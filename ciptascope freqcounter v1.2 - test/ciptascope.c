@@ -98,8 +98,15 @@ interrupt [EXT_INT1] void ext_int1_isr(void)
 // SPI interrupt service routine
 interrupt [SPI_STC] void spi_isr(void)
 {
-// Place your code here                 
-    SPDR = (frq & 0xff);
+// Place your code here  
+    if(updatefreq > 0x00){ //updatefreq ==1              
+        SPDR = (frq & 0xff);   //set SPDR to LSB
+        updatefreq =0x00; //disable update freq
+    }
+    else //update freq == 0
+    {
+        updatefreq=0x01;
+    }
 }
 #define DATA_REGISTER_EMPTY (1<<UDRE)
 #define RX_COMPLETE (1<<RXC)
@@ -220,19 +227,21 @@ TCNT0=0x06;
         if(counter>=1) //freq sampling per 1ms
         {
             counter=0;
-            #asm ("cli");
-            frq = TCNT1;
-            if(frq >= 0x1770) //frequency too high, more than 6MHz
-            {
-                frq =0x0001;
+            if(updatefreq >0x00){   //update freq ==0x01
+                #asm ("cli");
+                frq = TCNT1;
+                if(frq >= 0x1770) //frequency too high, more than 6MHz
+                {
+                    frq =0x0001;
+                }
+                else{  // frequency valid
+                    
+                }
+                SPDR = (frq & 0xff00)>>8;
+                TCNT1H =0x00;
+                TCNT1L =0x00;
+                #asm("sei"); 
             }
-            else{  // frequency valid
-                
-            }
-            SPDR = (frq & 0xff00)>>8;
-            TCNT1H =0x00;
-            TCNT1L =0x00;
-            #asm("sei");
 	    } 
     }
 }
