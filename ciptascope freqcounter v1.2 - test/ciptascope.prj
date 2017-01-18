@@ -26,7 +26,7 @@ Active0=0
 EditorPanel0=0
 PageIndex0=1
 EditorPanel1=0
-TimeStamp1=1244361636
+TimeStamp1=1244811642
 PageIndex1=0
 F1=ciptascope.c
 [CompilerDebug]
@@ -126,8 +126,8 @@ DebugBootLoader=0
 WatchAVR8LAutoVariables=0
 UseEEPROMLocation0=1
 RebuildAll=0
-LinkageInformationPresent=1
-COFFileTimeStamp=1244418707
+LinkageInformationPresent=0
+COFFileTimeStamp=-1
 Build=62
 [DefinedSymbolsDebug]
 Count=0
@@ -463,29 +463,29 @@ L14=Automatic register allocation: Yes
 L15=Smart register allocation: Yes
 L16=
 L17=Build: 62
-L18=9385 line(s) compiled
+L18=1686 line(s) compiled
 L19=No errors
 L20=No warnings
 L21=
-L22=Bit variables area: 0x2 to 0x2
-L23=Bit variables size: 1 byte(s)
-L24=
-L25=Data Stack area: 0x60 to 0x15F
-L26=Data Stack size: 256 byte(s)
-L27=Estimated Data Stack usage: 14 byte(s)
-L28=
-L29=RAM Global variables area: 0x160 to 0x181
-L30=RAM Global variables size: 34 byte(s)
-L31=
-L32=Hardware Stack area: 0x182 to 0x45F
-L33=Hardware Stack size: 734 byte(s)
+L22=Bit variables size: 0 byte(s)
+L23=
+L24=Data Stack area: 0x60 to 0x15F
+L25=Data Stack size: 256 byte(s)
+L26=Estimated Data Stack usage: 0 byte(s)
+L27=
+L28=RAM Global variables size: 0 byte(s)
+L29=
+L30=Hardware Stack area: 0x160 to 0x45F
+L31=Hardware Stack size: 768 byte(s)
+L32=
+L33=Heap size: 0 byte(s)
 L34=
 L35=Heap size: 0 byte(s)
 L36=
 L37=EEPROM usage: 0 byte(s), 0,0% of EEPROM
 L38=Program size: 334 words (668 bytes), 8,2% of FLASH
 L39=4 words (8 bytes), 1,2% reduced by Code Compression
-Lines=39
+Lines=34
 [BuildInfoAssembler]
 L1=AVRASM: AVR macro assembler 2.1.30 (build 592 Nov  7 2008 12:38:17)
 L2=Copyright (C) 1995-2008 ATMEL Corporation
@@ -499,24 +499,24 @@ L9=[.cseg] 0x000000 0x00029c    632     36    668    8192   8.2%
 L10=[.dseg] 0x000060 0x000182      0     34     34    1024   3.3%
 L11=[.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 L12=
-Lines=12
+Lines=0
 [Bookmarks0]
 Row=0
 Column=0
 ScrollPosX=0
 ScrollPosY=0
-TimeStamp=1244367193
+TimeStamp=1244812432
 [BookmarksFoldedCode]
 Files=3
 F1=ciptascope.c
 F2=Debug\List\ciptascope.asm
 F3=Z:\project\2015\ciptascope\test\firmware\source\20160512m8a\ciptascope.c
 [Bookmarks1]
-TimeStamp=1244361636
-Row=187
-Column=80
+TimeStamp=1244811642
+Row=106
+Column=123
 ScrollPosX=0
-ScrollPosY=174
+ScrollPosY=100
 BK0=-1
 BK1=-1
 BK2=-1
@@ -572,11 +572,10 @@ BK8=-1
 BK9=-1
 [FoldedCode3]
 Blocks=0
-[FoldedCode1]
-Blocks=0
 [HeadersList]
-Files=1
+Files=2
 F1=D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v1.2 - test\ciptascope.c
+F2=D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\ciptascope.c
 [Header1]
 Files=6
 F1=C:\cvavr\inc\mega8.h
@@ -585,3 +584,13 @@ F3=C:\cvavr\inc\delay.h
 F4=C:\cvavr\inc\stdio.h
 F5=C:\cvavr\inc\io.h
 F6=C:\cvavr\inc\stdarg.h
+[Header2]
+Files=6
+F1=C:\cvavr\inc\mega8.h
+F2=C:\cvavr\inc\mega8_bits.h
+F3=C:\cvavr\inc\delay.h
+F4=C:\cvavr\inc\stdio.h
+F5=C:\cvavr\inc\io.h
+F6=C:\cvavr\inc\stdarg.h
+[FoldedCode1]
+Blocks=0

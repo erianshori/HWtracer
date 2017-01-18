@@ -14,6 +14,7 @@ const char Dimap[] = {0, 1, 2, 4, 8, 16, 32, 64, 12, 20, 0, 0, 0, 0 ,0, 0};
 int reset_low;
 int counter;
 WORD freqDataBuffer[60];
+byte command;
 //
 //std::string hexStr(unsigned char *data, int len)
 //{
@@ -105,6 +106,8 @@ namespace ciptascope {
 	private: System::Windows::Forms::TextBox^  textBox2;
 	private: System::Windows::Forms::Timer^  timer1;
 	private: System::Windows::Forms::ToolStripMenuItem^  printFreqBufferToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripStatusLabel^  toolStripStatusLabel2;
+	private: System::Windows::Forms::Timer^  voltage;
 
 
 
@@ -163,12 +166,14 @@ namespace ciptascope {
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
 			this->toolStripStatusLabel1 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
+			this->toolStripStatusLabel2 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
 			this->pdupoll = (gcnew System::Windows::Forms::Timer(this->components));
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->voltage = (gcnew System::Windows::Forms::Timer(this->components));
 			this->MainMenu->SuspendLayout();
 			this->statusStrip1->SuspendLayout();
 			this->SuspendLayout();
@@ -237,7 +242,7 @@ namespace ciptascope {
 			this->deviceToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->scanToolStripMenuItem, 
 				this->m_devlist});
 			this->deviceToolStripMenuItem->Name = L"deviceToolStripMenuItem";
-			this->deviceToolStripMenuItem->Size = System::Drawing::Size(151, 22);
+			this->deviceToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->deviceToolStripMenuItem->Text = L"Device";
 			this->deviceToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::deviceToolStripMenuItem_Click);
 			// 
@@ -260,7 +265,7 @@ namespace ciptascope {
 			this->frequencyToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->m_FreqList, 
 				this->scanFrequencyToolStripMenuItem, this->helloToolStripMenuItem, this->printFreqBufferToolStripMenuItem});
 			this->frequencyToolStripMenuItem->Name = L"frequencyToolStripMenuItem";
-			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(151, 22);
+			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->frequencyToolStripMenuItem->Text = L"Frequency(Hz)";
 			this->frequencyToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::frequencyToolStripMenuItem_Click);
 			// 
@@ -285,7 +290,6 @@ namespace ciptascope {
 			this->helloToolStripMenuItem->Name = L"helloToolStripMenuItem";
 			this->helloToolStripMenuItem->Size = System::Drawing::Size(181, 22);
 			this->helloToolStripMenuItem->Text = L"hello";
-			this->helloToolStripMenuItem->Visible = false;
 			this->helloToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::helloToolStripMenuItem_Click);
 			// 
 			// printFreqBufferToolStripMenuItem
@@ -299,7 +303,7 @@ namespace ciptascope {
 			// 
 			this->baudRateToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->m_baudrate});
 			this->baudRateToolStripMenuItem->Name = L"baudRateToolStripMenuItem";
-			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(151, 22);
+			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->baudRateToolStripMenuItem->Text = L"BaudRate(bps)";
 			// 
 			// m_baudrate
@@ -325,7 +329,8 @@ namespace ciptascope {
 			// 
 			// statusStrip1
 			// 
-			this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->toolStripStatusLabel1});
+			this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->toolStripStatusLabel1, 
+				this->toolStripStatusLabel2});
 			this->statusStrip1->Location = System::Drawing::Point(0, 401);
 			this->statusStrip1->Name = L"statusStrip1";
 			this->statusStrip1->Size = System::Drawing::Size(635, 22);
@@ -337,6 +342,12 @@ namespace ciptascope {
 			this->toolStripStatusLabel1->Name = L"toolStripStatusLabel1";
 			this->toolStripStatusLabel1->Size = System::Drawing::Size(79, 17);
 			this->toolStripStatusLabel1->Text = L"Disconnected";
+			// 
+			// toolStripStatusLabel2
+			// 
+			this->toolStripStatusLabel2->Name = L"toolStripStatusLabel2";
+			this->toolStripStatusLabel2->Size = System::Drawing::Size(80, 17);
+			this->toolStripStatusLabel2->Text = L"Card Voltage :";
 			// 
 			// richTextBox1
 			// 
@@ -384,6 +395,11 @@ namespace ciptascope {
 			this->timer1->Interval = 10;
 			this->timer1->Tick += gcnew System::EventHandler(this, &Form1::timer1_Tick_1);
 			// 
+			// voltage
+			// 
+			this->voltage->Interval = 5000;
+			this->voltage->Tick += gcnew System::EventHandler(this, &Form1::voltage_Tick);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -420,7 +436,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 	char buffer[20];
 	char RxBuffer[256];
 	WORD baudbuf=0;
-	ftStatus = FT_SetBitMode(ftHandle,0x99,0x20);
+	ftStatus = FT_SetBitMode(ftHandle,0xCC,0x20);//11011100
 	ftStatus = FT_GetBitMode(ftHandle, &ucMask);
 	if (ftStatus != FT_OK) {
 		
@@ -1309,53 +1325,9 @@ private: System::Void helloToolStripMenuItem_Click(System::Object^  sender, Syst
 		DWORD BytesReceived;
 		WORD data = 0x55;
 		char buffer[10];
-			//tes baca byte
+		voltage->Enabled="True";
 		
-		//set SS to HIGH (active low) and MISO to low (input)
-		//////setbit CBUS to 0b1101100
-		ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-		//set SCK to LOW (setdtr, active low)
-		ftStatus = FT_SetDtr(ftHandle);
-		//set MOSI to low (setRts, active low)
-		ftStatus = FT_SetRts(ftHandle);
-		
-
-		/////start reading byte 
-		//set SS to low (CBUS to 0b11001000)
-		ftStatus = FT_SetBitMode(ftHandle, 0xC8,0x20);
-		//get MISO status
-		for(i = 0;i<8;i++){
-			ftStatus = FT_GetBitMode(ftHandle, &ucMask);
-			mask = (ucMask & 0x01);
-			data = (data << 1) | mask;
-			//do clock
-			//set SCK to HIGH (clrdtr)
-			ftStatus = FT_ClrDtr(ftHandle);
-			//set SCK to LOW (setdtr)
-			ftStatus = FT_SetDtr(ftHandle);
 		}
-			//set SS to HIGH,0b11001100
-			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-			/////start reading byte 
-		//set SS to low (CBUS to 0b11001000)
-		ftStatus = FT_SetBitMode(ftHandle, 0xC8,0x20);
-		//get MISO status
-		for(i = 0;i<8;i++){
-			ftStatus = FT_GetBitMode(ftHandle, &ucMask);
-			mask = (ucMask & 0x01);
-			data = (data << 1) | mask;
-			//do clock
-			//set SCK to HIGH (clrdtr)
-			ftStatus = FT_ClrDtr(ftHandle);
-			//set SCK to LOW (setdtr)
-			ftStatus = FT_SetDtr(ftHandle);
-		}
-			//set SS to HIGH,0b11001100
-			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-			freqDataBuffer[counter] = data;
-			sprintf(&buffer[0], "%02d", data*1000);
-			textBox2->Text = gcnew String(buffer);
-		 }
 
 private: System::Void timer1_Tick_1(System::Object^  sender, System::EventArgs^  e) {
 			 char buffer[60][10];
@@ -1386,6 +1358,58 @@ private: System::Void printFreqBufferToolStripMenuItem_Click(System::Object^  se
 private: System::Void textBox2_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void m_devlist_Click(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  e) {
+		FT_STATUS ftStatus;	
+		byte ucMask,i,mask;
+		WORD data = 0x55;
+		char buffer[10];
+			 //ask for voltage data
+			command =0x55; // this command to ask the voltage data
+			byte command_array[8]; //command in bit array
+			byte index; //bit
+			// baca byte
+		
+		//============set command byte to command bit ==========//
+			for(index=0;index<8;index++){
+				command_array[index] = (command >> 7-index) & 0x01;
+			}
+
+		//set SS to HIGH (active low) and MISO to low (input)
+		//////setbit CBUS to 0b1101100
+		ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
+		
+		//set SCK to LOW (setdtr, active low)
+		ftStatus = FT_SetDtr(ftHandle);
+		
+		/////start reading byte 
+		//set SS to low (CBUS to 0b11001000)
+		ftStatus = FT_SetBitMode(ftHandle, 0xC8,0x20);
+		//set MOSI to low (setRts, active low)
+		ftStatus = FT_SetRts(ftHandle);
+		for(i = 0;i<8;i++){
+			ftStatus = FT_GetBitMode(ftHandle, &ucMask);
+			mask = (ucMask & 0x01);
+			data = (data << 1) | mask;
+			//set MOSI
+			if(command_array[i] >0x00){
+				ftStatus = FT_ClrRts(ftHandle);
+			}
+			else{
+				ftStatus = FT_SetRts(ftHandle);
+			}
+			//Sleep(10);
+			//do clock
+			//set SCK to HIGH (clrdtr)
+			ftStatus = FT_ClrDtr(ftHandle);
+			//set SCK to LOW (setdtr)
+			ftStatus = FT_SetDtr(ftHandle);
+		}
+			ftStatus = FT_SetRts(ftHandle);
+			//set SS to HIGH,0b11001100
+			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
+			sprintf(&buffer[0], "%02x", data);
+			textBox1->Text = gcnew String(buffer);
 		 }
 };
 }

@@ -98,7 +98,11 @@ interrupt [EXT_INT1] void ext_int1_isr(void)
 // SPI interrupt service routine
 interrupt [SPI_STC] void spi_isr(void)
 {
-// Place your code here  
+// Place your code here 
+    if(SPDR ==51){
+        SPDR = 43;
+    }
+    else{ 
     if(updatefreq > 0x00){ //updatefreq ==1              
         SPDR = (frq & 0xff);   //set SPDR to LSB
         updatefreq =0x00; //disable update freq
@@ -106,6 +110,7 @@ interrupt [SPI_STC] void spi_isr(void)
     else //update freq == 0
     {
         updatefreq=0x01;
+    }    
     }
 }
 #define DATA_REGISTER_EMPTY (1<<UDRE)
