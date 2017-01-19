@@ -289,7 +289,7 @@ namespace ciptascope {
 			// 
 			this->helloToolStripMenuItem->Name = L"helloToolStripMenuItem";
 			this->helloToolStripMenuItem->Size = System::Drawing::Size(181, 22);
-			this->helloToolStripMenuItem->Text = L"hello";
+			this->helloToolStripMenuItem->Text = L"Show Voltage";
 			this->helloToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::helloToolStripMenuItem_Click);
 			// 
 			// printFreqBufferToolStripMenuItem
@@ -397,7 +397,7 @@ namespace ciptascope {
 			// 
 			// voltage
 			// 
-			this->voltage->Interval = 5000;
+			this->voltage->Interval = 500;
 			this->voltage->Tick += gcnew System::EventHandler(this, &Form1::voltage_Tick);
 			// 
 			// Form1
@@ -729,7 +729,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 						}
 
 						//----------set the baudrate according to frequency-----//
-						index=0;//get the first one
+						index=4;//get the first one
 						
 						if (freqDataBuffer[index] <1000){
 							sprintf(&buffer[0], "freq less than 1MHz");	
@@ -1087,6 +1087,7 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
 					ftStatus = FT_SetBaudRate(ftHandle, baudrate);
 					FT_Purge (ftHandle, FT_PURGE_RX);
 					FT_Purge (ftHandle, FT_PURGE_TX);
+					freqDataBuffer[4] = 0x12bc;
 					//FT_SetTimeouts (ftHandle,5000,5000);
 					//FT_SetResetPipeRetryCount (ftHandle,100);
 					//FT_SetDeadmanTimeout (ftHandle,6000);
@@ -1362,10 +1363,10 @@ private: System::Void m_devlist_Click(System::Object^  sender, System::EventArgs
 private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  e) {
 		FT_STATUS ftStatus;	
 		byte ucMask,i,mask;
-		WORD data = 0x55;
-		char buffer[10];
+		byte data = 0x55;
+		char buffer[30];
 			 //ask for voltage data
-			command =0x55; // this command to ask the voltage data
+			command =0x51; // this command to ask the voltage data
 			byte command_array[8]; //command in bit array
 			byte index; //bit
 			// baca byte
@@ -1408,8 +1409,33 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 			ftStatus = FT_SetRts(ftHandle);
 			//set SS to HIGH,0b11001100
 			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-			sprintf(&buffer[0], "%02x", data);
-			textBox1->Text = gcnew String(buffer);
+		
+		//set SCK to LOW (setdtr, active low)
+		ftStatus = FT_SetDtr(ftHandle);
+		
+		/////start reading byte 
+		//set SS to low (CBUS to 0b11001000)
+		ftStatus = FT_SetBitMode(ftHandle, 0xC8,0x20);
+		//set MOSI to low (setRts, active low)
+		ftStatus = FT_SetRts(ftHandle);
+		for(i = 0;i<8;i++){
+			ftStatus = FT_GetBitMode(ftHandle, &ucMask);
+			mask = (ucMask & 0x01);
+			data = (data << 1) | mask;
+			//set MOSI ->0
+				ftStatus = FT_SetRts(ftHandle);
+			//Sleep(10);
+			//do clock
+			//set SCK to HIGH (clrdtr)
+			ftStatus = FT_ClrDtr(ftHandle);
+			//set SCK to LOW (setdtr)
+			ftStatus = FT_SetDtr(ftHandle);
+		}
+			ftStatus = FT_SetRts(ftHandle);
+			//set SS to HIGH,0b11001100
+			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
+			sprintf(&buffer[0], "Card Voltage : %02d mV", data*5090/255); //ref voltage :5090mV
+			toolStripStatusLabel2->Text = gcnew String(buffer);
 		 }
 };
 }

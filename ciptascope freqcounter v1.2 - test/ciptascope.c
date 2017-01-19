@@ -98,19 +98,20 @@ interrupt [EXT_INT1] void ext_int1_isr(void)
 // SPI interrupt service routine
 interrupt [SPI_STC] void spi_isr(void)
 {
-// Place your code here 
-    if(SPDR ==51){
-        SPDR = 43;
+// Place your code here       
+    if(SPDR ==0x51){
+        updatefreq =0x00;
+        SPDR = (read_adc(0)>>2) & 0x00ff;
     }
     else{ 
-    if(updatefreq > 0x00){ //updatefreq ==1              
-        SPDR = (frq & 0xff);   //set SPDR to LSB
-        updatefreq =0x00; //disable update freq
-    }
-    else //update freq == 0
-    {
-        updatefreq=0x01;
-    }    
+        if(updatefreq > 0x00){ //updatefreq ==1              
+            SPDR = (frq & 0xff);   //set SPDR to LSB
+            updatefreq =0x00; //disable update freq
+        }
+        else //update freq == 0
+        {
+            updatefreq=0x01;
+        }    
     }
 }
 #define DATA_REGISTER_EMPTY (1<<UDRE)
@@ -223,7 +224,7 @@ TCNT0=0x06;
         TCNT1H =0x00;
         TCNT1L =0x00;
         counter = 0;
-        SPDR=0x12;          
+        SPDR=0x00;          
     }
     else //v1.1   scan freq
     {
