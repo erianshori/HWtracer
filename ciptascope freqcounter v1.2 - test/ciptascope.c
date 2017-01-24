@@ -102,7 +102,7 @@ interrupt [SPI_STC] void spi_isr(void)
     if(SPDR ==0x51){
         updatefreq =0x00;
         SPDR = (read_adc(0)>>2) & 0x00ff;
-    }
+   }
     else{ 
         if(updatefreq > 0x00){ //updatefreq ==1              
             SPDR = (frq & 0xff);   //set SPDR to LSB

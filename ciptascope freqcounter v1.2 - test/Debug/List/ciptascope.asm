@@ -1402,7 +1402,7 @@ _spi_isr:
 	RCALL _read_adc
 	RCALL __LSRW2
 	OUT  0xF,R30
-; 0000 0069     }
+; 0000 0069    }
 ; 0000 006A     else{
 	RJMP _0xE
 _0xD:

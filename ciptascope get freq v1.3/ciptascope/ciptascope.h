@@ -15,6 +15,9 @@ int reset_low;
 int counter;
 WORD freqDataBuffer[60];
 byte command;
+int globalIndex;
+unsigned char INSBefore;
+
 //
 //std::string hexStr(unsigned char *data, int len)
 //{
@@ -242,7 +245,7 @@ namespace ciptascope {
 			this->deviceToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->scanToolStripMenuItem, 
 				this->m_devlist});
 			this->deviceToolStripMenuItem->Name = L"deviceToolStripMenuItem";
-			this->deviceToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->deviceToolStripMenuItem->Size = System::Drawing::Size(151, 22);
 			this->deviceToolStripMenuItem->Text = L"Device";
 			this->deviceToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::deviceToolStripMenuItem_Click);
 			// 
@@ -265,7 +268,7 @@ namespace ciptascope {
 			this->frequencyToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->m_FreqList, 
 				this->scanFrequencyToolStripMenuItem, this->helloToolStripMenuItem, this->printFreqBufferToolStripMenuItem});
 			this->frequencyToolStripMenuItem->Name = L"frequencyToolStripMenuItem";
-			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(151, 22);
 			this->frequencyToolStripMenuItem->Text = L"Frequency(Hz)";
 			this->frequencyToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::frequencyToolStripMenuItem_Click);
 			// 
@@ -303,7 +306,7 @@ namespace ciptascope {
 			// 
 			this->baudRateToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->m_baudrate});
 			this->baudRateToolStripMenuItem->Name = L"baudRateToolStripMenuItem";
-			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(151, 22);
 			this->baudRateToolStripMenuItem->Text = L"BaudRate(bps)";
 			// 
 			// m_baudrate
@@ -359,6 +362,7 @@ namespace ciptascope {
 			this->richTextBox1->Size = System::Drawing::Size(635, 377);
 			this->richTextBox1->TabIndex = 6;
 			this->richTextBox1->Text = L"";
+			this->richTextBox1->Enter += gcnew System::EventHandler(this, &Form1::richTextBox1_TextChanged);
 			this->richTextBox1->TextChanged += gcnew System::EventHandler(this, &Form1::richTextBox1_TextChanged);
 			// 
 			// pdupoll
@@ -438,6 +442,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 	WORD baudbuf=0;
 	ftStatus = FT_SetBitMode(ftHandle,0xCC,0x20);//11011100
 	ftStatus = FT_GetBitMode(ftHandle, &ucMask);
+	
 	if (ftStatus != FT_OK) {
 		
 	}
@@ -450,7 +455,8 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		else 
 		{
 			
-
+			//set global index
+	globalIndex =0;
 			FT_SetBaudRate(ftHandle, 9600);
 			FT_Purge (ftHandle, FT_PURGE_RX);
 			//-----------------scan the frequency------------------//
@@ -922,6 +928,7 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 						ftStatus=FT_INVALID_BAUD_RATE;
 						ftStatus = FT_SetBaudRate(ftHandle, baudrate);
 						///ftStatus = FT_SetDivisor(ftHandle,223.375);
+						
 
 						if (ftStatus == FT_OK) {
 							itoa (baudrate,hexStr,10);
@@ -1175,7 +1182,11 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 	DWORD RxBytes,i;
 	DWORD BytesReceived; 
 	char RxBuffer[1024];
-
+	unsigned char CLA, INS, P1, P2, P3, RES;
+	unsigned char DT[256];
+for(i=0;i<1024;i++){
+						RxBuffer[i]=0x00;
+					}
 			/*ftStatus = FT_SetBitMode(ftHandle,0x99,0x20);
 			ftStatus = FT_GetBitMode(ftHandle, &ucMask);
 			if (ftStatus != FT_OK) {
@@ -1214,15 +1225,112 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 				if (ftStatus == FT_OK) {
 					// FT_Read OK 
 					char hexStr[2048];
-					char sTmp[2];
+					char sTmp[250];
 					for(i=0;i<2048;i++){
 						hexStr[i]=0x00;
 					}
+					
+					richTextBox1->SelectionStart = richTextBox1->Text->Length;
+					richTextBox1->ScrollToCaret();
+					//================= show data from buffer ===================//
 					for(i=0;i<BytesReceived;i++){
-						sprintf(&sTmp[0], "%1X", (RxBuffer[i]& 0xF0) >> 4);
-						sprintf(&sTmp[1], "%1X", (RxBuffer[i]& 0x0F));
+						sprintf(&sTmp[0], "%02X",RxBuffer[i] & 0xFF);
+							
+						//sprintf(&sTmp[0], "%1X", (RxBuffer[i]& 0xF0) >> 4);
+						//sprintf(&sTmp[1], "%1X", (RxBuffer[i]& 0x0F));
+						
 						strcat(hexStr, sTmp);
+					
 					}
+						sprintf(&sTmp[0], "\n");
+						strcat(hexStr, sTmp);
+					
+					//============================= parsing =====================//
+					CLA = RxBuffer[0] & 0xFF;
+					INS = RxBuffer[1] & 0xFF;
+					P1 = RxBuffer[2] & 0xFF;
+					P2 = RxBuffer[3] & 0xFF;
+					P3 = RxBuffer[4] & 0xFF;
+					RES = RxBuffer[5] & 0xFF;
+					if(CLA == 0xA0 ){
+						globalIndex++;
+						sprintf(&sTmp[0], "Terminal : \n  CLA : %02X\n",CLA);
+						strcat(hexStr, sTmp);
+						if((INS == 0xA4) || (INS == 0xC0)){
+							INSBefore = INS;
+							if(INS==0xA4){
+								sprintf(&sTmp[0], "  INS : %02X (SELECT FILE)\n", INS);
+								strcat(hexStr, sTmp);
+							}
+							else{
+								sprintf(&sTmp[0], "  INS : %02X (GET RESPONSE)\n", INS);
+								strcat(hexStr, sTmp);
+							}
+							sprintf(&sTmp[0], "  P1 : %02X\n  P2 : %02X\n  P3 : %02X\n", P1, P2, P3);
+							strcat(hexStr, sTmp);
+							if(RES == INSBefore){
+								sprintf(&sTmp[0], "ACK : %02X\n Data : ", RES);strcat(hexStr, sTmp);
+								for(i=0;i<P3;i++){
+									DT[i] = RxBuffer[6+i] &0xFF;
+									sprintf(&sTmp[0], "%02X", DT[i]);
+									strcat(hexStr, sTmp);
+								}
+								if(RxBuffer[6+P3]!=0x00){
+									sprintf(&sTmp[0], "\nSW : %02X%02X\n", RxBuffer[6+P3] &0xFF,RxBuffer[7+P3]&0xFF);
+									strcat(hexStr, sTmp);
+								}
+							}
+							else if(RES == 0x68){
+								sprintf(&sTmp[0], "Command Error, CLA is unknown");strcat(hexStr, sTmp);
+							}
+							else{
+								globalIndex = P3;
+							}
+						}
+						else{
+							sprintf(&sTmp[0], "Command Error, INS is unknown");strcat(hexStr, sTmp);
+							if(RES ==0x6D){
+								sprintf(&sTmp[0], "\nSW : %02X%02X\n", RES,RxBuffer[6] & 0xFF );
+								strcat(hexStr, sTmp);
+								globalIndex=0;
+							}
+						}
+						
+					}
+					else{
+						if(globalIndex>0){
+							if(CLA != INSBefore){
+								sprintf(&sTmp[0], "SW : %02X%02X\n", CLA,INS);
+								strcat(hexStr, sTmp);
+								globalIndex=0;
+							}
+							else{
+								sprintf(&sTmp[0], "ACK : %02X\n Data : ", CLA);
+								strcat(hexStr, sTmp);
+								for(i=0;i<globalIndex;i++){
+									DT[i] = RxBuffer[1+i] &0xFF;
+									sprintf(&sTmp[0], "%02X", DT[i]);
+									strcat(hexStr, sTmp);
+								}
+								if(RxBuffer[1+globalIndex]!=0x00){
+									sprintf(&sTmp[0], "\nSW : %02X%02X\n", RxBuffer[1+globalIndex] &0xFF,RxBuffer[globalIndex+2]&0xFF);
+									strcat(hexStr, sTmp);
+								}
+							}
+						}
+						else{
+							globalIndex++;
+							sprintf(&sTmp[0], "CLA is unknown: %02X", CLA );
+							strcat(hexStr, sTmp);
+							if(RES ==0x68){
+								sprintf(&sTmp[0], "\nSW : %02X%02X\n", RES,RxBuffer[6] & 0xFF );
+								strcat(hexStr, sTmp);
+								globalIndex=0;
+							}
+						}
+					}
+					//======================end of parsing ========================//
+					
 					// if(BytesReceived==1 && RxBuffer[0]==0x00)
 					// {
 						// //richTextBox1->Text +=gcnew String(hexStr) +"\n";
@@ -1241,7 +1349,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 					// }
 					// else
 					// {
-						richTextBox1->Text +=gcnew String(hexStr) +"\n";
+						richTextBox1->Text += gcnew String(hexStr) +"\n";
 					//}
 				}
 			}
@@ -1255,6 +1363,8 @@ private: System::Void cleanToolStripMenuItem_Click(System::Object^  sender, Syst
 private: System::Void deviceToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void richTextBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			richTextBox1->SelectionStart = richTextBox1->Text->Length;
+					richTextBox1->ScrollToCaret();
 		 }
 private: System::Void m_FreqList_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
