@@ -1,9 +1,19 @@
 reset
+#select MF
 A0A4000002 3F00
+#get response
 A0C0000022
+#select 7f10
 A0A4000002 7F10	
-A0C0000022	
+#get response
+A0C0000022
+#wrong INS	
 a0ab000004
-aba0000003
+#wrong CLA
+aca0000003
+#select MF with P2 wrong
 A0A4001002 3F00
+#get response fail due to fail to select
 A0C0000120
+#get status
+A0F2000016
