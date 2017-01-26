@@ -1256,37 +1256,58 @@ for(i=0;i<1024;i++){
 						globalIndex++;
 						sprintf(&sTmp[0], "Terminal : \n  CLA : %02X\n",CLA);
 						strcat(hexStr, sTmp);
-						if((INS == 0xA4) || (INS == 0xC0)){
-							INSBefore = INS;
-							if(INS==0xA4){
-								sprintf(&sTmp[0], "  INS : %02X (SELECT FILE)\n", INS);
+						//if((INS == 0xA4) ||  (INS == 0xF2)|| (INS==0xB0)||(INS == 0xD6) ||(INS==B2)){
+						INSBefore = INS;
+						sprintf(&sTmp[0], "   INS : %02X\n", INS);
+						strcat(hexStr, sTmp);
+						sprintf(&sTmp[0], "   P1 : %02X\n   P2 : %02X\n   P3 : %02X\n", P1, P2, P3);
+						strcat(hexStr, sTmp);
+						if(RES == INSBefore){
+							sprintf(&sTmp[0], "Card:\n  ACK : %02X\nT/C Data : ", RES);strcat(hexStr, sTmp);
+							for(i=0;i<P3;i++){
+								DT[i] = RxBuffer[6+i] &0xFF;
+								sprintf(&sTmp[0], "%02X", DT[i]);
 								strcat(hexStr, sTmp);
 							}
-							else{
-								sprintf(&sTmp[0], "  INS : %02X (GET RESPONSE)\n", INS);
+							if(RxBuffer[6+P3]!=0x00){
+								sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[6+P3] &0xFF,RxBuffer[7+P3]&0xFF);
 								strcat(hexStr, sTmp);
 							}
-							sprintf(&sTmp[0], "  P1 : %02X\n  P2 : %02X\n  P3 : %02X\n", P1, P2, P3);
-							strcat(hexStr, sTmp);
-							if(RES == INSBefore){
-								sprintf(&sTmp[0], "ACK : %02X\n Data : ", RES);strcat(hexStr, sTmp);
-								for(i=0;i<P3;i++){
-									DT[i] = RxBuffer[6+i] &0xFF;
-									sprintf(&sTmp[0], "%02X", DT[i]);
-									strcat(hexStr, sTmp);
-								}
-								if(RxBuffer[6+P3]!=0x00){
-									sprintf(&sTmp[0], "\nSW : %02X%02X\n", RxBuffer[6+P3] &0xFF,RxBuffer[7+P3]&0xFF);
-									strcat(hexStr, sTmp);
-								}
-							}
-							else if(RES == 0x68){
+						}
+							/*else if(RES == 0x68){
 								sprintf(&sTmp[0], "Command Error, CLA is unknown");strcat(hexStr, sTmp);
 							}
 							else{
-								globalIndex = P3;
+								globalIndex = P3;*/ 
+
+							//}
+						else{
+							switch (RES)
+							{
+								case 0x67 :
+								case 0x6B :
+								case 0x68 :
+								case 0x6D :
+								case 0x6E :
+								case 0x6F :
+								case 0x90 :
+								case 0x91 :
+								case 0x9E :
+								case 0x9F :
+								case 0x92 :
+								case 0x93 :
+								case 0x94 :
+								case 0x98 :
+									sprintf(&sTmp[0], "  SW : %02X%02X\n", RES,RxBuffer[6]&0xFF);
+									strcat(hexStr, sTmp);
+									globalIndex=0;
+									break;
+								default :
+									globalIndex =P3;
 							}
+
 						}
+						/*}
 						else{
 							sprintf(&sTmp[0], "Command Error, INS is unknown");strcat(hexStr, sTmp);
 							if(RES ==0x6D){
@@ -1294,18 +1315,18 @@ for(i=0;i<1024;i++){
 								strcat(hexStr, sTmp);
 								globalIndex=0;
 							}
-						}
+						}*/
 						
 					}
 					else{
 						if(globalIndex>0){
 							if(CLA != INSBefore){
-								sprintf(&sTmp[0], "SW : %02X%02X\n", CLA,INS);
+								sprintf(&sTmp[0], "Card :\n  SW : %02X%02X\n", CLA,INS);
 								strcat(hexStr, sTmp);
 								globalIndex=0;
 							}
 							else{
-								sprintf(&sTmp[0], "ACK : %02X\n Data : ", CLA);
+								sprintf(&sTmp[0], "Card :\n  ACK : %02X\nT/C Data : ", CLA);
 								strcat(hexStr, sTmp);
 								for(i=0;i<globalIndex;i++){
 									DT[i] = RxBuffer[1+i] &0xFF;
@@ -1313,7 +1334,7 @@ for(i=0;i<1024;i++){
 									strcat(hexStr, sTmp);
 								}
 								if(RxBuffer[1+globalIndex]!=0x00){
-									sprintf(&sTmp[0], "\nSW : %02X%02X\n", RxBuffer[1+globalIndex] &0xFF,RxBuffer[globalIndex+2]&0xFF);
+									sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[1+globalIndex] &0xFF,RxBuffer[globalIndex+2]&0xFF);
 									strcat(hexStr, sTmp);
 								}
 							}
@@ -1323,7 +1344,7 @@ for(i=0;i<1024;i++){
 							sprintf(&sTmp[0], "CLA is unknown: %02X", CLA );
 							strcat(hexStr, sTmp);
 							if(RES ==0x68){
-								sprintf(&sTmp[0], "\nSW : %02X%02X\n", RES,RxBuffer[6] & 0xFF );
+								sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RES,RxBuffer[6] & 0xFF );
 								strcat(hexStr, sTmp);
 								globalIndex=0;
 							}
@@ -1349,7 +1370,9 @@ for(i=0;i<1024;i++){
 					// }
 					// else
 					// {
+					
 						richTextBox1->Text += gcnew String(hexStr) +"\n";
+						
 					//}
 				}
 			}
