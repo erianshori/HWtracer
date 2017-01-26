@@ -15,7 +15,7 @@ int reset_low;
 int counter;
 WORD freqDataBuffer[60];
 byte command;
-int globalIndex;
+int globalIndex, remaining;
 unsigned char INSBefore;
 
 //
@@ -456,7 +456,8 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		{
 			
 			//set global index
-	globalIndex =0;
+			globalIndex =0;
+			remaining =0;
 			FT_SetBaudRate(ftHandle, 9600);
 			FT_Purge (ftHandle, FT_PURGE_RX);
 			//-----------------scan the frequency------------------//
@@ -1184,48 +1185,18 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 	char RxBuffer[1024];
 	unsigned char CLA, INS, P1, P2, P3, RES;
 	unsigned char DT[256];
-for(i=0;i<1024;i++){
-						RxBuffer[i]=0x00;
-					}
-			/*ftStatus = FT_SetBitMode(ftHandle,0x99,0x20);
-			ftStatus = FT_GetBitMode(ftHandle, &ucMask);
-			if (ftStatus != FT_OK) {
-
-			}
-			else
-			{
-				
-				if (ucMask & 0x02){
-
+			for(i=0;i<1024;i++){
+					RxBuffer[i]=0x00;
 				}
-				else 
-				{
-					this->CardResetPoll->Tick += gcnew System::EventHandler(this, &Form1::timer1_Tick);
-
-				}
-			}*/
-
 			RxBytes=0;
-			//HANDLE hEvent; 
-			//DWORD EventMask; 
-			//
-			//hEvent = CreateEvent( NULL,false,false,NULL);
-			//EventMask = FT_EVENT_RXCHAR; 
-			//
-			//ftStatus = FT_SetEventNotification(ftHandle,EventMask,hEvent); 
-			// 
-			////WaitForSingleObject(hEvent,INFINITE); 
-			//WaitForSingleObject(hEvent,100); 
-			//DWORD EventDWord; 
-			//DWORD TxBytes; 
-			//FT_GetStatus(ftHandle,&RxBytes,&TxBytes,&EventDWord); 
+			 
 			FT_GetQueueStatus(ftHandle, &RxBytes);
 			if (RxBytes > 0) {
 				ftStatus = FT_Read(ftHandle, RxBuffer, RxBytes, &BytesReceived);
 				if (ftStatus == FT_OK) {
 					// FT_Read OK 
 					char hexStr[2048];
-					char sTmp[250];
+					char sTmp[256];
 					for(i=0;i<2048;i++){
 						hexStr[i]=0x00;
 					}
@@ -1233,18 +1204,16 @@ for(i=0;i<1024;i++){
 					richTextBox1->SelectionStart = richTextBox1->Text->Length;
 					richTextBox1->ScrollToCaret();
 					//================= show data from buffer ===================//
-					for(i=0;i<BytesReceived;i++){
-						sprintf(&sTmp[0], "%02X",RxBuffer[i] & 0xFF);
-							
-						//sprintf(&sTmp[0], "%1X", (RxBuffer[i]& 0xF0) >> 4);
-						//sprintf(&sTmp[1], "%1X", (RxBuffer[i]& 0x0F));
+					/*if(remaining==0){
+						for(i=0;i<BytesReceived;i++){
+							sprintf(&sTmp[0], "%02X",RxBuffer[i] & 0xFF);
+							strcat(hexStr, sTmp);
 						
-						strcat(hexStr, sTmp);
-					
-					}
-						sprintf(&sTmp[0], "\n");
-						strcat(hexStr, sTmp);
-					
+						}
+							sprintf(&sTmp[0], "\n");
+							strcat(hexStr, sTmp);
+					}*/
+					//=====================end of showing data from buffer ===========//
 					//============================= parsing =====================//
 					CLA = RxBuffer[0] & 0xFF;
 					INS = RxBuffer[1] & 0xFF;
@@ -1252,9 +1221,20 @@ for(i=0;i<1024;i++){
 					P2 = RxBuffer[3] & 0xFF;
 					P3 = RxBuffer[4] & 0xFF;
 					RES = RxBuffer[5] & 0xFF;
-					if(CLA == 0xA0 ){
+					if(remaining >0){
+						for(i=0;i<remaining-2;i++){
+							sprintf(&sTmp[0], "%02X", RxBuffer[i] & 0xFF);strcat(hexStr, sTmp);
+						}
+						if(RxBuffer[i]!=0x00){
+							sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[i] &0xFF,RxBuffer[i+1]&0xFF);
+							strcat(hexStr, sTmp);
+						}
+						remaining =0;
+					}
+					else
+					if((CLA == 0xA0) ||(CLA == 0xFA) ){
 						globalIndex++;
-						sprintf(&sTmp[0], "Terminal : \n  CLA : %02X\n",CLA);
+						sprintf(&sTmp[0], "\nTerminal : \n  CLA : %02X\n",CLA);
 						strcat(hexStr, sTmp);
 						//if((INS == 0xA4) ||  (INS == 0xF2)|| (INS==0xB0)||(INS == 0xD6) ||(INS==B2)){
 						INSBefore = INS;
@@ -1263,24 +1243,29 @@ for(i=0;i<1024;i++){
 						sprintf(&sTmp[0], "   P1 : %02X\n   P2 : %02X\n   P3 : %02X\n", P1, P2, P3);
 						strcat(hexStr, sTmp);
 						if(RES == INSBefore){
+							//if received datas less than length of data transfer -> wait for next data
+							remaining = P3 +2 - (BytesReceived -6);
 							sprintf(&sTmp[0], "Card:\n  ACK : %02X\nT/C Data : ", RES);strcat(hexStr, sTmp);
-							for(i=0;i<P3;i++){
-								DT[i] = RxBuffer[6+i] &0xFF;
-								sprintf(&sTmp[0], "%02X", DT[i]);
-								strcat(hexStr, sTmp);
+							if(remaining>0){
+								for(i=0;i<BytesReceived-6;i++){
+									DT[i] = RxBuffer[6+i] &0xFF;
+									sprintf(&sTmp[0], "%02X", DT[i]);
+									strcat(hexStr, sTmp);
+								}
 							}
-							if(RxBuffer[6+P3]!=0x00){
-								sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[6+P3] &0xFF,RxBuffer[7+P3]&0xFF);
-								strcat(hexStr, sTmp);
+							else{// no remaining data
+								for(i=0;i<BytesReceived-8;i++){
+									DT[i] = RxBuffer[6+i] &0xFF;
+									sprintf(&sTmp[0], "%02X", DT[i]);
+									strcat(hexStr, sTmp);
+								}
+								if(RxBuffer[BytesReceived-2]!=0x00){
+									sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[BytesReceived-2] &0xFF,RxBuffer[BytesReceived-1]&0xFF);
+									strcat(hexStr, sTmp);
+								}
 							}
+							
 						}
-							/*else if(RES == 0x68){
-								sprintf(&sTmp[0], "Command Error, CLA is unknown");strcat(hexStr, sTmp);
-							}
-							else{
-								globalIndex = P3;*/ 
-
-							//}
 						else{
 							switch (RES)
 							{
@@ -1304,22 +1289,11 @@ for(i=0;i<1024;i++){
 									break;
 								default :
 									globalIndex =P3;
-							}
-
-						}
-						/*}
-						else{
-							sprintf(&sTmp[0], "Command Error, INS is unknown");strcat(hexStr, sTmp);
-							if(RES ==0x6D){
-								sprintf(&sTmp[0], "\nSW : %02X%02X\n", RES,RxBuffer[6] & 0xFF );
-								strcat(hexStr, sTmp);
-								globalIndex=0;
-							}
-						}*/
-						
-					}
-					else{
-						if(globalIndex>0){
+							} //end of switch
+						}//end of error sw			
+					} //end of identify CLA
+					else{ //CLA
+						if(globalIndex>0){ //continue the previous parsing
 							if(CLA != INSBefore){
 								sprintf(&sTmp[0], "Card :\n  SW : %02X%02X\n", CLA,INS);
 								strcat(hexStr, sTmp);
@@ -1339,7 +1313,7 @@ for(i=0;i<1024;i++){
 								}
 							}
 						}
-						else{
+						else{ //CLA not support
 							globalIndex++;
 							sprintf(&sTmp[0], "CLA is unknown: %02X", CLA );
 							strcat(hexStr, sTmp);
@@ -1349,31 +1323,9 @@ for(i=0;i<1024;i++){
 								globalIndex=0;
 							}
 						}
-					}
+					}//end of CLA
 					//======================end of parsing ========================//
-					
-					// if(BytesReceived==1 && RxBuffer[0]==0x00)
-					// {
-						// //richTextBox1->Text +=gcnew String(hexStr) +"\n";
-						// //pdupoll->Enabled="False";
-						// RxBytes=0;
-						// while(RxBytes<1)
-						// {
-							// FT_GetQueueStatus(ftHandle, &RxBytes);
-						// }
-						// if (RxBytes > 0) {
-							// FT_Read(ftHandle, RxBuffer, RxBytes, &BytesReceived);
-						// }
-						// if(RxBuffer[0]==0x3B || RxBuffer[0]==0x3F){
-							// this->CardResetPoll->Tick += gcnew System::EventHandler(this, &Form1::timer1_Tick);
-						// }
-					// }
-					// else
-					// {
-					
-						richTextBox1->Text += gcnew String(hexStr) +"\n";
-						
-					//}
+					richTextBox1->Text += gcnew String(hexStr);
 				}
 			}
 			
