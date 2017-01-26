@@ -1232,7 +1232,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 						remaining =0;
 					}
 					else
-					if((CLA == 0xA0) ||(CLA == 0xFA) ){
+					if((CLA == 0xA0) ||(CLA == 0xFA) || (CLA==0x00)){
 						globalIndex++;
 						sprintf(&sTmp[0], "\nTerminal : \n  CLA : %02X\n",CLA);
 						strcat(hexStr, sTmp);
@@ -1283,7 +1283,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 								case 0x93 :
 								case 0x94 :
 								case 0x98 :
-									sprintf(&sTmp[0], "  SW : %02X%02X\n", RES,RxBuffer[6]&0xFF);
+									sprintf(&sTmp[0], "Card:\n  SW : %02X%02X\n", RES,RxBuffer[6]&0xFF);
 									strcat(hexStr, sTmp);
 									globalIndex=0;
 									break;
@@ -1295,7 +1295,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 					else{ //CLA
 						if(globalIndex>0){ //continue the previous parsing
 							if(CLA != INSBefore){
-								sprintf(&sTmp[0], "Card :\n  SW : %02X%02X\n", CLA,INS);
+								sprintf(&sTmp[0], "\nCard :\n  SW : %02X%02X\n", CLA,INS);
 								strcat(hexStr, sTmp);
 								globalIndex=0;
 							}
@@ -1315,10 +1315,14 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 						}
 						else{ //CLA not support
 							globalIndex++;
-							sprintf(&sTmp[0], "CLA is unknown: %02X", CLA );
+							sprintf(&sTmp[0], "\nTerminal : \n  CLA : %02X (not support)\n",CLA);
 							strcat(hexStr, sTmp);
-							if(RES ==0x68){
-								sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RES,RxBuffer[6] & 0xFF );
+							sprintf(&sTmp[0], "   INS : %02X\n", INS);
+							strcat(hexStr, sTmp);
+							sprintf(&sTmp[0], "   P1 : %02X\n   P2 : %02X\n   P3 : %02X\n", P1, P2, P3);
+							strcat(hexStr, sTmp);
+							if(RES ==0x68 || RES == 0x6E){
+								sprintf(&sTmp[0], "Card:\n  SW : %02X%02X\n", RES,RxBuffer[6] & 0xFF );
 								strcat(hexStr, sTmp);
 								globalIndex=0;
 							}
