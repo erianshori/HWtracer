@@ -111,6 +111,8 @@ namespace ciptascope {
 	private: System::Windows::Forms::ToolStripMenuItem^  printFreqBufferToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripStatusLabel^  toolStripStatusLabel2;
 	private: System::Windows::Forms::Timer^  voltage;
+	private: System::Windows::Forms::ToolStripMenuItem^  saveAsToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  openLogFileToolStripMenuItem;
 
 
 
@@ -152,6 +154,7 @@ namespace ciptascope {
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->openToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->closeToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->saveAsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->cleanToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->optionsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -161,8 +164,8 @@ namespace ciptascope {
 			this->frequencyToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->m_FreqList = (gcnew System::Windows::Forms::ToolStripComboBox());
 			this->scanFrequencyToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->helloToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->printFreqBufferToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->helloToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->baudRateToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->m_baudrate = (gcnew System::Windows::Forms::ToolStripComboBox());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -177,6 +180,7 @@ namespace ciptascope {
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->voltage = (gcnew System::Windows::Forms::Timer(this->components));
+			this->openLogFileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->MainMenu->SuspendLayout();
 			this->statusStrip1->SuspendLayout();
 			this->SuspendLayout();
@@ -198,8 +202,9 @@ namespace ciptascope {
 			// 
 			// fileToolStripMenuItem
 			// 
-			this->fileToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->openToolStripMenuItem, 
-				this->closeToolStripMenuItem, this->cleanToolStripMenuItem, this->exitToolStripMenuItem});
+			this->fileToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(6) {this->openToolStripMenuItem, 
+				this->closeToolStripMenuItem, this->openLogFileToolStripMenuItem, this->saveAsToolStripMenuItem, this->cleanToolStripMenuItem, 
+				this->exitToolStripMenuItem});
 			this->fileToolStripMenuItem->Name = L"fileToolStripMenuItem";
 			this->fileToolStripMenuItem->Size = System::Drawing::Size(37, 20);
 			this->fileToolStripMenuItem->Text = L"File";
@@ -207,28 +212,35 @@ namespace ciptascope {
 			// openToolStripMenuItem
 			// 
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(133, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->openToolStripMenuItem->Text = L"Connect";
 			this->openToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::openToolStripMenuItem_Click);
 			// 
 			// closeToolStripMenuItem
 			// 
 			this->closeToolStripMenuItem->Name = L"closeToolStripMenuItem";
-			this->closeToolStripMenuItem->Size = System::Drawing::Size(133, 22);
+			this->closeToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->closeToolStripMenuItem->Text = L"Disconnect";
 			this->closeToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::closeToolStripMenuItem_Click);
+			// 
+			// saveAsToolStripMenuItem
+			// 
+			this->saveAsToolStripMenuItem->Name = L"saveAsToolStripMenuItem";
+			this->saveAsToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveAsToolStripMenuItem->Text = L"Save As";
+			this->saveAsToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::saveAsToolStripMenuItem_Click);
 			// 
 			// cleanToolStripMenuItem
 			// 
 			this->cleanToolStripMenuItem->Name = L"cleanToolStripMenuItem";
-			this->cleanToolStripMenuItem->Size = System::Drawing::Size(133, 22);
+			this->cleanToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->cleanToolStripMenuItem->Text = L"Clean";
 			this->cleanToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::cleanToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(133, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::exitToolStripMenuItem_Click);
 			// 
@@ -266,10 +278,10 @@ namespace ciptascope {
 			// frequencyToolStripMenuItem
 			// 
 			this->frequencyToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->m_FreqList, 
-				this->scanFrequencyToolStripMenuItem, this->helloToolStripMenuItem, this->printFreqBufferToolStripMenuItem});
+				this->scanFrequencyToolStripMenuItem, this->printFreqBufferToolStripMenuItem, this->helloToolStripMenuItem});
 			this->frequencyToolStripMenuItem->Name = L"frequencyToolStripMenuItem";
 			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(151, 22);
-			this->frequencyToolStripMenuItem->Text = L"Frequency(Hz)";
+			this->frequencyToolStripMenuItem->Text = L"Show";
 			this->frequencyToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::frequencyToolStripMenuItem_Click);
 			// 
 			// m_FreqList
@@ -279,6 +291,7 @@ namespace ciptascope {
 			this->m_FreqList->Name = L"m_FreqList";
 			this->m_FreqList->Size = System::Drawing::Size(121, 23);
 			this->m_FreqList->Text = L"5000000";
+			this->m_FreqList->Visible = false;
 			this->m_FreqList->Click += gcnew System::EventHandler(this, &Form1::m_FreqList_Click);
 			// 
 			// scanFrequencyToolStripMenuItem
@@ -288,19 +301,19 @@ namespace ciptascope {
 			this->scanFrequencyToolStripMenuItem->Text = L"Scan Frequency";
 			this->scanFrequencyToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::scanFrequencyToolStripMenuItem_Click);
 			// 
-			// helloToolStripMenuItem
-			// 
-			this->helloToolStripMenuItem->Name = L"helloToolStripMenuItem";
-			this->helloToolStripMenuItem->Size = System::Drawing::Size(181, 22);
-			this->helloToolStripMenuItem->Text = L"Show Voltage";
-			this->helloToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::helloToolStripMenuItem_Click);
-			// 
 			// printFreqBufferToolStripMenuItem
 			// 
 			this->printFreqBufferToolStripMenuItem->Name = L"printFreqBufferToolStripMenuItem";
 			this->printFreqBufferToolStripMenuItem->Size = System::Drawing::Size(181, 22);
 			this->printFreqBufferToolStripMenuItem->Text = L"Print Freq Buffer";
 			this->printFreqBufferToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::printFreqBufferToolStripMenuItem_Click);
+			// 
+			// helloToolStripMenuItem
+			// 
+			this->helloToolStripMenuItem->Name = L"helloToolStripMenuItem";
+			this->helloToolStripMenuItem->Size = System::Drawing::Size(181, 22);
+			this->helloToolStripMenuItem->Text = L"Show Voltage";
+			this->helloToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::helloToolStripMenuItem_Click);
 			// 
 			// baudRateToolStripMenuItem
 			// 
@@ -329,6 +342,7 @@ namespace ciptascope {
 			this->aboutToolStripMenuItem->Name = L"aboutToolStripMenuItem";
 			this->aboutToolStripMenuItem->Size = System::Drawing::Size(107, 22);
 			this->aboutToolStripMenuItem->Text = L"About";
+			this->aboutToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::aboutToolStripMenuItem_Click);
 			// 
 			// statusStrip1
 			// 
@@ -392,6 +406,7 @@ namespace ciptascope {
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->Size = System::Drawing::Size(143, 20);
 			this->textBox2->TabIndex = 9;
+			this->textBox2->Visible = false;
 			this->textBox2->TextChanged += gcnew System::EventHandler(this, &Form1::textBox2_TextChanged);
 			// 
 			// timer1
@@ -403,6 +418,13 @@ namespace ciptascope {
 			// 
 			this->voltage->Interval = 500;
 			this->voltage->Tick += gcnew System::EventHandler(this, &Form1::voltage_Tick);
+			// 
+			// openLogFileToolStripMenuItem
+			// 
+			this->openLogFileToolStripMenuItem->Name = L"openLogFileToolStripMenuItem";
+			this->openLogFileToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->openLogFileToolStripMenuItem->Text = L"Open Log File";
+			this->openLogFileToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::openLogFileToolStripMenuItem_Click);
 			// 
 			// Form1
 			// 
@@ -1232,7 +1254,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 						remaining =0;
 					}
 					else
-					if((CLA == 0xA0) ||(CLA == 0xFA) || (CLA==0x00)){
+					if((CLA == 0xA0) ||(CLA == 0xFA) || (CLA == 0x00)){
 						globalIndex++;
 						sprintf(&sTmp[0], "\nTerminal : \n  CLA : %02X\n",CLA);
 						strcat(hexStr, sTmp);
@@ -1245,23 +1267,27 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 						if(RES == INSBefore){
 							//if received datas less than length of data transfer -> wait for next data
 							remaining = P3 +2 - (BytesReceived -6);
-							sprintf(&sTmp[0], "Card:\n  ACK : %02X\nT/C Data : ", RES);strcat(hexStr, sTmp);
-							if(remaining>0){
-								for(i=0;i<BytesReceived-6;i++){
-									DT[i] = RxBuffer[6+i] &0xFF;
-									sprintf(&sTmp[0], "%02X", DT[i]);
-									strcat(hexStr, sTmp);
+							if(remaining<0)
+								remaining=0;
+							if(BytesReceived>5){//min value to have ACK
+								sprintf(&sTmp[0], "Card:\n  ACK : %02X\nT/C Data : ", RES);strcat(hexStr, sTmp);
+								if(remaining>0){
+									for(i=0;i<BytesReceived-6;i++){
+										DT[i] = RxBuffer[6+i] &0xFF;
+										sprintf(&sTmp[0], "%02X", DT[i]);
+										strcat(hexStr, sTmp);
+									}
 								}
-							}
-							else{// no remaining data
-								for(i=0;i<BytesReceived-8;i++){
-									DT[i] = RxBuffer[6+i] &0xFF;
-									sprintf(&sTmp[0], "%02X", DT[i]);
-									strcat(hexStr, sTmp);
-								}
-								if(RxBuffer[BytesReceived-2]!=0x00){
-									sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[BytesReceived-2] &0xFF,RxBuffer[BytesReceived-1]&0xFF);
-									strcat(hexStr, sTmp);
+								else{// no remaining data
+									for(i=0;i<BytesReceived-8;i++){
+										DT[i] = RxBuffer[6+i] &0xFF;
+										sprintf(&sTmp[0], "%02X", DT[i]);
+										strcat(hexStr, sTmp);
+									}
+									if(RxBuffer[BytesReceived-2]!=0x00){
+										sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[BytesReceived-2] &0xFF,RxBuffer[BytesReceived-1]&0xFF);
+										strcat(hexStr, sTmp);
+									}
 								}
 							}
 							
@@ -1290,7 +1316,8 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 								default :
 									globalIndex =P3;
 							} //end of switch
-						}//end of error sw			
+						}//end of error sw	
+						
 					} //end of identify CLA
 					else{ //CLA
 						if(globalIndex>0){ //continue the previous parsing
@@ -1449,6 +1476,22 @@ private: System::Void textBox2_TextChanged(System::Object^  sender, System::Even
 		 }
 private: System::Void m_devlist_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
+private: System::Void saveFile(void){
+			 // Create a SaveFileDialog to request a path and file name to save to.
+      SaveFileDialog^ saveFile1 = gcnew SaveFileDialog;
+
+      // Initialize the SaveFileDialog to specify the RTF extention for the file.
+      saveFile1->DefaultExt = "*.txt";
+      saveFile1->Filter = "TXT Files|*.txt";
+
+      // Determine whether the user selected a file name from the saveFileDialog. 
+      if ( saveFile1->ShowDialog() == System::Windows::Forms::DialogResult::OK &&
+         saveFile1->FileName->Length > 0 )
+      {
+         // Save the contents of the RichTextBox into the file.
+         richTextBox1->SaveFile( saveFile1->FileName,RichTextBoxStreamType::PlainText );
+      }
+		 }
 private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  e) {
 		FT_STATUS ftStatus;	
 		byte ucMask,i,mask;
@@ -1523,8 +1566,30 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 			ftStatus = FT_SetRts(ftHandle);
 			//set SS to HIGH,0b11001100
 			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-			sprintf(&buffer[0], "Card Voltage : %02d mV", data*5090/255); //ref voltage :5090mV
+			sprintf(&buffer[0], "Card Voltage : %02d mV", 2*data*5090/255); //ref voltage :5090mV
 			toolStripStatusLabel2->Text = gcnew String(buffer);
+		 }
+private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+			
+		 }
+private: System::Void saveAsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+			 saveFile();
+		 }
+private: System::Void openLogFileToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+			  // Create an OpenFileDialog to request a file to open.
+      OpenFileDialog^ openFile1 = gcnew OpenFileDialog;
+
+      // Initialize the OpenFileDialog to look for RTF files.
+      openFile1->DefaultExt = "*.txt";
+      openFile1->Filter = "TXT Files|*.txt";
+
+      // Determine whether the user selected a file from the OpenFileDialog.
+      if ( openFile1->ShowDialog() == System::Windows::Forms::DialogResult::OK &&
+         openFile1->FileName->Length > 0 )
+      {
+         // Load the contents of the file into the RichTextBox.
+         richTextBox1->LoadFile( openFile1->FileName,RichTextBoxStreamType::PlainText );
+      }
 		 }
 };
 }
