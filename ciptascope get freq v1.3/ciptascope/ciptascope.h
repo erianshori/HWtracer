@@ -464,7 +464,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 	WORD baudbuf=0;
 	ftStatus = FT_SetBitMode(ftHandle,0xCC,0x20);//11011100
 	ftStatus = FT_GetBitMode(ftHandle, &ucMask);
-	
+	char temp;
 	if (ftStatus != FT_OK) {
 		
 	}
@@ -480,7 +480,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			//set global index
 			globalIndex =0;
 			remaining =0;
-			FT_SetBaudRate(ftHandle, 9600);
+			FT_SetBaudRate(ftHandle, 10000);
 			FT_Purge (ftHandle, FT_PURGE_RX);
 			//-----------------scan the frequency------------------//
 			counter =0;	//clear counter after reset
@@ -520,8 +520,9 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 				TotalBytesReceived+=BytesReceived;
 				if (ftStatus == FT_OK) 
 				{
-					
+					temp = RxBuffer[0];
 					if(RxBuffer[0]==0x3B ||RxBuffer[0]==0x3F)
+					//	if (RxBytes > 0) 
 					{
 						if(TotalBytesReceived==1)
 						{
@@ -759,9 +760,9 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 
 						//----------set the baudrate according to frequency-----//
 						index=4;//get the first one
-						
 						if (freqDataBuffer[index] <1000){
-							sprintf(&buffer[0], "freq less than 1MHz");	
+							sprintf(&buffer[0], "freq less than 1MHz");
+							freqDataBuffer[index] = 3700;
 						}
 						else
 							sprintf(&buffer[0], "%02d", freqDataBuffer[index]*1000);//*1000 to get per second
@@ -918,7 +919,7 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 						array<Byte> ^chars = System::Text::Encoding::ASCII->GetBytes(m_FreqList->Text);
 						pin_ptr<Byte> charsPointer = &(chars[0]);
 						char *PChar = reinterpret_cast<char *>(static_cast<unsigned char *>(charsPointer));
-						unsigned int f = atoi(PChar);
+						unsigned int f = freqDataBuffer[index]*1000;//atoi(PChar);
 						baudrate = f/372;
 						i=0;
 						if(TOTAL_PPS_LENGTH *2 == TOTAL_PPS_RECEIVED)
@@ -949,8 +950,8 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 						//FT_Purge (ftHandle, FT_PURGE_RX);
 						//FT_SetDataCharacteristics(ftHandle, FT_BITS_8, FT_STOP_BITS_2, FT_PARITY_EVEN);
 						ftStatus=FT_INVALID_BAUD_RATE;
-						ftStatus = FT_SetBaudRate(ftHandle, baudrate);
-						///ftStatus = FT_SetDivisor(ftHandle,223.375);
+						ftStatus = FT_SetBaudRate(ftHandle, 59468+400); //baudrate);//59921+1000);// baudrate+200);
+						//ftStatus = FT_SetDivisor(ftHandle,223.375);
 						
 
 						if (ftStatus == FT_OK) {
@@ -1117,7 +1118,7 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
 					ftStatus = FT_SetBaudRate(ftHandle, baudrate);
 					FT_Purge (ftHandle, FT_PURGE_RX);
 					FT_Purge (ftHandle, FT_PURGE_TX);
-					freqDataBuffer[4] = 0x12bc;
+					//freqDataBuffer[4] = 0x12bc;
 					//FT_SetTimeouts (ftHandle,5000,5000);
 					//FT_SetResetPipeRetryCount (ftHandle,100);
 					//FT_SetDeadmanTimeout (ftHandle,6000);
@@ -1226,7 +1227,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 					richTextBox1->SelectionStart = richTextBox1->Text->Length;
 					richTextBox1->ScrollToCaret();
 					//================= show data from buffer ===================//
-					/*if(remaining==0){
+					if(remaining==0){
 						for(i=0;i<BytesReceived;i++){
 							sprintf(&sTmp[0], "%02X",RxBuffer[i] & 0xFF);
 							strcat(hexStr, sTmp);
@@ -1234,7 +1235,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 						}
 							sprintf(&sTmp[0], "\n");
 							strcat(hexStr, sTmp);
-					}*/
+					}
 					//=====================end of showing data from buffer ===========//
 					//============================= parsing =====================//
 					CLA = RxBuffer[0] & 0xFF;
@@ -1243,9 +1244,10 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 					P2 = RxBuffer[3] & 0xFF;
 					P3 = RxBuffer[4] & 0xFF;
 					RES = RxBuffer[5] & 0xFF;
-					if(remaining >0){
+					if(remaining >1){
 						for(i=0;i<remaining-2;i++){
-							sprintf(&sTmp[0], "%02X", RxBuffer[i] & 0xFF);strcat(hexStr, sTmp);
+							sprintf(&sTmp[0], "%02X", RxBuffer[i] & 0xFF);
+							strcat(hexStr, sTmp);
 						}
 						if(RxBuffer[i]!=0x00){
 							sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[i] &0xFF,RxBuffer[i+1]&0xFF);
@@ -1566,7 +1568,7 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 			ftStatus = FT_SetRts(ftHandle);
 			//set SS to HIGH,0b11001100
 			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-			sprintf(&buffer[0], "Card Voltage : %02d mV", 2*data*5090/255); //ref voltage :5090mV
+			sprintf(&buffer[0], "Card Voltage : %02d mV", 2*data*5090/256); //ref voltage :5090mV
 			toolStripStatusLabel2->Text = gcnew String(buffer);
 		 }
 private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {

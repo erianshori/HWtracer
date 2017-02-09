@@ -1356,8 +1356,8 @@ _0x9:
 ; 0000 0054             fRSTCTL =1;
 	SET
 	BLD  R2,0
-; 0000 0055             cTIMERST = 50; //cTimer diubah dari v1.0 sebelumya -> 100;
-	LDI  R30,LOW(50)
+; 0000 0055             cTIMERST = 75; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
+	LDI  R30,LOW(75)
 	MOV  R4,R30
 ; 0000 0056                             //namun tetap menghasilkan delay 50ms karena timer nol interrupt setiap 1 ms
 ; 0000 0057          oRSTCTL =0;
@@ -1588,8 +1588,8 @@ _timer0_ovf_isr:
 	CPI  R30,0
 	BRNE _0x1C
 ; 0000 00D4         {
-; 0000 00D5             if(vCard >100)
-	LDI  R30,LOW(100)
+; 0000 00D5             if(vCard >25)
+	LDI  R30,LOW(25)
 	CP   R30,R13
 	BRSH _0x1D
 ; 0000 00D6             {

@@ -1,49 +1,1389 @@
 
 Terminal : 
-  CLA : E0 (not support)
+  CLA : FE (not support)
    INS : 00
    P1 : 00
    P2 : 00
    P3 : 00
 
 >>>> Card Reset
-ATR : 3B189621040101047F9000
-T_PPS : FF109679
-C_PPS : FF109679
+ATR : 3B9F94801FC78031E073FE21136313010E83079000D6
+T_PPS : FF10947B
+C_PPS : FF10947B
 
 Terminal : 
-  CLA : FA
-   INS : C7
+  CLA : A0
+   INS : A4
    P1 : 00
    P2 : 00
+   P3 : 02
+Card :
+  ACK : A4
+T/C Data : 3F00
+Card :
+  SW : 9F22
+
+>>>> Card Reset
+ATR : 3B9F94801FC78031E073FE21136313010E83079000D6
+T_PPS : FF10947B
+C_PPS : FF10947B
+
+Terminal : 
+  CLA : A0
+   INS : A4
+   P1 : 00
+   P2 : 00
+   P3 : 02
+Card :
+  ACK : A4
+T/C Data : 3F00
+Card :
+  SW : 9F22
+
+Terminal : 
+  CLA : 00
+   INS : 00
+   P1 : 00
+   P2 : 00
+   P3 : 00
+
+>>>> Card Reset
+ATR : 3B9F94801FC78031E073FE21136313010E83079000D6
+T_PPS : FF10947B
+C_PPS : FF10947B
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 04
+   P3 : 02
+Card :
+  ACK : A4
+T/C Data : 3F00
+Card :
+  SW : 6129
+
+Terminal : 
+  CLA : 04 (not support)
+   INS : 02
+   P1 : A4
+   P2 : 2F
+   P3 : E2
+
+Card :
+  SW : 8002
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 2F
+   P1 : 05
+   P2 : 61
+   P3 : 21
+
+Card :
+  SW : 8801
+
+Terminal : 
+  CLA : 10 (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
    P3 : FF
+
+Card :
+  SW : 9142
+
+Terminal : 
+  CLA : 00
+   INS : 42
+   P1 : 12
+   P2 : D0
+   P3 : 40
+
+Card :
+  SW : 5472
+
+Terminal : 
+  CLA : 05 (not support)
+   INS : 42
+   P1 : 21
+   P2 : 00
+   P3 : 32
+
+Card :
+  SW : 6138
+
+Terminal : 
+  CLA : 02 (not support)
+   INS : 23
+   P1 : F0
+   P2 : CA
+   P3 : 01
+
+Card :
+  SW : 6124
+
+Terminal : 
+  CLA : 00
+   INS : B2
+   P1 : 01
+   P2 : 04
+   P3 : 1D
 Card:
-  ACK : C7
-T/C Data : 680C0020A1110000990200009B020000000000000000000000000000000000000000000000000000000000009D02000000000000000000009F020000A1020000A3020000090200004F02000069020000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+  ACK : B2
+T/C Data : FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 Card:
   SW : 9000
 
 Terminal : 
-  CLA : FA
-   INS : C7
-   P1 : 00
-   P2 : 00
-   P3 : FF
+  CLA : 00
+   INS : B2
+   P1 : 03
+   P2 : 04
+   P3 : 1D
 Card:
-  ACK : C7
-T/C Data : 680C0020A1110000990200009B020000000000000000000000000000000000000000000000000000000000009D02000000000000000000009F020000A1020000A3020000090200004F02000069020000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+  ACK : B2
+T/C Data : FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+Card:
+  SW : 9000
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : B2 (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : 6F05
+
+Terminal : 
+  CLA : 00
+   INS : 10
+   P1 : 88
+   P2 : 01
+   P3 : 10
 Card:
   SW : 9000
 
 Terminal : 
-  CLA : FA
-   INS : C7
+  CLA : 00
+   INS : 2C
+   P1 : 00
+   P2 : 01
+   P3 : 00
+
+Terminal : 
+  CLA : 63 (not support)
+   INS : C3
+   P1 : 00
+   P2 : 2C
+   P3 : 00
+
+Card :
+  SW : 63CA
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 04
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 6FAD612100C000
+Card :
+  SW : C062
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 04
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 6F07
+Card:
+  SW : 6121
+
+Terminal : 
+  CLA : 00
+   INS : C0
    P1 : 00
    P2 : 00
-   P3 : FF
+   P3 : 21
 Card:
-  ACK : C7
-T/C Data : 
+  ACK : C0
+T/C Data : 621F8202412183026F07A506C00100CA01828A01058B036F060980020009880138900000B0
+Card :
+  SW : 09B0
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 6F
+   P1 : 78
+   P2 : 61
+   P3 : 21
+
+Card :
+  SW : 0182
+
+Terminal : 
+  CLA : B0 (not support)
+   INS : 00
+   P1 : 02
+   P2 : 90
+   P3 : 00
+
+Card :
+  SW : 6121
+
+Terminal : 
+  CLA : B0 (not support)
+   INS : 32
+   P1 : 89
+   P2 : D4
+   P3 : 98
+
+Card :
+  SW : A46F
+
+Terminal : 
+  CLA : 80 (not support)
+   INS : 02
+   P1 : 00
+   P2 : 0E
+   P3 : 88
+
+Card :
+  SW : E204
+
+Terminal : 
+  CLA : C0 (not support)
+   INS : 00
+   P1 : 00
+   P2 : 21
+   P3 : C0
+
+Card :
+  SW : B09B
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 6F
+   P1 : 08
+   P2 : 61
+   P3 : 21
+
+Card :
+  SW : 6F06
+
+Terminal : 
+  CLA : B0 (not support)
+   INS : 03
+   P1 : C9
+   P2 : CA
+   P3 : 89
+
+Card :
+  SW : 6121
+
+Terminal : 
+  CLA : 00
+   INS : 21
+   P1 : B0
+   P2 : 03
+   P3 : A6
+
+Card :
+  SW : 5C8C
+
+Terminal : 
+  CLA : C0 (not support)
+   INS : 00
+   P1 : 00
+   P2 : 21
+   P3 : C0
+
+Card :
+  SW : A46F
+
+Terminal : 
+  CLA : A5 (not support)
+   INS : 06
+   P1 : C0
+   P2 : 01
+   P3 : 00
+
+Card :
+  SW : A47F
+
+Terminal : 
+  CLA : B0 (not support)
+   INS : 03
+   P1 : D8
+   P2 : D7
+   P3 : A1
+
+Card :
+  SW : A44F
+
+Terminal : 
+  CLA : 02 (not support)
+   INS : 00
+   P1 : 09
+   P2 : 88
+   P3 : 01
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 08
+   P2 : 04
+   P3 : 04
+Card:
+  ACK : A4
+T/C Data : 7FFF6F56612100C0000021C0621F8202412183026F56A506C00100CA01808A01058B036F060F80020009880128900000B000
+Card :
+  SW : B000
+
+Terminal : 
+  CLA : 6A (not support)
+   INS : 82
+   P1 : 00
+   P2 : A4
+   P3 : 00
+Card :
+  ACK : A4
+T/C Data : 7F
+Card:
+  SW : FF6F
+
+Card :
+  SW : 9000
+
+Terminal : 
+  CLA : 6A (not support)
+   INS : 82
+   P1 : 00
+   P2 : A4
+   P3 : 00
+Card :
+  ACK : A4
+T/C Data : 7F
+Card:
+  SW : FF6F
+
+Card :
+  SW : 9000
+
+Terminal : 
+  CLA : C4 (not support)
+   INS : A5
+   P1 : 06
+   P2 : C0
+   P3 : 01
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : FF (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 04
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 6F656A8200A400
+Card:
+  SW : 0C02
+Card :
+  ACK : A4
+T/C Data : 3FCard :
+  ACK : A4
+T/C Data : 7F
+Card:
+  SW : FF6F
+
+Terminal : 
+  CLA : 00
+   INS : 01
+   P1 : B0
+   P2 : 05
+   P3 : 90
+
+Card :
+  SW : A46F
+
+Terminal : 
+  CLA : B0 (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : 00
+
+Card :
+  SW : A46F
+
+Terminal : 
+  CLA : FF (not support)
+   INS : 00
+   P1 : 00
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : A46F
+
+Terminal : 
+  CLA : 80 (not support)
+   INS : 8A
+   P1 : 01
+   P2 : 05
+   P3 : 8B
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 04
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 6F7B612100C0000021C0621F8202412183026F7BA506C00100CA01828A01058B036F06078002000C880168900000B000000CB064F002
+Card:
+  SW : 15F0
+
+Card :
+  SW : 9815
+
+Terminal : 
+  CLA : 21 (not support)
+   INS : 83
+   P1 : 02
+   P2 : 6F
+   P3 : 48
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 04
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 6F39612400C0000024C062
+Card:
+  SW : 2282
+
+Card :
+  SW : 0546
+
+Terminal : 
+  CLA : 00
+   INS : 90
+   P1 : 00
+   P2 : 00
+   P3 : A4
+
+Card :
+  SW : B000
+
+Terminal : 
+  CLA : 21 (not support)
+   INS : 83
+   P1 : 02
+   P2 : 6F
+   P3 : C3
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : 00
+   INS : CA
+   P1 : 01
+   P2 : 80
+   P3 : 8A
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : 61 (not support)
+   INS : 24
+   P1 : 00
+   P2 : C0
+   P3 : 00
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 04
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 6FC6612400C0000024C062228205422100080283026FC6A506C001
+Card :
+  SW : 0180
+
+Terminal : 
+  CLA : 61 (not support)
+   INS : 02
+   P1 : 00
+   P2 : C0
+   P3 : 00
+
+Card :
+  SW : C062
+
+Terminal : 
+  CLA : C0 (not support)
+   INS : 62
+   P1 : 21
+   P2 : 82
+   P3 : 05
+
+Card :
+  SW : 6A82
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 7F
+   P1 : FF
+   P2 : 6F
+   P3 : 15
+
+Card :
+  SW : C062
+
+Terminal : 
+  CLA : 61 (not support)
+   INS : 24
+   P1 : 00
+   P2 : C0
+   P3 : 00
+
+Card :
+  SW : 01A4
+
+Terminal : 
+  CLA : 30 (not support)
+   INS : 61
+   P1 : 23
+   P2 : 00
+   P3 : C0
+Card :
+  ACK : A4
+T/C Data : 7F
+Card:
+  SW : 1090
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 3F
+   P1 : 00
+   P2 : 90
+   P3 : 00
+
+Card :
+  SW : 6A82
+
+Terminal : 
+  CLA : 7F (not support)
+   INS : 10
+   P1 : 90
+   P2 : 00
+   P3 : 00
+
+Card :
+  SW : 6123
+
+Terminal : 
+  CLA : 05 (not support)
+   INS : C0
+   P1 : 03
+   P2 : 4F
+   P3 : 3A
+
+Card :
+  SW : 6121
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 6F
+   P1 : 16
+   P2 : 6A
+   P3 : 82
+
+Card :
+  SW : 3F00
+
+Terminal : 
+  CLA : C0 (not support)
+   INS : 00
+   P1 : 00
+   P2 : 23
+   P3 : C0
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : 00
+   INS : C0
+   P1 : 00
+   P2 : 00
+   P3 : 23
+Card:
+  ACK : C0
+T/C Data : 622182054221004C0183024F30A506C00100CA01808A01058B036F06098002004C8800900000B201044CB2A805C0034F3A02FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 Card:
   SW : 9000
-eriririririri
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 08
+   P2 : 04
+   P3 : 04
+Card:
+  ACK : A4
+T/C Data : 7FFF6F60612100C0000021C0621F8202412183026F60A506C00100CA01808A01058B036F060780020064880150
+Card:
+  SW : 9000
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 04
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 6FC6612400C0000024C062228205422100080283026FC6A506C00100CA01
+Card:
+  SW : 808A
+
+Card :
+  SW : 0105
+
+Terminal : 
+  CLA : 41 (not support)
+   INS : 21
+   P1 : 83
+   P2 : 02
+   P3 : 6F
+
+Card :
+  SW : 4221
+
+Terminal : 
+  CLA : 50 (not support)
+   INS : A5
+   P1 : 06
+   P2 : C0
+   P3 : 01
+Card :
+  ACK : A4
+T/C Data : 6F
+Card:
+  SW : 146A
+Card :
+  ACK : A4
+T/C Data : 3F
+Card :
+  SW : 0100
+
+Terminal : 
+  CLA : 6A (not support)
+   INS : 82
+   P1 : 00
+   P2 : A4
+   P3 : 00
+
+Card :
+  SW : 0404
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 6F
+   P1 : 06
+   P2 : 61
+   P3 : 24
+
+Card :
+  SW : 0436
+
+Terminal : 
+  CLA : 02 (not support)
+   INS : 00
+   P1 : 78
+   P2 : 88
+   P3 : 00
+
+Card :
+  SW : C002
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 6F
+   P1 : 3C
+   P2 : 61
+   P3 : 23
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : 90 (not support)
+   INS : 00
+   P1 : 00
+   P2 : B2
+   P3 : 01
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : B2 (not support)
+   INS : 00
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : FF (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Terminal : 
+  CLA : 00
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+Card:
+  ACK : FF
+T/C Data : FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF900000B20504B0B200FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+Card:
+  SW : FFFF
+Card :
+  ACK : FF
+T/C Data : FFFF
+Card:
+  SW : FFFF
+
+Card :
+  SW : B200
+
+Terminal : 
+  CLA : FF (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+Card :
+  ACK : FF
+T/C Data : FF
+Card:
+  SW : FFFF
+Card :
+  ACK : FF
+T/C Data : FF
+Card:
+  SW : FFFF
+Card :
+  ACK : FF
+T/C Data : FF
+Card:
+  SW : FFFF
+Card :
+  ACK : FF
+T/C Data : FF
+Card:
+  SW : FFFF
+
+Card :
+  SW : B200
+
+Terminal : 
+  CLA : FF (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Terminal : 
+  CLA : 00
+   INS : B2
+   P1 : 0C
+   P2 : 04
+   P3 : B0
+Card:
+  ACK : B2
+T/C Data : 00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+Card:
+  SW : 9000
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : FF (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : FF (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : FF (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : FF (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : 00
+   INS : B2
+   P1 : 14
+   P2 : 04
+   P3 : B0
+Card:
+  ACK : B2
+T/C Data : 00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+Card:
+  SW : 9000
+
+Terminal : 
+  CLA : 00
+   INS : A2
+   P1 : 01
+   P2 : 04
+   P3 : 1E
+Card:
+  ACK : A2
+T/C Data : 00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+Card:
+  SW : 6114
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 08
+   P2 : 04
+   P3 : 06
+Card:
+  ACK : A4
+T/C Data : 7F105F3A4F3A612400C0000024C0622282054221001CC883024F3AA506C00100CA01828A01058B036F0607800215E0880110900000A400
+Card:
+  SW : 0C02
+Card :
+  ACK : A4
+T/C Data : 7F1090
+Card :
+  SW : 6123
+
+Terminal : 
+  CLA : 00
+   INS : 21
+   P1 : C0
+   P2 : 62
+   P3 : 1F
+
+Card :
+  SW : 6123
+
+Terminal : 
+  CLA : C0 (not support)
+   INS : 00
+   P1 : 00
+   P2 : 21
+   P3 : C0
+
+Card :
+  SW : 6F06
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 08
+   P1 : 04
+   P2 : 06
+   P3 : A4
+
+Card :
+  SW : B000
+
+Terminal : 
+  CLA : 6A (not support)
+   INS : 82
+   P1 : 00
+   P2 : A4
+   P3 : 00
+
+Card :
+  SW : A45F
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 7F
+   P1 : FF
+   P2 : 6F
+   P3 : 4A
+
+Card :
+  SW : 7FFF
+
+Terminal : 
+  CLA : 02 (not support)
+   INS : A4
+   P1 : 5F
+   P2 : 3A
+   P3 : 90
+
+Card :
+  SW : A2FF
+
+Terminal : 
+  CLA : 61 (not support)
+   INS : BF
+   P1 : 00
+   P2 : C0
+   P3 : 00
+
+Card :
+  SW : 191A
+
+Terminal : 
+  CLA : AC (not support)
+   INS : AD
+   P1 : AE
+   P2 : AF
+   P3 : B0
+
+Card :
+  SW : B249
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 08
+   P2 : 04
+   P3 : 06
+Card:
+  ACK : A4
+T/C Data : 7F105F3A4F3A612400C0000024C0622282054221001CC883024F3AA506C00100CA01828A01058B036F0607800215E0880110900000B203041CB243656B2050756C7361FFFFFFFFFF04818A88FBFFFFFFFFFFFFFFFFFF
+Card:
+  SW : 9000
+
+Terminal : 
+  CLA : 00
+   INS : B2
+   P1 : 04
+   P2 : 04
+   P3 : 1C
+Card:
+  ACK : B2
+T/C Data : 4E535031323132FFFFFFFFFFFFFF03812121FFFFFFFFFFFFFFFFFFFF900000A4080404A47FFF6FC7
+Card:
+  SW : 6123
+
+Terminal : 
+  CLA : 00
+   INS : C0
+   P1 : 00
+   P2 : 00
+   P3 : 23
+Card:
+  ACK : C0
+T/C Data : 622182054221001E0383026FC7A506C00100CA01808A01058B036F06108002005A8800900000A4080406A47F105F3A4F3A612400C0000024C0622282054221001CC883024F3AA506C00100CA01828A0105
+Card:
+  SW : 8B03
+
+Card :
+  SW : 6F06
+
+Terminal : 
+  CLA : 61 (not support)
+   INS : 24
+   P1 : 00
+   P2 : C0
+   P3 : 00
+
+Card :
+  SW : 024F
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 7F
+   P1 : FF
+   P2 : 6F
+   P3 : 80
+
+Card :
+  SW : 5F3A
+
+Terminal : 
+  CLA : 00
+   INS : 00
+   P1 : 23
+   P2 : C0
+   P3 : 62
+
+Card :
+  SW : 8002
+
+Terminal : 
+  CLA : 61 (not support)
+   INS : 0C
+   P1 : 00
+   P2 : C0
+   P3 : 00
+
+Card :
+  SW : 496E
+
+Terminal : 
+  CLA : B2 (not support)
+   INS : 4E
+   P1 : 53
+   P2 : 50
+   P3 : 31
+
+Terminal : 
+  CLA : 00
+   INS : B2
+   P1 : 06
+   P2 : 04
+   P3 : 1C
+Card:
+  ACK : B2
+T/C Data : 43656B20426F6E7573FFFFFFFFFF04818A98FBFFFFFFFFFFFFFFFFFF900000B207041CB2436F6E746163742043656E746572038181F8FFFFFFFFFFFFFFFFFFFF900000B208
+Card:
+  SW : 041C
+Card :
+  ACK : B2
+T/C Data : 4365
+Card:
+  SW : 6B20
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : B2 (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : 0100
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 6F
+   P1 : C7
+   P2 : 61
+   P3 : 23
+
+Card :
+  SW : 6103
+
+Terminal : 
+  CLA : 00
+   INS : 39
+   P1 : 0A
+   P2 : 83
+   P3 : 02
+Card:
+  SW : 6F81
+
+Terminal : 
+  CLA : 00
+   INS : B2
+   P1 : 01
+   P2 : 04
+   P3 : 39
+Card:
+  ACK : B2
+T/C Data : FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF900000B2020439B2FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+Card:
+  SW : FFFF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : 04 (not support)
+   INS : 39
+   P1 : B2
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : B2 (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+Card :
+  ACK : B2
+T/C Data : FF
+Card:
+  SW : FFFF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : FF (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : FF (not support)
+   INS : 00
+   P1 : 00
+   P2 : 00
+   P3 : 00
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : B2 (not support)
+   INS : FF
+   P1 : FF
+   P2 : FF
+   P3 : FF
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 08
+   P2 : 04
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 2FE2612100C0000021C0621F8202412183022FE2A506C00100CA01008A01058B032F06088002000A880110900000A4000402A42F06612400C0000024C062228205422100361083022F06A506C00100CA01048A01058B032F060180020360880130900000B2080436B280010297008001019000800118A40683010A950108FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF900000A4080404A47FFF6F40612300C0000023C0622182054221002C0183026F40A506C00100CA01828A01058B036F06108002002C8800900000A4000402A46FC9612300C000
+Card :
+  SW : C062
+
+Terminal : 
+  CLA : 21 (not support)
+   INS : 00
+   P1 : 36
+   P2 : 10
+   P3 : 83
+
+Card :
+  SW : 6A82
+
+Terminal : 
+  CLA : A4 (not support)
+   INS : 7F
+   P1 : FF
+   P2 : 6F
+   P3 : CB
+
+Card :
+  SW : 9000
+
+Terminal : 
+  CLA : B2 (not support)
+   INS : 80
+   P1 : 01
+   P2 : 01
+   P3 : A4
+
+Card :
+  SW : 6121
+
+Terminal : 
+  CLA : 90 (not support)
+   INS : 00
+   P1 : 00
+   P2 : A4
+   P3 : 08
+Card :
+  ACK : A4
+T/C Data : 7F
+Card:
+  SW : FF6F
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 04
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 6FC9612300C0000023C062218205422100040283026FC9A506C00100CA01808A01058B036F0610800200088800900000B2010404B200000000900000A4000402A46FCA612300C00000
+Card:
+  SW : 23C0
+
+Card :
+  SW : 6221
+
+Terminal : 
+  CLA : B2 (not support)
+   INS : FF
+   P1 : 00
+   P2 : FF
+   P3 : FF
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 0C
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 3F00
+Card:
+  SW : 9000
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 08
+   P2 : 04
+   P3 : 04
+Card:
+  ACK : A4
+T/C Data : 7FFF6F176A8200A4000C02A43F00900000A4080404A47F
+Card:
+  SW : FF6F
+
+Card :
+  SW : 176A
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 08
+   P2 : 04
+   P3 : 04
+Card :
+  ACK : A4
+T/C Data : 7FFF6F18
+Card:
+  SW : 6A82
+
+Terminal : 
+  CLA : 00
+   INS : A4
+   P1 : 00
+   P2 : 04
+   P3 : 02
+Card:
+  ACK : A4
+T/C Data : 7FFF
+Card:
+  SW : 6138
+
+Card :
+  SW : FFFF
+
+Terminal : 
+  CLA : FE (not support)
+   INS : FF
+   P1 : FF
+   P2 : FE
+   P3 : FF
+
+Card :
+  SW : FF00
+
+Terminal : 
+  CLA : 00
+   INS : 00
+   P1 : 00
+   P2 : 00
+   P3 : 00
+0000
+Terminal : 
+  CLA : 00
+   INS : 00
+   P1 : 00
+   P2 : 00
+   P3 : 00
+00000000
+Terminal : 
+  CLA : 00
+   INS : 00
+   P1 : 00
+   P2 : 00
+   P3 : 00
+000000

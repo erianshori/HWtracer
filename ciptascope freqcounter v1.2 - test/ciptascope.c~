@@ -82,7 +82,7 @@ unsigned char i;
         if(!iRSTOUT)
         {        
             fRSTCTL =1;
-            cTIMERST = 50; //cTimer diubah dari v1.0 sebelumya -> 100; 
+            cTIMERST = 25; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
                             //namun tetap menghasilkan delay 50ms karena timer nol interrupt setiap 1 ms
          oRSTCTL =0;
         }
@@ -99,20 +99,20 @@ interrupt [EXT_INT1] void ext_int1_isr(void)
 interrupt [SPI_STC] void spi_isr(void)
 {
 // Place your code here       
-   // if(SPDR ==0x51){
+    if(SPDR ==0x51){
         updatefreq =0x00;
-        SPDR = 0x55;// (read_adc(0)>>2) & 0x00ff;
-//    }
-//    else{ 
-//        if(updatefreq > 0x00){ //updatefreq ==1              
-//            SPDR = (frq & 0xff);   //set SPDR to LSB
-//            updatefreq =0x00; //disable update freq
-//        }
-//        else //update freq == 0
-//        {
-//            updatefreq=0x01;
-//        }    
-//    }
+        SPDR = (read_adc(0)>>2) & 0x00ff;
+   }
+    else{ 
+        if(updatefreq > 0x00){ //updatefreq ==1              
+            SPDR = (frq & 0xff);   //set SPDR to LSB
+            updatefreq =0x00; //disable update freq
+        }
+        else //update freq == 0
+        {
+            updatefreq=0x01;
+        }    
+    }
 }
 #define DATA_REGISTER_EMPTY (1<<UDRE)
 #define RX_COMPLETE (1<<RXC)
@@ -210,7 +210,7 @@ TCNT0=0x06;
         vCard = read_adc(0);
         if(!cTIMERST--)
         {
-            if(vCard >100)
+            if(vCard >25)
             {
                 cTIMERST=0;
                 fRSTCTL=0; 

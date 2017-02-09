@@ -82,7 +82,7 @@ unsigned char i;
         if(!iRSTOUT)
         {        
             fRSTCTL =1;
-            cTIMERST = 50; //cTimer diubah dari v1.0 sebelumya -> 100; 
+            cTIMERST = 75; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
                             //namun tetap menghasilkan delay 50ms karena timer nol interrupt setiap 1 ms
          oRSTCTL =0;
         }
@@ -210,7 +210,7 @@ TCNT0=0x06;
         vCard = read_adc(0);
         if(!cTIMERST--)
         {
-            if(vCard >100)
+            if(vCard >25)
             {
                 cTIMERST=0;
                 fRSTCTL=0; 
