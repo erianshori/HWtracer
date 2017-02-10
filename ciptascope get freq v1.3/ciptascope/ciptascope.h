@@ -15,7 +15,9 @@ int reset_low;
 int counter;
 WORD freqDataBuffer[60];
 byte command;
-int globalIndex, remaining;
+int globalIndex,phase;
+DWORD assign, remaining;
+unsigned char datalength ,start,stop;
 unsigned char INSBefore;
 
 //
@@ -476,10 +478,13 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		}
 		else 
 		{
-			
+			pdupoll->Enabled="False";
 			//set global index
 			globalIndex =0;
-			remaining =0;
+			phase =1; //CLA
+			assign =0;
+			remaining=0;
+			datalength = 0;
 			FT_SetBaudRate(ftHandle, 10000);
 			FT_Purge (ftHandle, FT_PURGE_RX);
 			//-----------------scan the frequency------------------//
@@ -815,7 +820,7 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 								}
 								//check pps1, pps2, pps3
 								unsigned char PPS_LENGTH=((RxBuffer[33] & 0x40)>>6);
-								PPS_LENGTH +((RxBuffer[33] & 0x20)>>5);
+								PPS_LENGTH +=((RxBuffer[33] & 0x20)>>5);
 								PPS_LENGTH +=((RxBuffer[33] & 0x10)>>4);
 								TOTAL_PPS_LENGTH = (PPS_LENGTH+3);
 								if(TotalBytesReceived<TOTAL_PPS_LENGTH)
@@ -938,7 +943,13 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 						{
 							unsigned int Fi = Fimap[(RxBuffer[34] & 0xF0) >> 4];
 							unsigned char Di= Dimap[RxBuffer[34] & 0x0F];
-							baudrate = f*Di/(Fi);
+							if(Fi ==0x00){
+								baudrate =f*Di;
+								richTextBox1->Text +="\n" +">>>> Fi=0" +"\n";
+							}
+							else{
+								baudrate = f*Di/(Fi);
+							}	
 						}
 						else if((RxBuffer[1]) & 0x10){	//T0
 							unsigned int Fi = Fimap[(RxBuffer[2] & 0xF0) >> 4];
@@ -1084,7 +1095,7 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 			//Sleep(1000);
 			//helloToolStripMenuItem_Click(sender,e);
 			//scanFrequencyToolStripMenuItem_Click(sender, e);
-			
+			//pdupoll->Enabled="True";
 		}
 	}
 }
@@ -1123,7 +1134,7 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
 					//FT_SetResetPipeRetryCount (ftHandle,100);
 					//FT_SetDeadmanTimeout (ftHandle,6000);
 					CardResetPoll->Enabled="True";
-					pdupoll->Enabled="True";
+					//pdupoll->Enabled="True";
 				}
 				else {
 					// FT_Open Failed
@@ -1206,7 +1217,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 	DWORD RxBytes,i;
 	DWORD BytesReceived; 
 	char RxBuffer[1024];
-	unsigned char CLA, INS, P1, P2, P3, RES;
+	unsigned char CLA, INS, P1, P2, P3, ACK;
 	unsigned char DT[256];
 			for(i=0;i<1024;i++){
 					RxBuffer[i]=0x00;
@@ -1223,140 +1234,161 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 					for(i=0;i<2048;i++){
 						hexStr[i]=0x00;
 					}
-					
+					globalIndex=0;
 					richTextBox1->SelectionStart = richTextBox1->Text->Length;
 					richTextBox1->ScrollToCaret();
 					//================= show data from buffer ===================//
-					if(remaining==0){
-						for(i=0;i<BytesReceived;i++){
+						/*for(i=0;i<BytesReceived;i++){
 							sprintf(&sTmp[0], "%02X",RxBuffer[i] & 0xFF);
 							strcat(hexStr, sTmp);
 						
 						}
-							sprintf(&sTmp[0], "\n");
-							strcat(hexStr, sTmp);
-					}
+						sprintf(&sTmp[0], "\n");
+						strcat(hexStr, sTmp);*/ 
 					//=====================end of showing data from buffer ===========//
+						if((0x3B ==RxBuffer[0] & 0xFF)||(0x3F ==RxBuffer[0] & 0xFF)){
+							BytesReceived =0;
+						}
 					//============================= parsing =====================//
-					CLA = RxBuffer[0] & 0xFF;
-					INS = RxBuffer[1] & 0xFF;
-					P1 = RxBuffer[2] & 0xFF;
-					P2 = RxBuffer[3] & 0xFF;
-					P3 = RxBuffer[4] & 0xFF;
-					RES = RxBuffer[5] & 0xFF;
-					if(remaining >1){
-						for(i=0;i<remaining-2;i++){
-							sprintf(&sTmp[0], "%02X", RxBuffer[i] & 0xFF);
-							strcat(hexStr, sTmp);
-						}
-						if(RxBuffer[i]!=0x00){
-							sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[i] &0xFF,RxBuffer[i+1]&0xFF);
-							strcat(hexStr, sTmp);
-						}
-						remaining =0;
-					}
-					else
-					if((CLA == 0xA0) ||(CLA == 0xFA) || (CLA == 0x00)){
-						globalIndex++;
-						sprintf(&sTmp[0], "\nTerminal : \n  CLA : %02X\n",CLA);
-						strcat(hexStr, sTmp);
-						//if((INS == 0xA4) ||  (INS == 0xF2)|| (INS==0xB0)||(INS == 0xD6) ||(INS==B2)){
-						INSBefore = INS;
-						sprintf(&sTmp[0], "   INS : %02X\n", INS);
-						strcat(hexStr, sTmp);
-						sprintf(&sTmp[0], "   P1 : %02X\n   P2 : %02X\n   P3 : %02X\n", P1, P2, P3);
-						strcat(hexStr, sTmp);
-						if(RES == INSBefore){
-							//if received datas less than length of data transfer -> wait for next data
-							remaining = P3 +2 - (BytesReceived -6);
-							if(remaining<0)
-								remaining=0;
-							if(BytesReceived>5){//min value to have ACK
-								sprintf(&sTmp[0], "Card:\n  ACK : %02X\nT/C Data : ", RES);strcat(hexStr, sTmp);
-								if(remaining>0){
-									for(i=0;i<BytesReceived-6;i++){
-										DT[i] = RxBuffer[6+i] &0xFF;
-										sprintf(&sTmp[0], "%02X", DT[i]);
-										strcat(hexStr, sTmp);
-									}
-								}
-								else{// no remaining data
-									for(i=0;i<BytesReceived-8;i++){
-										DT[i] = RxBuffer[6+i] &0xFF;
-										sprintf(&sTmp[0], "%02X", DT[i]);
-										strcat(hexStr, sTmp);
-									}
-									if(RxBuffer[BytesReceived-2]!=0x00){
-										sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[BytesReceived-2] &0xFF,RxBuffer[BytesReceived-1]&0xFF);
-										strcat(hexStr, sTmp);
-									}
-								}
-							}
-							
-						}
-						else{
-							switch (RES)
-							{
-								case 0x67 :
-								case 0x6B :
-								case 0x68 :
-								case 0x6D :
-								case 0x6E :
-								case 0x6F :
-								case 0x90 :
-								case 0x91 :
-								case 0x9E :
-								case 0x9F :
-								case 0x92 :
-								case 0x93 :
-								case 0x94 :
-								case 0x98 :
-									sprintf(&sTmp[0], "Card:\n  SW : %02X%02X\n", RES,RxBuffer[6]&0xFF);
-									strcat(hexStr, sTmp);
-									globalIndex=0;
-									break;
-								default :
-									globalIndex =P3;
-							} //end of switch
-						}//end of error sw	
-						
-					} //end of identify CLA
-					else{ //CLA
-						if(globalIndex>0){ //continue the previous parsing
-							if(CLA != INSBefore){
-								sprintf(&sTmp[0], "\nCard :\n  SW : %02X%02X\n", CLA,INS);
-								strcat(hexStr, sTmp);
-								globalIndex=0;
+					while((BytesReceived > 0) && (BytesReceived <0x400)){
+						if(phase == 1){ //CLA
+							assign =5;
+							if((BytesReceived <assign) && (remaining ==0)){
+								remaining = assign-BytesReceived; //remaining =2
+								assign = BytesReceived; //assign = 3
+								//0 <= x < assign
+								start = 0;
+								stop = assign;
+								phase =1;
 							}
 							else{
-								sprintf(&sTmp[0], "Card :\n  ACK : %02X\nT/C Data : ", CLA);
+								if(remaining >0){
+									assign =remaining;
+									//5-remaining <= x < 5
+									start = 5- remaining;
+									stop = 5;
+								}
+								else{
+									assign = 5;
+									start = 0;
+									stop =assign;
+								}
+								remaining = 0;
+								phase++;
+							}
+							for(i=start;i<stop;i++){
+								switch (i){
+									case 0 : sprintf(&sTmp[0], "\nTerminal : \n  CLA : %02X\n",RxBuffer[globalIndex++] & 0xFF);
+												strcat(hexStr, sTmp); break;
+									case 1 : INSBefore =RxBuffer[globalIndex++] & 0xFF;
+												sprintf(&sTmp[0], "   INS : %02X\n", INSBefore);
+												strcat(hexStr, sTmp); break;
+									case 2 : sprintf(&sTmp[0], "   P1 : %02X\n", RxBuffer[globalIndex++] & 0xFF);
+												strcat(hexStr, sTmp); break;
+									case 3 : sprintf(&sTmp[0], "   P2 : %02X\n", RxBuffer[globalIndex++] & 0xFF);
+												strcat(hexStr, sTmp); break;
+									case 4 : 
+										datalength = RxBuffer[globalIndex++] & 0xFF;
+										sprintf(&sTmp[0], "   P3 : %02X\n", datalength );
+												
+												strcat(hexStr, sTmp);
+												if(datalength > 0x00){
+													phase = 2;
+												}
+												else{
+													phase = 4;
+												}break;
+									default : break;}
+							}
+							
+							
+							
+						}
+						else if (phase == 2){ //ACK
+							assign =1;
+							ACK = RxBuffer[globalIndex++] & 0xFF;
+							if(ACK == INSBefore){
+							sprintf(&sTmp[0], "Card:\n  ACK : %02X\n", ACK);
+							strcat(hexStr, sTmp);
+							phase++;
+							}
+							else{
+								assign =2;
+								sprintf(&sTmp[0], "Card:\n SW : ");
 								strcat(hexStr, sTmp);
-								for(i=0;i<globalIndex;i++){
-									DT[i] = RxBuffer[1+i] &0xFF;
+								globalIndex--;
+								for(i=0;i<assign;i++){
+									DT[i] = RxBuffer[globalIndex++] &0xFF;
 									sprintf(&sTmp[0], "%02X", DT[i]);
 									strcat(hexStr, sTmp);
 								}
-								if(RxBuffer[1+globalIndex]!=0x00){
-									sprintf(&sTmp[0], "\nCard:\n  SW : %02X%02X\n", RxBuffer[1+globalIndex] &0xFF,RxBuffer[globalIndex+2]&0xFF);
-									strcat(hexStr, sTmp);
-								}
+								sprintf(&sTmp[0], "\n");
+							strcat(hexStr, sTmp);
+								phase =1;
 							}
 						}
-						else{ //CLA not support
-							globalIndex++;
-							sprintf(&sTmp[0], "\nTerminal : \n  CLA : %02X (not support)\n",CLA);
-							strcat(hexStr, sTmp);
-							sprintf(&sTmp[0], "   INS : %02X\n", INS);
-							strcat(hexStr, sTmp);
-							sprintf(&sTmp[0], "   P1 : %02X\n   P2 : %02X\n   P3 : %02X\n", P1, P2, P3);
-							strcat(hexStr, sTmp);
-							if(RES ==0x68 || RES == 0x6E){
-								sprintf(&sTmp[0], "Card:\n  SW : %02X%02X\n", RES,RxBuffer[6] & 0xFF );
+						else if(phase == 3){ //DATA
+							if(remaining==0){
+								sprintf(&sTmp[0], "T/C Data : ");
 								strcat(hexStr, sTmp);
-								globalIndex=0;
 							}
+							if((datalength > BytesReceived) && (remaining ==0)){
+								assign = BytesReceived;
+								remaining = datalength-BytesReceived;
+								phase= 3;
+							}
+							else{
+								if(remaining >0){
+									assign =remaining;
+								}
+								else{
+									assign = datalength;
+								}
+								remaining = 0;
+								phase++;
+							}
+							for(i=0;i<assign;i++){
+								DT[i] = RxBuffer[globalIndex++] &0xFF;
+								sprintf(&sTmp[0], "%02X", DT[i]);
+								strcat(hexStr, sTmp);
+							}
+							sprintf(&sTmp[0], "\n");
+							strcat(hexStr, sTmp);
+							
 						}
-					}//end of CLA
+						else if(phase == 4){ //SW
+							if(remaining==0){
+								sprintf(&sTmp[0], "Card\n SW : ");
+								strcat(hexStr, sTmp);
+							}
+							if((2 > BytesReceived) && (remaining ==0)){
+								remaining = 2-BytesReceived;
+								assign = BytesReceived;
+								phase= 4;
+							}
+							else{
+								if(remaining >0){
+									assign =remaining;
+								}
+								else{
+									assign = 2;
+								}
+								remaining = 0;
+								phase=1;
+							}
+							for(i=0;i<assign;i++){
+								DT[i] = RxBuffer[globalIndex++] &0xFF;
+								sprintf(&sTmp[0], "%02X", DT[i]);
+								strcat(hexStr, sTmp);
+							}
+							sprintf(&sTmp[0], "\n");
+							strcat(hexStr, sTmp);
+						}
+						else {
+							assign = BytesReceived;
+						}
+						BytesReceived-= assign;
+					}
 					//======================end of parsing ========================//
 					richTextBox1->Text += gcnew String(hexStr);
 				}
@@ -1568,7 +1600,7 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 			ftStatus = FT_SetRts(ftHandle);
 			//set SS to HIGH,0b11001100
 			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-			sprintf(&buffer[0], "Card Voltage : %02d mV", 2*data*5090/256); //ref voltage :5090mV
+			sprintf(&buffer[0], "Card Voltage : %02d mV", 600+(2*data*5060/256)); //ref voltage :5090mV
 			toolStripStatusLabel2->Text = gcnew String(buffer);
 		 }
 private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
