@@ -156,6 +156,7 @@ namespace ciptascope {
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->openToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->closeToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->openLogFileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->saveAsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->cleanToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -182,7 +183,6 @@ namespace ciptascope {
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->voltage = (gcnew System::Windows::Forms::Timer(this->components));
-			this->openLogFileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->MainMenu->SuspendLayout();
 			this->statusStrip1->SuspendLayout();
 			this->SuspendLayout();
@@ -214,35 +214,42 @@ namespace ciptascope {
 			// openToolStripMenuItem
 			// 
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(147, 22);
 			this->openToolStripMenuItem->Text = L"Connect";
 			this->openToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::openToolStripMenuItem_Click);
 			// 
 			// closeToolStripMenuItem
 			// 
 			this->closeToolStripMenuItem->Name = L"closeToolStripMenuItem";
-			this->closeToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->closeToolStripMenuItem->Size = System::Drawing::Size(147, 22);
 			this->closeToolStripMenuItem->Text = L"Disconnect";
 			this->closeToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::closeToolStripMenuItem_Click);
+			// 
+			// openLogFileToolStripMenuItem
+			// 
+			this->openLogFileToolStripMenuItem->Name = L"openLogFileToolStripMenuItem";
+			this->openLogFileToolStripMenuItem->Size = System::Drawing::Size(147, 22);
+			this->openLogFileToolStripMenuItem->Text = L"Open Log File";
+			this->openLogFileToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::openLogFileToolStripMenuItem_Click);
 			// 
 			// saveAsToolStripMenuItem
 			// 
 			this->saveAsToolStripMenuItem->Name = L"saveAsToolStripMenuItem";
-			this->saveAsToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveAsToolStripMenuItem->Size = System::Drawing::Size(147, 22);
 			this->saveAsToolStripMenuItem->Text = L"Save As";
 			this->saveAsToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::saveAsToolStripMenuItem_Click);
 			// 
 			// cleanToolStripMenuItem
 			// 
 			this->cleanToolStripMenuItem->Name = L"cleanToolStripMenuItem";
-			this->cleanToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->cleanToolStripMenuItem->Size = System::Drawing::Size(147, 22);
 			this->cleanToolStripMenuItem->Text = L"Clean";
 			this->cleanToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::cleanToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(147, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::exitToolStripMenuItem_Click);
 			// 
@@ -408,7 +415,6 @@ namespace ciptascope {
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->Size = System::Drawing::Size(143, 20);
 			this->textBox2->TabIndex = 9;
-			this->textBox2->Visible = false;
 			this->textBox2->TextChanged += gcnew System::EventHandler(this, &Form1::textBox2_TextChanged);
 			// 
 			// timer1
@@ -418,15 +424,8 @@ namespace ciptascope {
 			// 
 			// voltage
 			// 
-			this->voltage->Interval = 500;
+			this->voltage->Interval = 1;
 			this->voltage->Tick += gcnew System::EventHandler(this, &Form1::voltage_Tick);
-			// 
-			// openLogFileToolStripMenuItem
-			// 
-			this->openLogFileToolStripMenuItem->Name = L"openLogFileToolStripMenuItem";
-			this->openLogFileToolStripMenuItem->Size = System::Drawing::Size(152, 22);
-			this->openLogFileToolStripMenuItem->Text = L"Open Log File";
-			this->openLogFileToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::openLogFileToolStripMenuItem_Click);
 			// 
 			// Form1
 			// 
@@ -466,7 +465,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 	WORD baudbuf=0;
 	ftStatus = FT_SetBitMode(ftHandle,0xCC,0x20);//11011100
 	ftStatus = FT_GetBitMode(ftHandle, &ucMask);
-	char temp;
+	int temp;
 	if (ftStatus != FT_OK) {
 		
 	}
@@ -485,12 +484,17 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			assign =0;
 			remaining=0;
 			datalength = 0;
-			FT_SetBaudRate(ftHandle, 10000);
+			temp = (freqDataBuffer[0]*1000/372)-300;
+		
+			sprintf(&buffer[0], "%02d", temp);
+			textBox2->Text = gcnew String(buffer);
+			
+			FT_SetBaudRate(ftHandle, temp);//freqDataBuffer[0]*1000/372-300);
 			FT_Purge (ftHandle, FT_PURGE_RX);
 			//-----------------scan the frequency------------------//
-			counter =0;	//clear counter after reset
-			reset_low=1; //set flag for frequency timer sampling to work
-			timer1->Enabled="True"; //enable the timer
+			//counter =0;	//clear counter after reset
+			//reset_low=1; //set flag for frequency timer sampling to work
+			//timer1->Enabled="True"; //enable the timer
 			//----------------------end---------------------------//
 			RxBytes=0;
 
@@ -525,10 +529,10 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 				TotalBytesReceived+=BytesReceived;
 				if (ftStatus == FT_OK) 
 				{
-					temp = RxBuffer[0];
 					if(RxBuffer[0]==0x3B ||RxBuffer[0]==0x3F)
 					//	if (RxBytes > 0) 
 					{
+						counter =0;
 						if(TotalBytesReceived==1)
 						{
 						//wait T0
@@ -764,9 +768,9 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 						}
 
 						//----------set the baudrate according to frequency-----//
-						index=4;//get the first one
+						index=0;//get the first one
 						if (freqDataBuffer[index] <1000){
-							sprintf(&buffer[0], "freq less than 1MHz");
+							sprintf(&buffer[0], "%02d", freqDataBuffer[index]*1000);//*1000 to get per second
 							freqDataBuffer[index] = 3700;
 						}
 						else
@@ -1135,6 +1139,8 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
 					//FT_SetDeadmanTimeout (ftHandle,6000);
 					CardResetPoll->Enabled="True";
 					//pdupoll->Enabled="True";
+					counter = 0;
+					voltage->Enabled="True";
 				}
 				else {
 					// FT_Open Failed
@@ -1459,6 +1465,10 @@ private: System::Void scanFrequencyToolStripMenuItem_Click(System::Object^  send
 			//set SS to HIGH,0b11001100
 			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
 			freqDataBuffer[counter] = data;
+			/*if(counter ==0){
+				sprintf(&buffer[0], "%02d", data*1000);
+				textBox2->Text = gcnew String(buffer);
+			}*/ 
 			//sprintf(&buffer[0], "%02d", data*1000);
 			//textBox1->Text = gcnew String(buffer);
 		}
@@ -1600,7 +1610,12 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 			ftStatus = FT_SetRts(ftHandle);
 			//set SS to HIGH,0b11001100
 			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-			sprintf(&buffer[0], "Card Voltage : %02d mV", 600+(2*data*5060/256)); //ref voltage :5090mV
+			if((data > 25) && (counter==0)){
+				voltage->Enabled="False";
+				scanFrequencyToolStripMenuItem_Click(sender,e);
+				counter++;
+			}
+			sprintf(&buffer[0], "Card Voltage : %02d mV %02d", 600+(2*data*5060/256), counter); //ref voltage :5090mV
 			toolStripStatusLabel2->Text = gcnew String(buffer);
 		 }
 private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
