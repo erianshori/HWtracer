@@ -30,6 +30,6 @@ ext_int0_isr                                                                    
 ext_int1_isr                                                                      0x00076      1
 spi_isr                                                                           0x00077     20
 usart_rx_isr                                                                      0x0008B     41
-timer0_ovf_isr                                                                    0x000B4     75
-timer1_ovf_isr                                                                    0x000FF      1
-main                                                                              0x00100     77
+timer0_ovf_isr                                                                    0x000B4     83
+timer1_ovf_isr                                                                    0x00107      1
+main                                                                              0x00108     77

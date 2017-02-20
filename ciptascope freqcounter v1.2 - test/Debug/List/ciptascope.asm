@@ -1269,7 +1269,7 @@ __GLOBAL_INI_END:
 ;
 ;#define iISOVOUT    PINC.0
 ;
-;#define oISP_SS     PORTB.2
+;#define iISP_SS     PINB.2
 ;#define iISP_MOSI   PINB.3
 ;#define iISP_MISO   PINB.4
 ;#define iISP_SCK    PINB.5
@@ -1428,7 +1428,7 @@ _0x10:
 ; 0000 0073     }
 _0xE:
 ; 0000 0074 }
-	RJMP _0x2A
+	RJMP _0x2E
 ; .FEND
 ;#define DATA_REGISTER_EMPTY (1<<UDRE)
 ;#define RX_COMPLETE (1<<RXC)
@@ -1611,81 +1611,109 @@ _0x1D:
 ; 0000 00DE             }
 _0x20:
 ; 0000 00DF         }
-; 0000 00E0         TCNT1H =0x00;
+; 0000 00E0         if(iDATAOUT){
 _0x1C:
-	RCALL SUBOPT_0x1
-; 0000 00E1         TCNT1L =0x00;
-; 0000 00E2         counter = 0;
-	CLR  R6
-	CLR  R7
-; 0000 00E3         SPDR=0x00;
-	LDI  R30,LOW(0)
-	OUT  0xF,R30
-; 0000 00E4     }
-; 0000 00E5     else //v1.1   scan freq
+	SBIS 0x10,3
 	RJMP _0x21
+; 0000 00E1             //MISO = HIGH
+; 0000 00E2             if(iISP_SS){
+	SBIS 0x16,2
+	RJMP _0x22
+; 0000 00E3             if(frq >= 0x03e8) //more than 1MHz
+	LDI  R30,LOW(1000)
+	LDI  R31,HIGH(1000)
+	CP   R8,R30
+	CPC  R9,R31
+	BRLO _0x23
+; 0000 00E4                 {
+; 0000 00E5                   PORTB |= (1<<PORTB4);
+	SBI  0x18,4
+; 0000 00E6                 }
+; 0000 00E7                 else{
+	RJMP _0x24
+_0x23:
+; 0000 00E8                   PORTB &= ~(1<<PORTB4);
+	CBI  0x18,4
+; 0000 00E9                 }
+_0x24:
+; 0000 00EA             }
+; 0000 00EB         }
+_0x22:
+; 0000 00EC         else
+	RJMP _0x25
+_0x21:
+; 0000 00ED         {
+; 0000 00EE              PORTB &= ~(1<<PORTB4);
+	CBI  0x18,4
+; 0000 00EF         }
+_0x25:
+; 0000 00F0         //TCNT1H =0x00;
+; 0000 00F1         //TCNT1L =0x00;
+; 0000 00F2         //counter = 0;
+; 0000 00F3         //SPDR=0x00;
+; 0000 00F4     }
+; 0000 00F5     //else //v1.1   scan freq
+; 0000 00F6     //{
+; 0000 00F7         counter++;
 _0x1B:
-; 0000 00E6     {
-; 0000 00E7         counter++;
 	MOVW R30,R6
 	ADIW R30,1
 	MOVW R6,R30
-; 0000 00E8         TCNT0=0x06;
+; 0000 00F8         TCNT0=0x06;
 	LDI  R30,LOW(6)
 	OUT  0x32,R30
-; 0000 00E9         if(counter>=1) //freq sampling per 1ms
+; 0000 00F9         if(counter>=1) //freq sampling per 1ms
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
 	CP   R6,R30
 	CPC  R7,R31
-	BRLO _0x22
-; 0000 00EA         {
-; 0000 00EB             counter=0;
+	BRLO _0x26
+; 0000 00FA         {
+; 0000 00FB             counter=0;
 	CLR  R6
 	CLR  R7
-; 0000 00EC             if(updatefreq >0x00){   //update freq ==0x01
+; 0000 00FC             if(updatefreq >0x00){   //update freq ==0x01
 	LDI  R30,LOW(0)
 	CP   R30,R5
-	BRSH _0x23
-; 0000 00ED                 #asm ("cli");
+	BRSH _0x27
+; 0000 00FD                 #asm ("cli");
 	cli
-; 0000 00EE                 frq = TCNT1;
+; 0000 00FE                 frq = TCNT1;
 	__INWR 8,9,44
-; 0000 00EF                 if(frq >= 0x1770) //frequency too high, more than 6MHz
+; 0000 00FF                 if(frq >= 0x1770) //frequency too high, more than 6MHz
 	LDI  R30,LOW(6000)
 	LDI  R31,HIGH(6000)
 	CP   R8,R30
 	CPC  R9,R31
-	BRLO _0x24
-; 0000 00F0                 {
-; 0000 00F1                     frq =0x0001;
+	BRLO _0x28
+; 0000 0100                 {
+; 0000 0101                     frq =0x0001;
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
 	MOVW R8,R30
-; 0000 00F2                 }
-; 0000 00F3                 else{  // frequency valid
-_0x24:
-; 0000 00F4 
-; 0000 00F5                 }
-; 0000 00F6                 SPDR = (frq & 0xff00)>>8;
+; 0000 0102                 }
+; 0000 0103                 else{  // frequency valid
+_0x28:
+; 0000 0104 
+; 0000 0105                 }
+; 0000 0106                 SPDR = (frq & 0xff00)>>8;
 	MOVW R30,R8
 	ANDI R30,LOW(0xFF00)
 	MOV  R30,R31
 	LDI  R31,0
 	OUT  0xF,R30
-; 0000 00F7                 TCNT1H =0x00;
+; 0000 0107                 TCNT1H =0x00;
 	RCALL SUBOPT_0x1
-; 0000 00F8                 TCNT1L =0x00;
-; 0000 00F9                 #asm("sei");
+; 0000 0108                 TCNT1L =0x00;
+; 0000 0109                 #asm("sei");
 	sei
-; 0000 00FA             }
-; 0000 00FB 	    }
-_0x23:
-; 0000 00FC     }
-_0x22:
-_0x21:
-; 0000 00FD }
-_0x2A:
+; 0000 010A             }
+; 0000 010B 	    }
+_0x27:
+; 0000 010C     //}
+; 0000 010D }
+_0x26:
+_0x2E:
 	LD   R30,Y+
 	OUT  SREG,R30
 	LD   R31,Y+
@@ -1703,245 +1731,245 @@ _0x2A:
 ; .FEND
 ;// Timer1 overflow interrupt service routine
 ;interrupt [TIM1_OVF] void timer1_ovf_isr(void)
-; 0000 0100 {
+; 0000 0110 {
 _timer1_ovf_isr:
 ; .FSTART _timer1_ovf_isr
-; 0000 0101 // Place your code here
-; 0000 0102 //    if(status)
-; 0000 0103 //    {
-; 0000 0104 //        RXDCTL = 1;
-; 0000 0105 //        status = 0;
-; 0000 0106 //    }
-; 0000 0107 //    else
-; 0000 0108 //    {
-; 0000 0109 //        RXDCTL = 0;
-; 0000 010A //        status = 1;
-; 0000 010B //    }
-; 0000 010C }
+; 0000 0111 // Place your code here
+; 0000 0112 //    if(status)
+; 0000 0113 //    {
+; 0000 0114 //        RXDCTL = 1;
+; 0000 0115 //        status = 0;
+; 0000 0116 //    }
+; 0000 0117 //    else
+; 0000 0118 //    {
+; 0000 0119 //        RXDCTL = 0;
+; 0000 011A //        status = 1;
+; 0000 011B //    }
+; 0000 011C }
 	RETI
 ; .FEND
 ;
 ;
 ;
 ;void main(void)
-; 0000 0111 {
+; 0000 0121 {
 _main:
 ; .FSTART _main
-; 0000 0112 // Declare your local variables here
-; 0000 0113 
-; 0000 0114 // Input/Output Ports initialization
-; 0000 0115 // Port B initialization
-; 0000 0116 // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=Out Bit0=In
-; 0000 0117 DDRB=(0<<DDB7) | (0<<DDB6) | (0<<DDB5) | (1<<DDB4) | (0<<DDB3) | (0<<DDB2) | (1<<DDB1) | (0<<DDB0);
+; 0000 0122 // Declare your local variables here
+; 0000 0123 
+; 0000 0124 // Input/Output Ports initialization
+; 0000 0125 // Port B initialization
+; 0000 0126 // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=Out Bit0=In
+; 0000 0127 DDRB=(0<<DDB7) | (0<<DDB6) | (0<<DDB5) | (1<<DDB4) | (0<<DDB3) | (0<<DDB2) | (1<<DDB1) | (0<<DDB0);
 	LDI  R30,LOW(18)
 	OUT  0x17,R30
-; 0000 0118 // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
-; 0000 0119 PORTB=(0<<PORTB7) | (0<<PORTB6) | (0<<PORTB5) | (0<<PORTB4) | (0<<PORTB3) | (0<<PORTB2) | (0<<PORTB1) | (0<<PORTB0);
+; 0000 0128 // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
+; 0000 0129 PORTB=(0<<PORTB7) | (0<<PORTB6) | (0<<PORTB5) | (0<<PORTB4) | (0<<PORTB3) | (0<<PORTB2) | (0<<PORTB1) | (0<<PORTB0);
 	LDI  R30,LOW(0)
 	OUT  0x18,R30
-; 0000 011A 
-; 0000 011B // Port C initialization
-; 0000 011C // Function: Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
-; 0000 011D DDRC=(0<<DDC6) | (0<<DDC5) | (0<<DDC4) | (0<<DDC3) | (0<<DDC2) | (0<<DDC1) | (0<<DDC0);
+; 0000 012A 
+; 0000 012B // Port C initialization
+; 0000 012C // Function: Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
+; 0000 012D DDRC=(0<<DDC6) | (0<<DDC5) | (0<<DDC4) | (0<<DDC3) | (0<<DDC2) | (0<<DDC1) | (0<<DDC0);
 	OUT  0x14,R30
-; 0000 011E // State: Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
-; 0000 011F PORTC=(0<<PORTC6) | (0<<PORTC5) | (0<<PORTC4) | (0<<PORTC3) | (0<<PORTC2) | (0<<PORTC1) | (0<<PORTC0);
+; 0000 012E // State: Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
+; 0000 012F PORTC=(0<<PORTC6) | (0<<PORTC5) | (0<<PORTC4) | (0<<PORTC3) | (0<<PORTC2) | (0<<PORTC1) | (0<<PORTC0);
 	OUT  0x15,R30
-; 0000 0120 
-; 0000 0121 // Port D initialization
-; 0000 0122 // Function: Bit7=Out Bit6=Out Bit5=In Bit4=Out Bit3=In Bit2=In Bit1=In Bit0=In
-; 0000 0123 DDRD=(1<<DDD7) | (1<<DDD6) | (0<<DDD5) | (1<<DDD4) | (0<<DDD3) | (0<<DDD2) | (0<<DDD1) | (0<<DDD0);
+; 0000 0130 
+; 0000 0131 // Port D initialization
+; 0000 0132 // Function: Bit7=Out Bit6=Out Bit5=In Bit4=Out Bit3=In Bit2=In Bit1=In Bit0=In
+; 0000 0133 DDRD=(1<<DDD7) | (1<<DDD6) | (0<<DDD5) | (1<<DDD4) | (0<<DDD3) | (0<<DDD2) | (0<<DDD1) | (0<<DDD0);
 	LDI  R30,LOW(208)
 	OUT  0x11,R30
-; 0000 0124 // State: Bit7=0 Bit6=1 Bit5=T Bit4=1 Bit3=T Bit2=T Bit1=T Bit0=T
-; 0000 0125 PORTD=(0<<PORTD7) | (1<<PORTD6) | (0<<PORTD5) | (1<<PORTD4) | (0<<PORTD3) | (0<<PORTD2) | (0<<PORTD1) | (0<<PORTD0);
+; 0000 0134 // State: Bit7=0 Bit6=1 Bit5=T Bit4=1 Bit3=T Bit2=T Bit1=T Bit0=T
+; 0000 0135 PORTD=(0<<PORTD7) | (1<<PORTD6) | (0<<PORTD5) | (1<<PORTD4) | (0<<PORTD3) | (0<<PORTD2) | (0<<PORTD1) | (0<<PORTD0);
 	LDI  R30,LOW(80)
 	OUT  0x12,R30
-; 0000 0126 
-; 0000 0127 // Timer/Counter 0 initialization
-; 0000 0128 // Clock source: System Clock
-; 0000 0129 // Clock value: 250,000 kHz
-; 0000 012A TCCR0=(0<<CS02) | (1<<CS01) | (1<<CS00);
+; 0000 0136 
+; 0000 0137 // Timer/Counter 0 initialization
+; 0000 0138 // Clock source: System Clock
+; 0000 0139 // Clock value: 250,000 kHz
+; 0000 013A TCCR0=(0<<CS02) | (1<<CS01) | (1<<CS00);
 	LDI  R30,LOW(3)
 	OUT  0x33,R30
-; 0000 012B TCNT0=0x06;
+; 0000 013B TCNT0=0x06;
 	LDI  R30,LOW(6)
 	OUT  0x32,R30
-; 0000 012C 
-; 0000 012D // Timer/Counter 1 initialization
-; 0000 012E // Clock source: T1 pin Rising Edge
-; 0000 012F // Mode: Normal top=0xFFFF
-; 0000 0130 // OC1A output: Disconnected
-; 0000 0131 // OC1B output: Disconnected
-; 0000 0132 // Noise Canceler: Off
-; 0000 0133 // Input Capture on Falling Edge
-; 0000 0134 // Timer1 Overflow Interrupt: On
-; 0000 0135 // Input Capture Interrupt: Off
-; 0000 0136 // Compare A Match Interrupt: Off
-; 0000 0137 // Compare B Match Interrupt: Off
-; 0000 0138 TCCR1A=(0<<COM1A1) | (0<<COM1A0) | (0<<COM1B1) | (0<<COM1B0) | (0<<WGM11) | (0<<WGM10);
+; 0000 013C 
+; 0000 013D // Timer/Counter 1 initialization
+; 0000 013E // Clock source: T1 pin Rising Edge
+; 0000 013F // Mode: Normal top=0xFFFF
+; 0000 0140 // OC1A output: Disconnected
+; 0000 0141 // OC1B output: Disconnected
+; 0000 0142 // Noise Canceler: Off
+; 0000 0143 // Input Capture on Falling Edge
+; 0000 0144 // Timer1 Overflow Interrupt: On
+; 0000 0145 // Input Capture Interrupt: Off
+; 0000 0146 // Compare A Match Interrupt: Off
+; 0000 0147 // Compare B Match Interrupt: Off
+; 0000 0148 TCCR1A=(0<<COM1A1) | (0<<COM1A0) | (0<<COM1B1) | (0<<COM1B0) | (0<<WGM11) | (0<<WGM10);
 	LDI  R30,LOW(0)
 	OUT  0x2F,R30
-; 0000 0139 TCCR1B=(0<<ICNC1) | (0<<ICES1) | (0<<WGM13) | (0<<WGM12) | (1<<CS12) | (1<<CS11) | (1<<CS10);
+; 0000 0149 TCCR1B=(0<<ICNC1) | (0<<ICES1) | (0<<WGM13) | (0<<WGM12) | (1<<CS12) | (1<<CS11) | (1<<CS10);
 	LDI  R30,LOW(7)
 	OUT  0x2E,R30
-; 0000 013A TCNT1H=0x00;
+; 0000 014A TCNT1H=0x00;
 	RCALL SUBOPT_0x1
-; 0000 013B TCNT1L=0x00;
-; 0000 013C ICR1H=0x00;
+; 0000 014B TCNT1L=0x00;
+; 0000 014C ICR1H=0x00;
 	LDI  R30,LOW(0)
 	OUT  0x27,R30
-; 0000 013D ICR1L=0x00;
+; 0000 014D ICR1L=0x00;
 	OUT  0x26,R30
-; 0000 013E OCR1AH=0x00;
+; 0000 014E OCR1AH=0x00;
 	OUT  0x2B,R30
-; 0000 013F OCR1AL=0x00;
+; 0000 014F OCR1AL=0x00;
 	OUT  0x2A,R30
-; 0000 0140 OCR1BH=0x00;
+; 0000 0150 OCR1BH=0x00;
 	OUT  0x29,R30
-; 0000 0141 OCR1BL=0x00;
+; 0000 0151 OCR1BL=0x00;
 	OUT  0x28,R30
-; 0000 0142 
-; 0000 0143 // Timer/Counter 2 initialization
-; 0000 0144 // Clock source: System Clock
-; 0000 0145 // Clock value: Timer2 Stopped
-; 0000 0146 // Mode: Normal top=0xFF
-; 0000 0147 // OC2 output: Disconnected
-; 0000 0148 ASSR=0<<AS2;
+; 0000 0152 
+; 0000 0153 // Timer/Counter 2 initialization
+; 0000 0154 // Clock source: System Clock
+; 0000 0155 // Clock value: Timer2 Stopped
+; 0000 0156 // Mode: Normal top=0xFF
+; 0000 0157 // OC2 output: Disconnected
+; 0000 0158 ASSR=0<<AS2;
 	OUT  0x22,R30
-; 0000 0149 TCCR2=(0<<PWM2) | (0<<COM21) | (0<<COM20) | (0<<CTC2) | (0<<CS22) | (0<<CS21) | (0<<CS20);
+; 0000 0159 TCCR2=(0<<PWM2) | (0<<COM21) | (0<<COM20) | (0<<CTC2) | (0<<CS22) | (0<<CS21) | (0<<CS20);
 	OUT  0x25,R30
-; 0000 014A TCNT2=0x00;
+; 0000 015A TCNT2=0x00;
 	OUT  0x24,R30
-; 0000 014B OCR2=0x00;
+; 0000 015B OCR2=0x00;
 	OUT  0x23,R30
-; 0000 014C 
-; 0000 014D // Timer(s)/Counter(s) Interrupt(s) initialization
-; 0000 014E TIMSK=(0<<OCIE2) | (0<<TOIE2) | (0<<TICIE1) | (0<<OCIE1A) | (0<<OCIE1B) | (1<<TOIE1) | (1<<TOIE0);
+; 0000 015C 
+; 0000 015D // Timer(s)/Counter(s) Interrupt(s) initialization
+; 0000 015E TIMSK=(0<<OCIE2) | (0<<TOIE2) | (0<<TICIE1) | (0<<OCIE1A) | (0<<OCIE1B) | (1<<TOIE1) | (1<<TOIE0);
 	LDI  R30,LOW(5)
 	OUT  0x39,R30
-; 0000 014F 
-; 0000 0150 // External Interrupt(s) initialization
-; 0000 0151 // INT0: On
-; 0000 0152 // INT0 Mode: Falling Edge
-; 0000 0153 // INT1: On
-; 0000 0154 // INT1 Mode: Any change
-; 0000 0155 GICR|=(1<<INT1) | (1<<INT0);
+; 0000 015F 
+; 0000 0160 // External Interrupt(s) initialization
+; 0000 0161 // INT0: On
+; 0000 0162 // INT0 Mode: Falling Edge
+; 0000 0163 // INT1: On
+; 0000 0164 // INT1 Mode: Any change
+; 0000 0165 GICR|=(1<<INT1) | (1<<INT0);
 	IN   R30,0x3B
 	ORI  R30,LOW(0xC0)
 	OUT  0x3B,R30
-; 0000 0156 MCUCR=(0<<ISC11) | (1<<ISC10) | (1<<ISC01) | (0<<ISC00);
+; 0000 0166 MCUCR=(0<<ISC11) | (1<<ISC10) | (1<<ISC01) | (0<<ISC00);
 	LDI  R30,LOW(6)
 	OUT  0x35,R30
-; 0000 0157 GIFR=(1<<INTF1) | (1<<INTF0);
+; 0000 0167 GIFR=(1<<INTF1) | (1<<INTF0);
 	LDI  R30,LOW(192)
 	OUT  0x3A,R30
-; 0000 0158 
-; 0000 0159 // USART initialization
-; 0000 015A // Communication Parameters: 8 Data, 1 Stop, Even Parity
-; 0000 015B // USART Receiver: On
-; 0000 015C // USART Transmitter: On
-; 0000 015D // USART Mode: Asynchronous
-; 0000 015E // USART Baud Rate: 9600
-; 0000 015F UCSRA=(0<<RXC) | (0<<TXC) | (0<<UDRE) | (0<<FE) | (0<<DOR) | (0<<UPE) | (0<<U2X) | (0<<MPCM);
+; 0000 0168 
+; 0000 0169 // USART initialization
+; 0000 016A // Communication Parameters: 8 Data, 1 Stop, Even Parity
+; 0000 016B // USART Receiver: On
+; 0000 016C // USART Transmitter: On
+; 0000 016D // USART Mode: Asynchronous
+; 0000 016E // USART Baud Rate: 9600
+; 0000 016F UCSRA=(0<<RXC) | (0<<TXC) | (0<<UDRE) | (0<<FE) | (0<<DOR) | (0<<UPE) | (0<<U2X) | (0<<MPCM);
 	LDI  R30,LOW(0)
 	OUT  0xB,R30
-; 0000 0160 UCSRB=(1<<RXCIE) | (0<<TXCIE) | (0<<UDRIE) | (1<<RXEN) | (1<<TXEN) | (0<<UCSZ2) | (0<<RXB8) | (0<<TXB8);
+; 0000 0170 UCSRB=(1<<RXCIE) | (0<<TXCIE) | (0<<UDRIE) | (1<<RXEN) | (1<<TXEN) | (0<<UCSZ2) | (0<<RXB8) | (0<<TXB8);
 	LDI  R30,LOW(152)
 	OUT  0xA,R30
-; 0000 0161 UCSRC=(1<<URSEL) | (0<<UMSEL) | (1<<UPM1) | (0<<UPM0) | (0<<USBS) | (1<<UCSZ1) | (1<<UCSZ0) | (0<<UCPOL);
+; 0000 0171 UCSRC=(1<<URSEL) | (0<<UMSEL) | (1<<UPM1) | (0<<UPM0) | (0<<USBS) | (1<<UCSZ1) | (1<<UCSZ0) | (0<<UCPOL);
 	LDI  R30,LOW(166)
 	OUT  0x20,R30
-; 0000 0162 UBRRH=0x00;
+; 0000 0172 UBRRH=0x00;
 	LDI  R30,LOW(0)
 	OUT  0x20,R30
-; 0000 0163 UBRRL=0x33;
+; 0000 0173 UBRRL=0x33;
 	LDI  R30,LOW(51)
 	OUT  0x9,R30
-; 0000 0164 
-; 0000 0165 // Analog Comparator initialization
-; 0000 0166 // Analog Comparator: Off
-; 0000 0167 // The Analog Comparator's positive input is
-; 0000 0168 // connected to the AIN0 pin
-; 0000 0169 // The Analog Comparator's negative input is
-; 0000 016A // connected to the AIN1 pin
-; 0000 016B ACSR=(1<<ACD) | (0<<ACBG) | (0<<ACO) | (0<<ACI) | (0<<ACIE) | (0<<ACIC) | (0<<ACIS1) | (0<<ACIS0);
+; 0000 0174 
+; 0000 0175 // Analog Comparator initialization
+; 0000 0176 // Analog Comparator: Off
+; 0000 0177 // The Analog Comparator's positive input is
+; 0000 0178 // connected to the AIN0 pin
+; 0000 0179 // The Analog Comparator's negative input is
+; 0000 017A // connected to the AIN1 pin
+; 0000 017B ACSR=(1<<ACD) | (0<<ACBG) | (0<<ACO) | (0<<ACI) | (0<<ACIE) | (0<<ACIC) | (0<<ACIS1) | (0<<ACIS0);
 	LDI  R30,LOW(128)
 	OUT  0x8,R30
-; 0000 016C 
-; 0000 016D 
-; 0000 016E // ADC initialization
-; 0000 016F // ADC Clock frequency: 1000,000 kHz
-; 0000 0170 // ADC Voltage Reference: AREF pin
-; 0000 0171 ADMUX=ADC_VREF_TYPE;
+; 0000 017C 
+; 0000 017D 
+; 0000 017E // ADC initialization
+; 0000 017F // ADC Clock frequency: 1000,000 kHz
+; 0000 0180 // ADC Voltage Reference: AREF pin
+; 0000 0181 ADMUX=ADC_VREF_TYPE;
 	LDI  R30,LOW(0)
 	OUT  0x7,R30
-; 0000 0172 ADCSRA=(1<<ADEN) | (0<<ADSC) | (0<<ADFR) | (0<<ADIF) | (0<<ADIE) | (0<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
+; 0000 0182 ADCSRA=(1<<ADEN) | (0<<ADSC) | (0<<ADFR) | (0<<ADIF) | (0<<ADIE) | (0<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
 	LDI  R30,LOW(131)
 	OUT  0x6,R30
-; 0000 0173 SFIOR=(0<<ACME);
+; 0000 0183 SFIOR=(0<<ACME);
 	LDI  R30,LOW(0)
 	OUT  0x30,R30
-; 0000 0174 
-; 0000 0175 
-; 0000 0176 // SPI initialization
-; 0000 0177 // SPI Type: Slave
-; 0000 0178 // SPI Clock Phase: Cycle Start
-; 0000 0179 // SPI Clock Polarity: Low
-; 0000 017A // SPI Data Order: MSB First
-; 0000 017B SPCR=(1<<SPIE) | (1<<SPE) | (0<<DORD) | (0<<MSTR) | (0<<CPOL) | (0<<CPHA) | (0<<SPR1) | (0<<SPR0);
+; 0000 0184 
+; 0000 0185 
+; 0000 0186 // SPI initialization
+; 0000 0187 // SPI Type: Slave
+; 0000 0188 // SPI Clock Phase: Cycle Start
+; 0000 0189 // SPI Clock Polarity: Low
+; 0000 018A // SPI Data Order: MSB First
+; 0000 018B SPCR=(1<<SPIE) | (1<<SPE) | (0<<DORD) | (0<<MSTR) | (0<<CPOL) | (0<<CPHA) | (0<<SPR1) | (0<<SPR0);
 	LDI  R30,LOW(192)
 	OUT  0xD,R30
-; 0000 017C SPSR=(0<<SPI2X);
+; 0000 018C SPSR=(0<<SPI2X);
 	LDI  R30,LOW(0)
 	OUT  0xE,R30
-; 0000 017D 
-; 0000 017E // Clear the SPI interrupt flag
-; 0000 017F #asm
-; 0000 0180     in   r30,spsr
+; 0000 018D 
+; 0000 018E // Clear the SPI interrupt flag
+; 0000 018F #asm
+; 0000 0190     in   r30,spsr
     in   r30,spsr
-; 0000 0181     in   r30,spdr
+; 0000 0191     in   r30,spdr
     in   r30,spdr
-; 0000 0182 #endasm
-; 0000 0183 
-; 0000 0184 // TWI initialization
-; 0000 0185 // TWI disabled
-; 0000 0186 TWCR=(0<<TWEA) | (0<<TWSTA) | (0<<TWSTO) | (0<<TWEN) | (0<<TWIE);
+; 0000 0192 #endasm
+; 0000 0193 
+; 0000 0194 // TWI initialization
+; 0000 0195 // TWI disabled
+; 0000 0196 TWCR=(0<<TWEA) | (0<<TWSTA) | (0<<TWSTO) | (0<<TWEN) | (0<<TWIE);
 	LDI  R30,LOW(0)
 	OUT  0x36,R30
-; 0000 0187 
-; 0000 0188 //putchar('s');
-; 0000 0189 tVoltage = read_adc(ISO_VCC);
+; 0000 0197 
+; 0000 0198 //putchar('s');
+; 0000 0199 tVoltage = read_adc(ISO_VCC);
 	LDI  R26,LOW(0)
 	RCALL _read_adc
 	MOVW R10,R30
-; 0000 018A //putchar((tVoltage&0xFF) +0x30);
-; 0000 018B //putchar(((tVoltage>>8)&0xFF) +0x30);
-; 0000 018C 
-; 0000 018D // Global enable interrupts
-; 0000 018E #asm("sei")
+; 0000 019A //putchar((tVoltage&0xFF) +0x30);
+; 0000 019B //putchar(((tVoltage>>8)&0xFF) +0x30);
+; 0000 019C 
+; 0000 019D // Global enable interrupts
+; 0000 019E #asm("sei")
 	sei
-; 0000 018F //UsartTx_Off;
-; 0000 0190 //initialize the global variable
-; 0000 0191             counter=0;
+; 0000 019F //UsartTx_Off;
+; 0000 01A0 //initialize the global variable
+; 0000 01A1             counter=0;
 	CLR  R6
 	CLR  R7
-; 0000 0192            updatefreq = 0x01;
+; 0000 01A2            updatefreq = 0x01;
 	LDI  R30,LOW(1)
 	MOV  R5,R30
-; 0000 0193            SPDR =0;
+; 0000 01A3            SPDR =0;
 	LDI  R30,LOW(0)
 	OUT  0xF,R30
-; 0000 0194 while (1)
-_0x26:
-; 0000 0195       {
-; 0000 0196       // Place your code here
-; 0000 0197 
-; 0000 0198       }
-	RJMP _0x26
-; 0000 0199 }
-_0x29:
-	RJMP _0x29
+; 0000 01A4 while (1)
+_0x2A:
+; 0000 01A5       {
+; 0000 01A6       // Place your code here
+; 0000 01A7 
+; 0000 01A8       }
+	RJMP _0x2A
+; 0000 01A9 }
+_0x2D:
+	RJMP _0x2D
 ; .FEND
 	#ifndef __SLEEP_DEFINED__
 	#define __SLEEP_DEFINED__
@@ -1987,7 +2015,7 @@ SUBOPT_0x0:
 	ST   -Y,R30
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:4 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
 SUBOPT_0x1:
 	LDI  R30,LOW(0)
 	OUT  0x2D,R30

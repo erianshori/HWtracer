@@ -34,7 +34,7 @@ Data Stack size         : 256
 
 #define iISOVOUT    PINC.0
 
-#define oISP_SS     PORTB.2
+#define iISP_SS     PINB.2
 #define iISP_MOSI   PINB.3
 #define iISP_MISO   PINB.4
 #define iISP_SCK    PINB.5
@@ -221,13 +221,29 @@ TCNT0=0x06;
                 cTIMERST=5;//diubah dari v1.0 sebelumnya 10
             }
         }
-        TCNT1H =0x00;
-        TCNT1L =0x00;
-        counter = 0;
-        SPDR=0x00;          
+        if(iDATAOUT){
+            //MISO = HIGH 
+            if(iISP_SS){
+            if(frq >= 0x03e8) //more than 1MHz
+                {
+                  PORTB |= (1<<PORTB4);
+                }
+                else{
+                  PORTB &= ~(1<<PORTB4);
+                }    
+            }
+        }
+        else
+        {
+             PORTB &= ~(1<<PORTB4);
+        }
+        //TCNT1H =0x00;
+        //TCNT1L =0x00;
+        //counter = 0;
+        //SPDR=0x00;          
     }
-    else //v1.1   scan freq
-    {
+    //else //v1.1   scan freq
+    //{
         counter++;
         TCNT0=0x06;	
         if(counter>=1) //freq sampling per 1ms
@@ -249,7 +265,7 @@ TCNT0=0x06;
                 #asm("sei"); 
             }
 	    } 
-    }
+    //}
 }
 // Timer1 overflow interrupt service routine
 interrupt [TIM1_OVF] void timer1_ovf_isr(void)

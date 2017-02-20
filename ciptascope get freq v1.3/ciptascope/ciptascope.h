@@ -189,7 +189,7 @@ namespace ciptascope {
 			// 
 			// CardResetPoll
 			// 
-			this->CardResetPoll->Interval = 15;
+			this->CardResetPoll->Interval = 1;
 			this->CardResetPoll->Tick += gcnew System::EventHandler(this, &Form1::timer1_Tick);
 			// 
 			// MainMenu
@@ -473,23 +473,22 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 	{
 		
 		if (ucMask & 0x02){
-			
 		}
 		else 
 		{
-			pdupoll->Enabled="False";
+			//pdupoll->Enabled="False";
 			//set global index
 			globalIndex =0;
 			phase =1; //CLA
 			assign =0;
 			remaining=0;
 			datalength = 0;
-			temp = (freqDataBuffer[0]*1000/372)-300;
+			//scanFrequencyToolStripMenuItem_Click(sender,e);
+			//temp = (freqDataBuffer[0]*1000/372);
 		
-			sprintf(&buffer[0], "%02d", temp);
-			textBox2->Text = gcnew String(buffer);
-			
-			FT_SetBaudRate(ftHandle, temp);//freqDataBuffer[0]*1000/372-300);
+			//sprintf(&buffer[0], "%02d", temp);
+			//textBox2->Text = gcnew String(buffer);
+			FT_SetBaudRate(ftHandle, 10000);//temp);//temp);//freqDataBuffer[0]*1000/372-300);
 			FT_Purge (ftHandle, FT_PURGE_RX);
 			//-----------------scan the frequency------------------//
 			//counter =0;	//clear counter after reset
@@ -509,7 +508,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			ftStatus = FT_SetEventNotification(ftHandle,EventMask,hEvent); 
 			 
 			//WaitForSingleObject(hEvent,INFINITE); 
-			WaitForSingleObject(hEvent,100); 
+			WaitForSingleObject(hEvent,200); 
 			DWORD EventDWord; 
 			DWORD RxBytes; 
 			DWORD TxBytes; 
@@ -521,6 +520,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			//{
 			//	FT_GetQueueStatus(ftHandle, &RxBytes);
 			//}
+			
 			TotalBytesReceived=0;
 			if (RxBytes > 0) 
 			{
@@ -532,7 +532,6 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 					if(RxBuffer[0]==0x3B ||RxBuffer[0]==0x3F)
 					//	if (RxBytes > 0) 
 					{
-						counter =0;
 						if(TotalBytesReceived==1)
 						{
 						//wait T0
@@ -1097,9 +1096,8 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 			}
 			//}
 			//Sleep(1000);
-			//helloToolStripMenuItem_Click(sender,e);
-			//scanFrequencyToolStripMenuItem_Click(sender, e);
 			//pdupoll->Enabled="True";
+			counter=0;
 		}
 	}
 }
@@ -1137,10 +1135,13 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
 					//FT_SetTimeouts (ftHandle,5000,5000);
 					//FT_SetResetPipeRetryCount (ftHandle,100);
 					//FT_SetDeadmanTimeout (ftHandle,6000);
+					//set SS to HIGH,0b11001100
+					ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
 					CardResetPoll->Enabled="True";
-					//pdupoll->Enabled="True";
+					pdupoll->Enabled="True";
+					timer1->Enabled="True"; //enable the timer
 					counter = 0;
-					voltage->Enabled="True";
+					//voltage->Enabled="True";
 				}
 				else {
 					// FT_Open Failed
@@ -1235,9 +1236,9 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 				ftStatus = FT_Read(ftHandle, RxBuffer, RxBytes, &BytesReceived);
 				if (ftStatus == FT_OK) {
 					// FT_Read OK 
-					char hexStr[2048];
+					char hexStr[2500];
 					char sTmp[256];
-					for(i=0;i<2048;i++){
+					for(i=0;i<2500;i++){
 						hexStr[i]=0x00;
 					}
 					globalIndex=0;
@@ -1250,9 +1251,9 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 						
 						}
 						sprintf(&sTmp[0], "\n");
-						strcat(hexStr, sTmp);*/ 
+						strcat(hexStr, sTmp); */ 
 					//=====================end of showing data from buffer ===========//
-						if((0x3B ==RxBuffer[0] & 0xFF)||(0x3F ==RxBuffer[0] & 0xFF)){
+						if((0x3B ==RxBuffer[0] & 0xFF)){
 							BytesReceived =0;
 						}
 					//============================= parsing =====================//
@@ -1469,8 +1470,8 @@ private: System::Void scanFrequencyToolStripMenuItem_Click(System::Object^  send
 				sprintf(&buffer[0], "%02d", data*1000);
 				textBox2->Text = gcnew String(buffer);
 			}*/ 
-			//sprintf(&buffer[0], "%02d", data*1000);
-			//textBox1->Text = gcnew String(buffer);
+			sprintf(&buffer[0], "%02d", data*1000);
+			textBox1->Text = gcnew String(buffer);
 		}
 private: System::Void MainMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
 		 }
@@ -1491,8 +1492,9 @@ private: System::Void helloToolStripMenuItem_Click(System::Object^  sender, Syst
 		}
 
 private: System::Void timer1_Tick_1(System::Object^  sender, System::EventArgs^  e) {
-			 char buffer[60][10];
-			 if(counter<60){
+			 FT_STATUS ftStatus;	
+			 byte ucMask,i,mask;
+			/* if(counter<60{)
 				 if(reset_low){
 					//helloToolStripMenuItem_Click(sender,e);
 					scanFrequencyToolStripMenuItem_Click(sender,e);
@@ -1504,6 +1506,13 @@ private: System::Void timer1_Tick_1(System::Object^  sender, System::EventArgs^ 
 				reset_low=0;
 				counter =0;
 				timer1->Enabled="False";
+			 }*/
+			 //scanFrequencyToolStripMenuItem_Click(sender,e);
+			 ftStatus = FT_GetBitMode(ftHandle, &ucMask);
+			 mask = (ucMask & 0x01) &&(ucMask & 0x04); //MISO ==1 and SS == 1
+			 if(mask && (counter==0)){
+				scanFrequencyToolStripMenuItem_Click(sender,e);
+				counter=1;
 			 }
 		 }
 private: System::Void printFreqBufferToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -1513,7 +1522,6 @@ private: System::Void printFreqBufferToolStripMenuItem_Click(System::Object^  se
 			{
 				sprintf(&buffer[0], "%02x", freqDataBuffer[i]);
 				richTextBox1->Text += gcnew String(buffer) + "\n";
-
 			}
 		 }
 private: System::Void textBox2_TextChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -1610,11 +1618,15 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 			ftStatus = FT_SetRts(ftHandle);
 			//set SS to HIGH,0b11001100
 			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-			if((data > 25) && (counter==0)){
-				voltage->Enabled="False";
+			/*if((data > 25) && (counter==0)){
+				if(freqDataBuffer[0] < 1000){
 				scanFrequencyToolStripMenuItem_Click(sender,e);
-				counter++;
-			}
+				}
+				else{
+					counter=1;
+					voltage->Enabled="False";
+				}
+			}*/ 
 			sprintf(&buffer[0], "Card Voltage : %02d mV %02d", 600+(2*data*5060/256), counter); //ref voltage :5090mV
 			toolStripStatusLabel2->Text = gcnew String(buffer);
 		 }
