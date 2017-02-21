@@ -235,7 +235,7 @@ TCNT0=0x06;
         }
         else
         {
-             PORTB &= ~(1<<PORTB6);
+             PORTB &= ~(1<<PORTB4);
         }
         //TCNT1H =0x00;
         //TCNT1L =0x00;

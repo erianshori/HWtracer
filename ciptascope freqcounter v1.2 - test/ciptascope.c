@@ -82,7 +82,7 @@ unsigned char i;
         if(!iRSTOUT)
         {        
             fRSTCTL =1;
-            cTIMERST = 75; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
+            cTIMERST = 50; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
                             //namun tetap menghasilkan delay 50ms karena timer nol interrupt setiap 1 ms
          oRSTCTL =0;
         }

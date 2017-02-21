@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.30  D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm Fri Feb 17 13:26:14 2017
+AVRASM ver. 2.1.30  D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm Mon Feb 20 15:14:59 2017
 
 D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm(1086): warning: Register r5 already defined by the .DEF directive
 D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm(1087): warning: Register r6 already defined by the .DEF directive
@@ -1382,8 +1382,8 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 0054             fRSTCTL =1;
 00006c 9468      	SET
 00006d f820      	BLD  R2,0
-                 ; 0000 0055             cTIMERST = 75; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
-00006e e4eb      	LDI  R30,LOW(75)
+                 ; 0000 0055             cTIMERST = 50; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
+00006e e3e2      	LDI  R30,LOW(50)
 00006f 2e4e      	MOV  R4,R30
                  ; 0000 0056                             //namun tetap menghasilkan delay 50ms karena timer nol interrupt setiap 1 ms
                  ; 0000 0057          oRSTCTL =0;

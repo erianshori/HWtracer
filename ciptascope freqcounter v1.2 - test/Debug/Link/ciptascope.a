@@ -157,7 +157,7 @@
 ;PCODE: $00000039 VOL: 0
 ;PCODE: $0000003A VOL: 0
 ;PCODE: $0000003B VOL: 0
-; 0000 0055             cTIMERST = 75; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
+; 0000 0055             cTIMERST = 50; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
 ;PCODE: $0000003C VOL: 0
 ;PCODE: $0000003D VOL: 0
 ; 0000 0056                             //namun tetap menghasilkan delay 50ms karena timer nol interrupt setiap 1 ms

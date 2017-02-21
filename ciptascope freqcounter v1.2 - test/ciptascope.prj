@@ -26,7 +26,7 @@ Active0=0
 EditorPanel0=0
 PageIndex0=1
 EditorPanel1=0
-TimeStamp1=1246849824
+TimeStamp1=1247050205
 PageIndex1=0
 F1=ciptascope.c
 OF2=C:\cvavr\inc\mega8_bits.h
@@ -132,8 +132,8 @@ WatchAVR8LAutoVariables=0
 UseEEPROMLocation0=1
 RebuildAll=0
 LinkageInformationPresent=1
-COFFileTimeStamp=1246849864
-Build=92
+COFFileTimeStamp=1247050208
+Build=93
 [DefinedSymbolsDebug]
 Count=0
 [Compiler]
@@ -235,7 +235,7 @@ UseEEPROMLocation0=1
 RebuildAll=1
 LinkageInformationPresent=0
 COFFileTimeStamp=-1
-Build=92
+Build=93
 IncludePath0=
 IncludePath1=
 IncludePath2=
@@ -467,7 +467,7 @@ L13=Enhanced function parameters passing: Yes
 L14=Automatic register allocation: Yes
 L15=Smart register allocation: Yes
 L16=
-L17=Build: 91
+L17=Build: 92
 L18=9416 line(s) compiled
 L19=No errors
 L20=No warnings
@@ -510,7 +510,7 @@ Row=0
 Column=0
 ScrollPosX=0
 ScrollPosY=0
-TimeStamp=1247049330
+TimeStamp=1247058856
 [BookmarksFoldedCode]
 Files=4
 F1=ciptascope.c
@@ -518,11 +518,11 @@ F2=Debug\List\ciptascope.asm
 F3=Z:\project\2015\ciptascope\test\firmware\source\20160512m8a\ciptascope.c
 F4=C:\cvavr\inc\mega8_bits.h
 [Bookmarks1]
-TimeStamp=1246849824
-Row=237
-Column=33
+TimeStamp=1247050205
+Row=84
+Column=25
 ScrollPosX=0
-ScrollPosY=76
+ScrollPosY=69
 BK0=-1
 BK1=-1
 BK2=-1
@@ -578,17 +578,6 @@ BK8=-1
 BK9=-1
 [FoldedCode3]
 Blocks=0
-[HeadersList]
-Files=1
-F1=D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\ciptascope.c
-[Header1]
-Files=6
-F1=C:\cvavr\inc\mega8.h
-F2=C:\cvavr\inc\mega8_bits.h
-F3=C:\cvavr\inc\delay.h
-F4=C:\cvavr\inc\stdio.h
-F5=C:\cvavr\inc\io.h
-F6=C:\cvavr\inc\stdarg.h
 [Bookmarks4]
 TimeStamp=982084010
 Row=318
@@ -605,6 +594,17 @@ BK6=-1
 BK7=-1
 BK8=-1
 BK9=-1
+[HeadersList]
+Files=1
+F1=D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\ciptascope.c
+[Header1]
+Files=6
+F1=C:\cvavr\inc\mega8.h
+F2=C:\cvavr\inc\mega8_bits.h
+F3=C:\cvavr\inc\delay.h
+F4=C:\cvavr\inc\stdio.h
+F5=C:\cvavr\inc\io.h
+F6=C:\cvavr\inc\stdarg.h
 [FoldedCode1]
 Blocks=0
 [FoldedCode4]
