@@ -20,6 +20,7 @@ DWORD assign, remaining;
 unsigned char datalength ,start,stop;
 unsigned char INSBefore;
 int temp;
+int updatebaudcounter;
 
 //
 //std::string hexStr(unsigned char *data, int len)
@@ -129,6 +130,9 @@ namespace ciptascope {
 
 
 
+
+
+
 	protected: 
 
 	protected: 
@@ -199,7 +203,7 @@ namespace ciptascope {
 				this->optionsToolStripMenuItem, this->helpToolStripMenuItem});
 			this->MainMenu->Location = System::Drawing::Point(0, 0);
 			this->MainMenu->Name = L"MainMenu";
-			this->MainMenu->Size = System::Drawing::Size(635, 24);
+			this->MainMenu->Size = System::Drawing::Size(839, 24);
 			this->MainMenu->TabIndex = 4;
 			this->MainMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &Form1::MainMenu_ItemClicked);
 			// 
@@ -267,7 +271,7 @@ namespace ciptascope {
 			this->deviceToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->scanToolStripMenuItem, 
 				this->m_devlist});
 			this->deviceToolStripMenuItem->Name = L"deviceToolStripMenuItem";
-			this->deviceToolStripMenuItem->Size = System::Drawing::Size(151, 22);
+			this->deviceToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->deviceToolStripMenuItem->Text = L"Device";
 			this->deviceToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::deviceToolStripMenuItem_Click);
 			// 
@@ -290,7 +294,7 @@ namespace ciptascope {
 			this->frequencyToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->m_FreqList, 
 				this->scanFrequencyToolStripMenuItem, this->printFreqBufferToolStripMenuItem, this->helloToolStripMenuItem});
 			this->frequencyToolStripMenuItem->Name = L"frequencyToolStripMenuItem";
-			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(151, 22);
+			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->frequencyToolStripMenuItem->Text = L"Show";
 			this->frequencyToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::frequencyToolStripMenuItem_Click);
 			// 
@@ -329,7 +333,7 @@ namespace ciptascope {
 			// 
 			this->baudRateToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->m_baudrate});
 			this->baudRateToolStripMenuItem->Name = L"baudRateToolStripMenuItem";
-			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(151, 22);
+			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->baudRateToolStripMenuItem->Text = L"BaudRate(bps)";
 			// 
 			// m_baudrate
@@ -360,7 +364,7 @@ namespace ciptascope {
 				this->toolStripStatusLabel2});
 			this->statusStrip1->Location = System::Drawing::Point(0, 401);
 			this->statusStrip1->Name = L"statusStrip1";
-			this->statusStrip1->Size = System::Drawing::Size(635, 22);
+			this->statusStrip1->Size = System::Drawing::Size(839, 22);
 			this->statusStrip1->TabIndex = 5;
 			this->statusStrip1->Text = L"statusStrip1";
 			// 
@@ -383,7 +387,7 @@ namespace ciptascope {
 				static_cast<System::Byte>(0)));
 			this->richTextBox1->Location = System::Drawing::Point(0, 24);
 			this->richTextBox1->Name = L"richTextBox1";
-			this->richTextBox1->Size = System::Drawing::Size(635, 377);
+			this->richTextBox1->Size = System::Drawing::Size(839, 377);
 			this->richTextBox1->TabIndex = 6;
 			this->richTextBox1->Text = L"";
 			this->richTextBox1->Enter += gcnew System::EventHandler(this, &Form1::richTextBox1_TextChanged);
@@ -396,7 +400,7 @@ namespace ciptascope {
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(473, 3);
+			this->textBox1->Location = System::Drawing::Point(671, 3);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(156, 20);
 			this->textBox1->TabIndex = 7;
@@ -404,7 +408,7 @@ namespace ciptascope {
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(413, 6);
+			this->label1->Location = System::Drawing::Point(608, 6);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(57, 13);
 			this->label1->TabIndex = 8;
@@ -412,10 +416,11 @@ namespace ciptascope {
 			// 
 			// textBox2
 			// 
-			this->textBox2->Location = System::Drawing::Point(264, 3);
+			this->textBox2->Location = System::Drawing::Point(450, 3);
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->Size = System::Drawing::Size(143, 20);
 			this->textBox2->TabIndex = 9;
+			this->textBox2->Visible = false;
 			this->textBox2->TextChanged += gcnew System::EventHandler(this, &Form1::textBox2_TextChanged);
 			// 
 			// timer1
@@ -425,14 +430,14 @@ namespace ciptascope {
 			// 
 			// voltage
 			// 
-			this->voltage->Interval = 1;
+			this->voltage->Interval = 500;
 			this->voltage->Tick += gcnew System::EventHandler(this, &Form1::voltage_Tick);
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(635, 423);
+			this->ClientSize = System::Drawing::Size(839, 423);
 			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->textBox1);
@@ -484,6 +489,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			assign =0;
 			remaining=0;
 			datalength = 0;
+			updatebaudcounter = 0;
 			//scanFrequencyToolStripMenuItem_Click(sender,e);
 			//temp = 9600;
 		
@@ -521,7 +527,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			{
 				
 				ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
-			ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
+				ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
 			
 				
 				TotalBytesReceived+=BytesReceived;
@@ -962,7 +968,7 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 						//FT_Purge (ftHandle, FT_PURGE_RX);
 						//FT_SetDataCharacteristics(ftHandle, FT_BITS_8, FT_STOP_BITS_2, FT_PARITY_EVEN);
 						ftStatus=FT_INVALID_BAUD_RATE;
-						ftStatus = FT_SetBaudRate(ftHandle, 59468+400); //baudrate);//59921+1000);// baudrate+200);
+						ftStatus = FT_SetBaudRate(ftHandle, baudrate);//59468+400); //baudrate);//59921+1000);// baudrate+200);
 						//ftStatus = FT_SetDivisor(ftHandle,223.375);
 						
 
@@ -1229,7 +1235,19 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 					RxBuffer[i]=0x00;
 				}
 			RxBytes=0;
-			 
+			 //update baudrate counter
+				/*updatebaudcounter++;
+				if(updatebaudcounter >100){
+					updatebaudcounter = 0;
+					scanFrequencyToolStripMenuItem_Click(sender,e);
+					//temp = freqDataBuffer[0]*1000/372;
+					if(freqDataBuffer[0] > 3800){
+						temp = 10000;
+					}
+					else {
+						temp =9600;
+					}
+				}*/
 			FT_GetQueueStatus(ftHandle, &RxBytes);
 			if (RxBytes > 0) {
 				ftStatus = FT_Read(ftHandle, RxBuffer, RxBytes, &BytesReceived);
@@ -1345,13 +1363,22 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 							}
 							else{
 								if(remaining >0){
-									assign =remaining;
+									if(remaining > BytesReceived){
+										assign = BytesReceived;
+										remaining = remaining - BytesReceived;
+										phase=3;
+									}
+									else{
+										assign =remaining;
+										remaining =0;
+										phase++;
+									}
 								}
 								else{
 									assign = datalength;
+									remaining =0;
+									phase++;
 								}
-								remaining = 0;
-								phase++;
 							}
 							for(i=0;i<assign;i++){
 								DT[i] = RxBuffer[globalIndex++] &0xFF;
@@ -1511,6 +1538,7 @@ private: System::Void timer1_Tick_1(System::Object^  sender, System::EventArgs^ 
 			 mask = (ucMask & 0x01) &&(ucMask & 0x04); //MISO ==1 and SS == 1
 			 if(mask && (counter==0)){
 				scanFrequencyToolStripMenuItem_Click(sender,e);
+				//temp = freqDataBuffer[0]*1000/372;
 				if(freqDataBuffer[0] > 3800){
 					temp = 10000;
 				}
@@ -1632,7 +1660,7 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 					voltage->Enabled="False";
 				}
 			}*/ 
-			sprintf(&buffer[0], "Card Voltage : %02d mV %02d", 600+(2*data*5060/256), counter); //ref voltage :5090mV
+			sprintf(&buffer[0], "Card Voltage : %02d mV", 600+(2*data*5060/256)); //ref voltage :5090mV
 			toolStripStatusLabel2->Text = gcnew String(buffer);
 		 }
 private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
