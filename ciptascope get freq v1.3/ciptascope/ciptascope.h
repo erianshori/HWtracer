@@ -81,7 +81,7 @@ namespace ciptascope {
 	private: System::Windows::Forms::MenuStrip^  MainMenu;
 
 	private: System::Windows::Forms::ToolStripMenuItem^  fileToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  openToolStripMenuItem;
+
 	private: System::Windows::Forms::ToolStripMenuItem^  exitToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  optionsToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  baudRateToolStripMenuItem;
@@ -90,14 +90,14 @@ namespace ciptascope {
 	private: System::Windows::Forms::ToolStripMenuItem^  helpToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  deviceToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripComboBox^  m_devlist;
+
 
 	private: System::Windows::Forms::StatusStrip^  statusStrip1;
 	private: System::Windows::Forms::ToolStripStatusLabel^  toolStripStatusLabel1;
 
 
-	private: System::Windows::Forms::ToolStripMenuItem^  closeToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  scanToolStripMenuItem;
+
+
 
 	private: System::Windows::Forms::ToolStripMenuItem^  frequencyToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripComboBox^  m_FreqList;
@@ -106,7 +106,7 @@ namespace ciptascope {
 	private: System::Windows::Forms::ToolStripMenuItem^  cleanToolStripMenuItem;
 	private: System::Windows::Forms::Timer^  pdupoll;
 	private: System::Windows::Forms::ToolStripMenuItem^  scanFrequencyToolStripMenuItem;
-	private: System::Windows::Forms::TextBox^  textBox1;
+
 
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::ToolStripMenuItem^  helloToolStripMenuItem;
@@ -117,6 +117,17 @@ namespace ciptascope {
 	private: System::Windows::Forms::Timer^  voltage;
 	private: System::Windows::Forms::ToolStripMenuItem^  saveAsToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  openLogFileToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  scanToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripComboBox^  m_devlist;
+	private: System::Windows::Forms::ToolStripMenuItem^  openToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  closeToolStripMenuItem;
+	private: System::Windows::Forms::TextBox^  textBox1;
+	private: System::Windows::Forms::Panel^  panel1;
+
+
+
+
+
 
 
 
@@ -159,16 +170,12 @@ namespace ciptascope {
 			this->CardResetPoll = (gcnew System::Windows::Forms::Timer(this->components));
 			this->MainMenu = (gcnew System::Windows::Forms::MenuStrip());
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->openToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->closeToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->openLogFileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->saveAsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->cleanToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->optionsToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->deviceToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->scanToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->m_devlist = (gcnew System::Windows::Forms::ToolStripComboBox());
 			this->frequencyToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->m_FreqList = (gcnew System::Windows::Forms::ToolStripComboBox());
 			this->scanFrequencyToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -178,6 +185,10 @@ namespace ciptascope {
 			this->m_baudrate = (gcnew System::Windows::Forms::ToolStripComboBox());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->scanToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->m_devlist = (gcnew System::Windows::Forms::ToolStripComboBox());
+			this->openToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->closeToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
 			this->toolStripStatusLabel1 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->toolStripStatusLabel2 = (gcnew System::Windows::Forms::ToolStripStatusLabel());
@@ -188,8 +199,10 @@ namespace ciptascope {
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->voltage = (gcnew System::Windows::Forms::Timer(this->components));
+			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->MainMenu->SuspendLayout();
 			this->statusStrip1->SuspendLayout();
+			this->panel1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// CardResetPoll
@@ -199,36 +212,25 @@ namespace ciptascope {
 			// 
 			// MainMenu
 			// 
-			this->MainMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {this->fileToolStripMenuItem, 
-				this->optionsToolStripMenuItem, this->helpToolStripMenuItem});
+			this->MainMenu->BackColor = System::Drawing::SystemColors::ControlLight;
+			this->MainMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(7) {this->fileToolStripMenuItem, 
+				this->optionsToolStripMenuItem, this->helpToolStripMenuItem, this->scanToolStripMenuItem, this->m_devlist, this->openToolStripMenuItem, 
+				this->closeToolStripMenuItem});
 			this->MainMenu->Location = System::Drawing::Point(0, 0);
 			this->MainMenu->Name = L"MainMenu";
-			this->MainMenu->Size = System::Drawing::Size(839, 24);
+			this->MainMenu->Padding = System::Windows::Forms::Padding(6, 0, 0, 35);
+			this->MainMenu->Size = System::Drawing::Size(839, 84);
 			this->MainMenu->TabIndex = 4;
 			this->MainMenu->ItemClicked += gcnew System::Windows::Forms::ToolStripItemClickedEventHandler(this, &Form1::MainMenu_ItemClicked);
 			// 
 			// fileToolStripMenuItem
 			// 
-			this->fileToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(6) {this->openToolStripMenuItem, 
-				this->closeToolStripMenuItem, this->openLogFileToolStripMenuItem, this->saveAsToolStripMenuItem, this->cleanToolStripMenuItem, 
-				this->exitToolStripMenuItem});
+			this->fileToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->openLogFileToolStripMenuItem, 
+				this->saveAsToolStripMenuItem, this->cleanToolStripMenuItem, this->exitToolStripMenuItem});
+			this->fileToolStripMenuItem->Margin = System::Windows::Forms::Padding(0, 5, 0, 5);
 			this->fileToolStripMenuItem->Name = L"fileToolStripMenuItem";
-			this->fileToolStripMenuItem->Size = System::Drawing::Size(37, 20);
+			this->fileToolStripMenuItem->Size = System::Drawing::Size(37, 39);
 			this->fileToolStripMenuItem->Text = L"File";
-			// 
-			// openToolStripMenuItem
-			// 
-			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(147, 22);
-			this->openToolStripMenuItem->Text = L"Connect";
-			this->openToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::openToolStripMenuItem_Click);
-			// 
-			// closeToolStripMenuItem
-			// 
-			this->closeToolStripMenuItem->Name = L"closeToolStripMenuItem";
-			this->closeToolStripMenuItem->Size = System::Drawing::Size(147, 22);
-			this->closeToolStripMenuItem->Text = L"Disconnect";
-			this->closeToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::closeToolStripMenuItem_Click);
 			// 
 			// openLogFileToolStripMenuItem
 			// 
@@ -262,39 +264,25 @@ namespace ciptascope {
 			// 
 			this->optionsToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {this->deviceToolStripMenuItem, 
 				this->frequencyToolStripMenuItem, this->baudRateToolStripMenuItem});
+			this->optionsToolStripMenuItem->Margin = System::Windows::Forms::Padding(0, 5, 0, 5);
 			this->optionsToolStripMenuItem->Name = L"optionsToolStripMenuItem";
-			this->optionsToolStripMenuItem->Size = System::Drawing::Size(61, 20);
+			this->optionsToolStripMenuItem->Size = System::Drawing::Size(61, 39);
 			this->optionsToolStripMenuItem->Text = L"Options";
 			// 
 			// deviceToolStripMenuItem
 			// 
-			this->deviceToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->scanToolStripMenuItem, 
-				this->m_devlist});
 			this->deviceToolStripMenuItem->Name = L"deviceToolStripMenuItem";
-			this->deviceToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->deviceToolStripMenuItem->Size = System::Drawing::Size(151, 22);
 			this->deviceToolStripMenuItem->Text = L"Device";
+			this->deviceToolStripMenuItem->Visible = false;
 			this->deviceToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::deviceToolStripMenuItem_Click);
-			// 
-			// scanToolStripMenuItem
-			// 
-			this->scanToolStripMenuItem->Name = L"scanToolStripMenuItem";
-			this->scanToolStripMenuItem->Size = System::Drawing::Size(181, 22);
-			this->scanToolStripMenuItem->Text = L"Scan";
-			this->scanToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::scanToolStripMenuItem_Click);
-			// 
-			// m_devlist
-			// 
-			this->m_devlist->Name = L"m_devlist";
-			this->m_devlist->Size = System::Drawing::Size(121, 23);
-			this->m_devlist->Text = L"Select Device";
-			this->m_devlist->Click += gcnew System::EventHandler(this, &Form1::m_devlist_Click);
 			// 
 			// frequencyToolStripMenuItem
 			// 
 			this->frequencyToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->m_FreqList, 
 				this->scanFrequencyToolStripMenuItem, this->printFreqBufferToolStripMenuItem, this->helloToolStripMenuItem});
 			this->frequencyToolStripMenuItem->Name = L"frequencyToolStripMenuItem";
-			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(151, 22);
 			this->frequencyToolStripMenuItem->Text = L"Show";
 			this->frequencyToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::frequencyToolStripMenuItem_Click);
 			// 
@@ -320,6 +308,7 @@ namespace ciptascope {
 			this->printFreqBufferToolStripMenuItem->Name = L"printFreqBufferToolStripMenuItem";
 			this->printFreqBufferToolStripMenuItem->Size = System::Drawing::Size(181, 22);
 			this->printFreqBufferToolStripMenuItem->Text = L"Print Freq Buffer";
+			this->printFreqBufferToolStripMenuItem->Visible = false;
 			this->printFreqBufferToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::printFreqBufferToolStripMenuItem_Click);
 			// 
 			// helloToolStripMenuItem
@@ -327,13 +316,14 @@ namespace ciptascope {
 			this->helloToolStripMenuItem->Name = L"helloToolStripMenuItem";
 			this->helloToolStripMenuItem->Size = System::Drawing::Size(181, 22);
 			this->helloToolStripMenuItem->Text = L"Show Voltage";
+			this->helloToolStripMenuItem->Visible = false;
 			this->helloToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::helloToolStripMenuItem_Click);
 			// 
 			// baudRateToolStripMenuItem
 			// 
 			this->baudRateToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->m_baudrate});
 			this->baudRateToolStripMenuItem->Name = L"baudRateToolStripMenuItem";
-			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(151, 22);
 			this->baudRateToolStripMenuItem->Text = L"BaudRate(bps)";
 			// 
 			// m_baudrate
@@ -347,8 +337,9 @@ namespace ciptascope {
 			// helpToolStripMenuItem
 			// 
 			this->helpToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->aboutToolStripMenuItem});
+			this->helpToolStripMenuItem->Margin = System::Windows::Forms::Padding(0, 5, 0, 5);
 			this->helpToolStripMenuItem->Name = L"helpToolStripMenuItem";
-			this->helpToolStripMenuItem->Size = System::Drawing::Size(44, 20);
+			this->helpToolStripMenuItem->Size = System::Drawing::Size(44, 39);
 			this->helpToolStripMenuItem->Text = L"Help";
 			// 
 			// aboutToolStripMenuItem
@@ -358,36 +349,77 @@ namespace ciptascope {
 			this->aboutToolStripMenuItem->Text = L"About";
 			this->aboutToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::aboutToolStripMenuItem_Click);
 			// 
+			// scanToolStripMenuItem
+			// 
+			this->scanToolStripMenuItem->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->scanToolStripMenuItem->Margin = System::Windows::Forms::Padding(20, 5, 20, 5);
+			this->scanToolStripMenuItem->Name = L"scanToolStripMenuItem";
+			this->scanToolStripMenuItem->Padding = System::Windows::Forms::Padding(30, 10, 30, 10);
+			this->scanToolStripMenuItem->Size = System::Drawing::Size(96, 39);
+			this->scanToolStripMenuItem->Text = L"Scan";
+			this->scanToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::scanToolStripMenuItem_Click);
+			// 
+			// m_devlist
+			// 
+			this->m_devlist->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->m_devlist->Name = L"m_devlist";
+			this->m_devlist->Size = System::Drawing::Size(180, 49);
+			this->m_devlist->Text = L"Select Device";
+			this->m_devlist->Click += gcnew System::EventHandler(this, &Form1::m_devlist_Click_1);
+			// 
+			// openToolStripMenuItem
+			// 
+			this->openToolStripMenuItem->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->openToolStripMenuItem->Margin = System::Windows::Forms::Padding(0, 5, 20, 5);
+			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
+			this->openToolStripMenuItem->Size = System::Drawing::Size(64, 39);
+			this->openToolStripMenuItem->Text = L"Connect";
+			this->openToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::openToolStripMenuItem_Click);
+			// 
+			// closeToolStripMenuItem
+			// 
+			this->closeToolStripMenuItem->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->closeToolStripMenuItem->Margin = System::Windows::Forms::Padding(0, 5, 0, 5);
+			this->closeToolStripMenuItem->Name = L"closeToolStripMenuItem";
+			this->closeToolStripMenuItem->Size = System::Drawing::Size(78, 39);
+			this->closeToolStripMenuItem->Text = L"Disconnect";
+			this->closeToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::closeToolStripMenuItem_Click);
+			// 
 			// statusStrip1
 			// 
 			this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->toolStripStatusLabel1, 
 				this->toolStripStatusLabel2});
-			this->statusStrip1->Location = System::Drawing::Point(0, 401);
+			this->statusStrip1->Location = System::Drawing::Point(0, 377);
+			this->statusStrip1->Margin = System::Windows::Forms::Padding(0, 5, 0, 5);
 			this->statusStrip1->Name = L"statusStrip1";
-			this->statusStrip1->Size = System::Drawing::Size(839, 22);
+			this->statusStrip1->Size = System::Drawing::Size(839, 30);
 			this->statusStrip1->TabIndex = 5;
 			this->statusStrip1->Text = L"statusStrip1";
 			// 
 			// toolStripStatusLabel1
 			// 
+			this->toolStripStatusLabel1->Margin = System::Windows::Forms::Padding(0, 10, 0, 5);
 			this->toolStripStatusLabel1->Name = L"toolStripStatusLabel1";
-			this->toolStripStatusLabel1->Size = System::Drawing::Size(79, 17);
+			this->toolStripStatusLabel1->Size = System::Drawing::Size(79, 15);
 			this->toolStripStatusLabel1->Text = L"Disconnected";
 			// 
 			// toolStripStatusLabel2
 			// 
+			this->toolStripStatusLabel2->Margin = System::Windows::Forms::Padding(0, 10, 0, 2);
 			this->toolStripStatusLabel2->Name = L"toolStripStatusLabel2";
-			this->toolStripStatusLabel2->Size = System::Drawing::Size(80, 17);
+			this->toolStripStatusLabel2->Size = System::Drawing::Size(80, 18);
 			this->toolStripStatusLabel2->Text = L"Card Voltage :";
 			// 
 			// richTextBox1
 			// 
-			this->richTextBox1->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->richTextBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
 			this->richTextBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->richTextBox1->Location = System::Drawing::Point(0, 24);
+			this->richTextBox1->Location = System::Drawing::Point(0, 97);
 			this->richTextBox1->Name = L"richTextBox1";
-			this->richTextBox1->Size = System::Drawing::Size(839, 377);
+			this->richTextBox1->Size = System::Drawing::Size(839, 283);
 			this->richTextBox1->TabIndex = 6;
 			this->richTextBox1->Text = L"";
 			this->richTextBox1->Enter += gcnew System::EventHandler(this, &Form1::richTextBox1_TextChanged);
@@ -400,23 +432,31 @@ namespace ciptascope {
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(671, 3);
+			this->textBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->textBox1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->textBox1->Location = System::Drawing::Point(685, 12);
+			this->textBox1->Margin = System::Windows::Forms::Padding(3, 3, 3, 5);
 			this->textBox1->Name = L"textBox1";
-			this->textBox1->Size = System::Drawing::Size(156, 20);
+			this->textBox1->Size = System::Drawing::Size(142, 20);
 			this->textBox1->TabIndex = 7;
 			// 
 			// label1
 			// 
+			this->label1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(608, 6);
+			this->label1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
+				static_cast<System::Byte>(0)));
+			this->label1->Location = System::Drawing::Point(616, 15);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(57, 13);
 			this->label1->TabIndex = 8;
 			this->label1->Text = L"Frequency";
+			this->label1->Click += gcnew System::EventHandler(this, &Form1::label1_Click);
 			// 
 			// textBox2
 			// 
-			this->textBox2->Location = System::Drawing::Point(450, 3);
+			this->textBox2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
+			this->textBox2->Location = System::Drawing::Point(397, 386);
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->Size = System::Drawing::Size(143, 20);
 			this->textBox2->TabIndex = 9;
@@ -433,27 +473,40 @@ namespace ciptascope {
 			this->voltage->Interval = 500;
 			this->voltage->Tick += gcnew System::EventHandler(this, &Form1::voltage_Tick);
 			// 
+			// panel1
+			// 
+			this->panel1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->panel1->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
+			this->panel1->BackColor = System::Drawing::SystemColors::ButtonShadow;
+			this->panel1->Controls->Add(this->label1);
+			this->panel1->Controls->Add(this->textBox1);
+			this->panel1->Location = System::Drawing::Point(0, 50);
+			this->panel1->Name = L"panel1";
+			this->panel1->Size = System::Drawing::Size(839, 41);
+			this->panel1->TabIndex = 10;
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(839, 423);
+			this->ClientSize = System::Drawing::Size(839, 407);
 			this->Controls->Add(this->textBox2);
-			this->Controls->Add(this->label1);
-			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->richTextBox1);
 			this->Controls->Add(this->statusStrip1);
+			this->Controls->Add(this->panel1);
 			this->Controls->Add(this->MainMenu);
 			this->MainMenuStrip = this->MainMenu;
-			this->MaximizeBox = false;
 			this->Name = L"Form1";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
-			this->Text = L"ciptascope 0.10b";
+			this->Text = L"Ciptascope 0.10b";
 			this->Load += gcnew System::EventHandler(this, &Form1::Form1_Load);
 			this->MainMenu->ResumeLayout(false);
 			this->MainMenu->PerformLayout();
 			this->statusStrip1->ResumeLayout(false);
 			this->statusStrip1->PerformLayout();
+			this->panel1->ResumeLayout(false);
+			this->panel1->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -961,7 +1014,13 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 						else if((RxBuffer[1]) & 0x10){	//T0
 							unsigned int Fi = Fimap[(RxBuffer[2] & 0xF0) >> 4];
 							unsigned char Di= Dimap[RxBuffer[2] & 0x0F];
-								baudrate = f*Di/(Fi);							
+							if(Fi ==0x00){
+								baudrate =f*Di;
+								richTextBox1->Text +="\n" +">>>> Fi=0" +"\n";
+							}
+							else{
+								baudrate = f*Di/(Fi);
+							}						
 						}
 						//FT_ResetDevice(ftHandle);
 						FT_SetChars (ftHandle, NULL, NULL, NULL, NULL);
@@ -1146,7 +1205,7 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
 					pdupoll->Enabled="True";
 					timer1->Enabled="True"; //enable the timer
 					counter = 0;
-					//voltage->Enabled="True";
+					voltage->Enabled="True";
 				}
 				else {
 					// FT_Open Failed
@@ -1154,7 +1213,7 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
 			}
 		}
 		else {
-		
+			MessageBox::Show( "1. Please make sure Ciptascope device has been connected\n2. Click Scan\n3. Select Device\n4. Click Connect", "Error : Could not connect the device",    MessageBoxButtons::OK, MessageBoxIcon::Exclamation );
 		}
 	}
 private: System::Void scanToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -1201,6 +1260,7 @@ private: System::Void scanToolStripMenuItem_Click(System::Object^  sender, Syste
 			String ^tempstr= gcnew String(DevInfo[count].SerialNumber);//Description);
 			m_devlist->Items->Add(tempstr);
 			}
+		m_devlist->Text = gcnew String(DevInfo[0].SerialNumber);
 		// Free storage
 		free(DevInfo);	
 		free(RDevsInfo);
@@ -1262,13 +1322,13 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 					richTextBox1->SelectionStart = richTextBox1->Text->Length;
 					richTextBox1->ScrollToCaret();
 					//================= show data from buffer ===================//
-						/*for(i=0;i<BytesReceived;i++){
+						for(i=0;i<BytesReceived;i++){
 							sprintf(&sTmp[0], "%02X",RxBuffer[i] & 0xFF);
 							strcat(hexStr, sTmp);
 						
 						}
 						sprintf(&sTmp[0], "\n");
-						strcat(hexStr, sTmp);*/ 
+						strcat(hexStr, sTmp);
 					//=====================end of showing data from buffer ===========//
 						if((0x3B ==RxBuffer[0] & 0xFF)){
 							BytesReceived =0;
@@ -1385,8 +1445,9 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 								sprintf(&sTmp[0], "%02X", DT[i]);
 								strcat(hexStr, sTmp);
 							}
+							if(remaining==0){
 							sprintf(&sTmp[0], "\n");
-							strcat(hexStr, sTmp);
+							strcat(hexStr, sTmp);}
 							
 						}
 						else if(phase == 4){ //SW
@@ -1493,10 +1554,10 @@ private: System::Void scanFrequencyToolStripMenuItem_Click(System::Object^  send
 			ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
 			freqDataBuffer[counter] = data;
 			/*if(counter ==0){
-				sprintf(&buffer[0], "%02d", data*1000);
-				textBox2->Text = gcnew String(buffer);
-			}*/ 
-			sprintf(&buffer[0], "%02d", data*1000);
+				sprintf(&buffer[0], "%02d Hz", data*1000);
+				textBox1->Text = gcnew String(buffer);
+			}*/
+			sprintf(&buffer[0], "%02d Hz", data*1000);
 			textBox1->Text = gcnew String(buffer);
 		}
 private: System::Void MainMenu_ItemClicked(System::Object^  sender, System::Windows::Forms::ToolStripItemClickedEventArgs^  e) {
@@ -1660,7 +1721,12 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 					voltage->Enabled="False";
 				}
 			}*/ 
-			sprintf(&buffer[0], "Card Voltage : %02d mV", 600+(2*data*5060/256)); //ref voltage :5090mV
+			if(data<30){
+				sprintf(&buffer[0], "Card Voltage : 0 mV"); //ref voltage :5090mV
+			}
+			else{
+				sprintf(&buffer[0], "Card Voltage : %02d mV", 600+(2*data*5060/256));
+			}
 			toolStripStatusLabel2->Text = gcnew String(buffer);
 		 }
 private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -1684,6 +1750,11 @@ private: System::Void openLogFileToolStripMenuItem_Click(System::Object^  sender
          // Load the contents of the file into the RichTextBox.
          richTextBox1->LoadFile( openFile1->FileName,RichTextBoxStreamType::PlainText );
       }
+		 }
+
+private: System::Void m_devlist_Click_1(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 };
 }
