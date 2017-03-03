@@ -1,9 +1,11 @@
 RAM Allocation [bytes]
 Variable                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
-rx_buffer                                                                         0x0160      32
-rx_rd_index                                                                       0x0180       1
-rx_counter                                                                        0x0181       1
+vCard                                                                             0x0160       1
+rx_buffer                                                                         0x0161      32
+rx_wr_index                                                                       0x0181       1
+rx_rd_index                                                                       0x0182       1
+rx_counter                                                                        0x0183       1
 
 EEPROM Allocation [bytes]
 Variable                                                                          Address   Size
@@ -14,22 +16,21 @@ Variable                                                                        
 ------------------------------------------------------------------------------------------------
 updatefreq                                                                        R5           1
 counter                                                                           R6,R7        2
-frq                                                                               R8,R9        2
-tVoltage                                                                          R10,R11      2
+counter2                                                                          R8,R9        2
+frq                                                                               R10,R11      2
+tVoltage                                                                          R12,R13      2
 fRSTCTL                                                                           R2.0      1bit
 cTIMERST                                                                          R4           1
-vCard                                                                             R13          1
-rx_wr_index                                                                       R12          1
 rx_buffer_overflow                                                                R2.1      1bit
 
 FLASH Allocation [words]
 Function                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
-read_adc                                                                          0x00051     14
-ext_int0_isr                                                                      0x0005F     23
-ext_int1_isr                                                                      0x00076      1
-spi_isr                                                                           0x00077     20
-usart_rx_isr                                                                      0x0008B     41
-timer0_ovf_isr                                                                    0x000B4     83
-timer1_ovf_isr                                                                    0x00107      1
-main                                                                              0x00108     77
+read_adc                                                                          0x0004D     14
+ext_int0_isr                                                                      0x0005B     24
+ext_int1_isr                                                                      0x00073      1
+spi_isr                                                                           0x00074     20
+usart_rx_isr                                                                      0x00088     48
+timer0_ovf_isr                                                                    0x000B8     87
+timer1_ovf_isr                                                                    0x0010F      1
+main                                                                              0x00110     79

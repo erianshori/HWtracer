@@ -308,7 +308,6 @@ namespace ciptascope {
 			this->printFreqBufferToolStripMenuItem->Name = L"printFreqBufferToolStripMenuItem";
 			this->printFreqBufferToolStripMenuItem->Size = System::Drawing::Size(181, 22);
 			this->printFreqBufferToolStripMenuItem->Text = L"Print Freq Buffer";
-			this->printFreqBufferToolStripMenuItem->Visible = false;
 			this->printFreqBufferToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::printFreqBufferToolStripMenuItem_Click);
 			// 
 			// helloToolStripMenuItem
@@ -460,7 +459,6 @@ namespace ciptascope {
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->Size = System::Drawing::Size(143, 20);
 			this->textBox2->TabIndex = 9;
-			this->textBox2->Visible = false;
 			this->textBox2->TextChanged += gcnew System::EventHandler(this, &Form1::textBox2_TextChanged);
 			// 
 			// timer1
@@ -515,7 +513,7 @@ namespace ciptascope {
 
 private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e)  {
 	FT_STATUS ftStatus;
-	byte ucMask;
+	byte ucMask,mask;
 	byte index;
 	DWORD RxBytes,i;
 	DWORD BytesReceived,TotalBytesReceived; 
@@ -523,8 +521,25 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 	char RxBuffer[256];
 	WORD baudbuf=0;
 
+
 	ftStatus = FT_SetBitMode(ftHandle,0xCC,0x20);//11011100
 	ftStatus = FT_GetBitMode(ftHandle, &ucMask);
+	mask = (ucMask & 0x01) &&(ucMask & 0x04); //MISO ==1 and SS == 1
+			 if(mask && (counter==0)){
+				scanFrequencyToolStripMenuItem_Click(sender,e);
+				//temp = freqDataBuffer[0]*1000/372;
+				if(freqDataBuffer[0] > 3800){
+					temp = 10000;
+				}
+				else if((freqDataBuffer[0] > 3300)||(freqDataBuffer[0] < 3100)) {
+					temp =9600;
+				}
+				else{
+					temp=8800;
+				}
+				counter=1;
+			 }
+			
 	if (ftStatus != FT_OK) {
 		
 	}
@@ -534,8 +549,9 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		if (ucMask & 0x02){
 		}
 		else 
-		{
-			//pdupoll->Enabled="False";
+		{	
+			 //ftStatus = FT_GetBitMode(ftHandle, &ucMask);
+			 //pdupoll->Enabled="False";
 			//set global index
 			globalIndex =0;
 			phase =1; //CLA
@@ -568,7 +584,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			ftStatus = FT_SetEventNotification(ftHandle,EventMask,hEvent); 
 			 
 			//WaitForSingleObject(hEvent,INFINITE); 
-			WaitForSingleObject(hEvent, 300); 
+			WaitForSingleObject(hEvent, 200); 
 			DWORD EventDWord; 
 			DWORD RxBytes; 
 			DWORD TxBytes; 
@@ -581,14 +597,16 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 				
 				ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
 				ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
-			
+				sprintf(&buffer[0], "%02d", temp);
+				textBox2->Text = gcnew String(buffer);
 				
 				TotalBytesReceived+=BytesReceived;
 				if (ftStatus == FT_OK) 
 				{
-					if(RxBuffer[0]==0x3B ||RxBuffer[0]==0x3F)
+					if(1)//(RxBuffer[0]==0x3B ||RxBuffer[0]==0x3F)
 					//	if (RxBytes > 0) 
 					{
+						
 						if(TotalBytesReceived==1)
 						{
 						//wait T0
@@ -600,7 +618,13 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 							ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
 							TotalBytesReceived+=BytesReceived;
 						}
+						if((RxBuffer[0] & 0xff) == 0xe7)
+						{
+							RxBuffer[0] = 0x3B;
+							RxBuffer[1] = 0x9f;
+						}
 						//calculate atr length from T0
+						//RxBuffer[1] = 0x9f;
 						unsigned char TOTAL_ATR_RECEIVED=TotalBytesReceived;
 						unsigned char TCK_PRESENT=0;
 						unsigned char TOTAL_ATR_LENGTH = 0;
@@ -1200,12 +1224,14 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
 					//FT_SetDeadmanTimeout (ftHandle,6000);
 					//set SS to HIGH,0b11001100
 					ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-					ftStatus = FT_SetBaudRate(ftHandle, 10000);
+					ftStatus = FT_SetBaudRate(ftHandle, 8800);
 					CardResetPoll->Enabled="True";
 					pdupoll->Enabled="True";
-					timer1->Enabled="True"; //enable the timer
+					freqDataBuffer[0]=3200;
+					temp=8800;
+					//timer1->Enabled="True"; //enable the timer
 					counter = 0;
-					voltage->Enabled="True";
+					//voltage->Enabled="True";
 				}
 				else {
 					// FT_Open Failed
@@ -1275,6 +1301,14 @@ private: System::Void closeToolStripMenuItem_Click(System::Object^  sender, Syst
 		toolStripStatusLabel1->Text="Disconnected";
 		CardResetPoll->Enabled="False";
 		pdupoll->Enabled="False";
+		temp =0;
+		counter =0;
+		globalIndex =0;
+			phase =1; //CLA
+			assign =0;
+			remaining=0;
+			datalength = 0;
+			updatebaudcounter = 0;
 	}
 	else {
 		// FT_Close Failed
@@ -1300,16 +1334,17 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 				if(updatebaudcounter >100){
 					updatebaudcounter = 0;
 					scanFrequencyToolStripMenuItem_Click(sender,e);
+					
 					//temp = freqDataBuffer[0]*1000/372;
 					if(freqDataBuffer[0] > 3800){
 						temp = 10000;
 					}
 					else {
 						temp =9600;
-					}
+					}FT_SetBaudRate(ftHandle, temp);//temp-300);//freqDataBuffer[0]*1000/372-300);
 				}*/
 			FT_GetQueueStatus(ftHandle, &RxBytes);
-			if (RxBytes > 0) {
+			if (RxBytes > 0) {	
 				ftStatus = FT_Read(ftHandle, RxBuffer, RxBytes, &BytesReceived);
 				if (ftStatus == FT_OK) {
 					// FT_Read OK 
@@ -1319,16 +1354,15 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 						hexStr[i]=0x00;
 					}
 					globalIndex=0;
-					richTextBox1->SelectionStart = richTextBox1->Text->Length;
-					richTextBox1->ScrollToCaret();
+					
 					//================= show data from buffer ===================//
-						for(i=0;i<BytesReceived;i++){
+						/*for(i=0;i<BytesReceived;i++){
 							sprintf(&sTmp[0], "%02X",RxBuffer[i] & 0xFF);
 							strcat(hexStr, sTmp);
 						
 						}
 						sprintf(&sTmp[0], "\n");
-						strcat(hexStr, sTmp);
+						strcat(hexStr, sTmp);*/
 					//=====================end of showing data from buffer ===========//
 						if((0x3B ==RxBuffer[0] & 0xFF)){
 							BytesReceived =0;
@@ -1485,6 +1519,8 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 					}
 					//======================end of parsing ========================//
 					richTextBox1->Text += gcnew String(hexStr);
+					//richTextBox1->SelectionStart = richTextBox1->Text->Length;
+					//richTextBox1->ScrollToCaret();
 				}
 			}
 			
@@ -1493,6 +1529,8 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 private: System::Void cleanToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 
 			 richTextBox1->Clear();
+			 textBox2->Clear();
+			 textBox1->Clear();
 		 }
 private: System::Void deviceToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
@@ -1603,8 +1641,11 @@ private: System::Void timer1_Tick_1(System::Object^  sender, System::EventArgs^ 
 				if(freqDataBuffer[0] > 3800){
 					temp = 10000;
 				}
-				else {
+				else if((freqDataBuffer[0] > 3300)||(freqDataBuffer[0] < 3100)) {
 					temp =9600;
+				}
+				else{
+					temp=8800;
 				}
 				counter=1;
 			 }
@@ -1612,7 +1653,7 @@ private: System::Void timer1_Tick_1(System::Object^  sender, System::EventArgs^ 
 private: System::Void printFreqBufferToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 			char buffer[10];
 			richTextBox1 ->Clear();
-			 for(int i=0;i<60;i++)
+			 for(int i=0;i<2;i++)
 			{
 				sprintf(&buffer[0], "%02x", freqDataBuffer[i]);
 				richTextBox1->Text += gcnew String(buffer) + "\n";

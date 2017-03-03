@@ -48,7 +48,7 @@ Data Stack size         : 256
 // Declare your global variables here
 unsigned char updatefreq; //0x01 : allowed to update freq, 0x00 : not allowed to update freq
 //unsigned char sendfinish; //0x01 : has been sent, 0x00 : has not been sent
-unsigned int counter; //counter for timer0
+unsigned int counter,counter2; //counter for timer0
 unsigned int frq; //frequency of card    
 unsigned int tVoltage;
 //bit status;
@@ -84,7 +84,8 @@ unsigned char i;
             fRSTCTL =1;
             cTIMERST = 50; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
                             //namun tetap menghasilkan delay 50ms karena timer nol interrupt setiap 1 ms
-         oRSTCTL =0;
+         oRSTCTL =0;   
+         oDATACTL=1;
         }
     }
 }
@@ -201,20 +202,19 @@ UDR=c;
 interrupt [TIM0_OVF] void timer0_ovf_isr(void)
 {
 // Reinitialize Timer 0 value
-//TCNT0=0xC2;v1.0
-//TCNT0=0x83;  //v1.1
 TCNT0=0x06;
 // Place your code here
     if(fRSTCTL)
-    {   
+    {               
         vCard = read_adc(0);
         if(!cTIMERST--)
         {
             if(vCard >25)
             {
-                cTIMERST=0;
-                fRSTCTL=0; 
-                oRSTCTL=1;
+                cTIMERST=0;   
+                oRSTCTL=1; 
+                
+                       
             }
             else
             {
@@ -224,27 +224,32 @@ TCNT0=0x06;
         if(iDATAOUT){
             //MISO = HIGH 
             if(iISP_SS){
-            if(frq >= 0x03e8) //more than 1MHz
-                {
-                  PORTB |= (1<<PORTB4);
-                }
-                else{
-                  PORTB &= ~(1<<PORTB4);
-                }    
+                if(frq >= 0x03e8) //more than 1MHz
+                    {
+                      PORTB |= (1<<PORTB4);
+                      oDATACTL=0; fRSTCTL=0;
+                    }
+                    else{
+                      PORTB &= ~(1<<PORTB4);
+                      oDATACTL=1;
+                    }
+                    
             }
         }
         else
         {
              PORTB &= ~(1<<PORTB4);
-        }
-        //TCNT1H =0x00;
-        //TCNT1L =0x00;
-        //counter = 0;
-        //SPDR=0x00;          
-    }
-    //else //v1.1   scan freq
-    //{
-        counter++;
+        }   
+    }        
+        /*if(oDATACTL==1){
+            counter2++;
+            if(counter2>15){
+                oDATACTL =0;
+                oRSTCTL=1;
+                counter2=0;
+            }
+        }*/
+        counter++;     
         TCNT0=0x06;	
         if(counter>=1) //freq sampling per 1ms
         {
@@ -265,7 +270,6 @@ TCNT0=0x06;
                 #asm("sei"); 
             }
 	    } 
-    //}
 }
 // Timer1 overflow interrupt service routine
 interrupt [TIM1_OVF] void timer1_ovf_isr(void)
@@ -414,7 +418,8 @@ tVoltage = read_adc(ISO_VCC);
 #asm("sei")
 //UsartTx_Off;
 //initialize the global variable
-            counter=0;
+            counter=0;    
+            counter2=0;
            updatefreq = 0x01;
            SPDR =0;
 while (1)
