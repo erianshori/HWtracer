@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.30  D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm Fri Mar 03 15:55:12 2017
+AVRASM ver. 2.1.30  D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm Fri Mar 03 17:01:26 2017
 
 D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm(1086): warning: Register r5 already defined by the .DEF directive
 D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm(1087): warning: Register r6 already defined by the .DEF directive
@@ -1117,16 +1117,16 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ;INTERRUPT VECTORS
 000000 c020      	RJMP __RESET
 000001 c059      	RJMP _ext_int0_isr
-000002 c070      	RJMP _ext_int1_isr
+000002 c06f      	RJMP _ext_int1_isr
 000003 cffc      	RJMP 0x00
 000004 cffb      	RJMP 0x00
 000005 cffa      	RJMP 0x00
 000006 cff9      	RJMP 0x00
 000007 cff8      	RJMP 0x00
-000008 c106      	RJMP _timer1_ovf_isr
-000009 c0ae      	RJMP _timer0_ovf_isr
-00000a c069      	RJMP _spi_isr
-00000b c07c      	RJMP _usart_rx_isr
+000008 c103      	RJMP _timer1_ovf_isr
+000009 c0ad      	RJMP _timer0_ovf_isr
+00000a c068      	RJMP _spi_isr
+00000b c07b      	RJMP _usart_rx_isr
 00000c cff3      	RJMP 0x00
 00000d cff2      	RJMP 0x00
 00000e cff1      	RJMP 0x00
@@ -1225,7 +1225,7 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
 00004a e6c0      	LDI  R28,LOW(__SRAM_START+__DSTACK_SIZE)
 00004b e0d1      	LDI  R29,HIGH(__SRAM_START+__DSTACK_SIZE)
                  
-00004c c0c3      	RJMP _main
+00004c c0c0      	RJMP _main
                  
                  	.ESEG
                  	.ORG 0
@@ -1356,7 +1356,7 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
 00005e 931a      	ST   -Y,R17
                  ;	i -> R17
 00005f 9982      	SBIC 0x10,2
-000060 c00d      	RJMP _0x6
+000060 c00c      	RJMP _0x6
                  ; 0000 0050     {
                  ; 0000 0051         for(i=0;i<10;i++){};
 000061 e010      	LDI  R17,LOW(0)
@@ -1368,7 +1368,7 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  _0x9:
                  ; 0000 0052         if(!iRSTOUT)
 000066 9982      	SBIC 0x10,2
-000067 c006      	RJMP _0xA
+000067 c005      	RJMP _0xA
                  ; 0000 0053         {
                  ; 0000 0054             fRSTCTL =1;
 000068 9468      	SET
@@ -1379,18 +1379,17 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 0056                             //namun tetap menghasilkan delay 50ms karena timer nol interrupt setiap 1 ms
                  ; 0000 0057          oRSTCTL =0;
 00006c 9894      	CBI  0x12,4
-                 ; 0000 0058          oDATACTL=1;
-00006d 9a97      	SBI  0x12,7
+                 ; 0000 0058          //oDATACTL=1;
                  ; 0000 0059         }
                  ; 0000 005A     }
                  _0xA:
                  ; 0000 005B }
                  _0x6:
-00006e 9119      	LD   R17,Y+
-00006f 91e9      	LD   R30,Y+
-000070 bfef      	OUT  SREG,R30
-000071 91e9      	LD   R30,Y+
-000072 9518      	RETI
+00006d 9119      	LD   R17,Y+
+00006e 91e9      	LD   R30,Y+
+00006f bfef      	OUT  SREG,R30
+000070 91e9      	LD   R30,Y+
+000071 9518      	RETI
                  ; .FEND
                  ;
                  ;// External Interrupt 1 service routine
@@ -1401,53 +1400,53 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 0060 // Place your code here
                  ; 0000 0061 
                  ; 0000 0062 }
-000073 9518      	RETI
+000072 9518      	RETI
                  ; .FEND
                  ;// SPI interrupt service routine
                  ;interrupt [SPI_STC] void spi_isr(void)
                  ; 0000 0065 {
                  _spi_isr:
                  ; .FSTART _spi_isr
-000074 d0ea      	RCALL SUBOPT_0x0
+000073 d0e8      	RCALL SUBOPT_0x0
                  ; 0000 0066 // Place your code here
                  ; 0000 0067     if(SPDR ==0x51){
-000075 b1ef      	IN   R30,0xF
-000076 35e1      	CPI  R30,LOW(0x51)
-000077 f431      	BRNE _0xF
+000074 b1ef      	IN   R30,0xF
+000075 35e1      	CPI  R30,LOW(0x51)
+000076 f431      	BRNE _0xD
                  ; 0000 0068         updatefreq =0x00;
-000078 2455      	CLR  R5
+000077 2455      	CLR  R5
                  ; 0000 0069         SPDR = (read_adc(0)>>2) & 0x00ff;
-000079 e0a0      	LDI  R26,LOW(0)
-00007a dfd2      	RCALL _read_adc
-00007b d0f5      	RCALL __LSRW2
-00007c b9ef      	OUT  0xF,R30
+000078 e0a0      	LDI  R26,LOW(0)
+000079 dfd3      	RCALL _read_adc
+00007a d0f3      	RCALL __LSRW2
+00007b b9ef      	OUT  0xF,R30
                  ; 0000 006A    }
                  ; 0000 006B     else{
-00007d c009      	RJMP _0x10
-                 _0xF:
+00007c c009      	RJMP _0xE
+                 _0xD:
                  ; 0000 006C         if(updatefreq > 0x00){ //updatefreq ==1
-00007e e0e0      	LDI  R30,LOW(0)
-00007f 15e5      	CP   R30,R5
-000080 f420      	BRSH _0x11
+00007d e0e0      	LDI  R30,LOW(0)
+00007e 15e5      	CP   R30,R5
+00007f f420      	BRSH _0xF
                  ; 0000 006D             SPDR = (frq & 0xff);   //set SPDR to LSB
-000081 2dea      	MOV  R30,R10
-000082 b9ef      	OUT  0xF,R30
+000080 2dea      	MOV  R30,R10
+000081 b9ef      	OUT  0xF,R30
                  ; 0000 006E             updatefreq =0x00; //disable update freq
-000083 2455      	CLR  R5
+000082 2455      	CLR  R5
                  ; 0000 006F         }
                  ; 0000 0070         else //update freq == 0
-000084 c002      	RJMP _0x12
-                 _0x11:
+000083 c002      	RJMP _0x10
+                 _0xF:
                  ; 0000 0071         {
                  ; 0000 0072             updatefreq=0x01;
-000085 e0e1      	LDI  R30,LOW(1)
-000086 2e5e      	MOV  R5,R30
+000084 e0e1      	LDI  R30,LOW(1)
+000085 2e5e      	MOV  R5,R30
                  ; 0000 0073         }
-                 _0x12:
-                 ; 0000 0074     }
                  _0x10:
+                 ; 0000 0074     }
+                 _0xE:
                  ; 0000 0075 }
-000087 c079      	RJMP _0x34
+000086 c077      	RJMP _0x2E
                  ; .FEND
                  ;#define DATA_REGISTER_EMPTY (1<<UDRE)
                  ;#define RX_COMPLETE (1<<RXC)
@@ -1479,71 +1478,71 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 0091 {
                  _usart_rx_isr:
                  ; .FSTART _usart_rx_isr
-000088 93aa      	ST   -Y,R26
-000089 93ea      	ST   -Y,R30
-00008a 93fa      	ST   -Y,R31
-00008b b7ef      	IN   R30,SREG
-00008c 93ea      	ST   -Y,R30
+000087 93aa      	ST   -Y,R26
+000088 93ea      	ST   -Y,R30
+000089 93fa      	ST   -Y,R31
+00008a b7ef      	IN   R30,SREG
+00008b 93ea      	ST   -Y,R30
                  ; 0000 0092 char status,data;
                  ; 0000 0093 status=UCSRA;
-00008d d0e8      	RCALL __SAVELOCR2
+00008c d0e6      	RCALL __SAVELOCR2
                  ;	status -> R17
                  ;	data -> R16
-00008e b11b      	IN   R17,11
+00008d b11b      	IN   R17,11
                  ; 0000 0094 data=UDR;
-00008f b10c      	IN   R16,12
+00008e b10c      	IN   R16,12
                  ; 0000 0095 if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN))==0)
-000090 2fe1      	MOV  R30,R17
-000091 71ec      	ANDI R30,LOW(0x1C)
-000092 f4e9      	BRNE _0x13
+00008f 2fe1      	MOV  R30,R17
+000090 71ec      	ANDI R30,LOW(0x1C)
+000091 f4e9      	BRNE _0x11
                  ; 0000 0096    {
                  ; 0000 0097    rx_buffer[rx_wr_index++]=data;
-000093 91e0 0181 	LDS  R30,_rx_wr_index
-000095 5fef      	SUBI R30,-LOW(1)
-000096 93e0 0181 	STS  _rx_wr_index,R30
-000098 50e1      	SUBI R30,LOW(1)
-000099 e0f0      	LDI  R31,0
-00009a 59ef      	SUBI R30,LOW(-_rx_buffer)
-00009b 4ffe      	SBCI R31,HIGH(-_rx_buffer)
-00009c 8300      	ST   Z,R16
+000092 91e0 0181 	LDS  R30,_rx_wr_index
+000094 5fef      	SUBI R30,-LOW(1)
+000095 93e0 0181 	STS  _rx_wr_index,R30
+000097 50e1      	SUBI R30,LOW(1)
+000098 e0f0      	LDI  R31,0
+000099 59ef      	SUBI R30,LOW(-_rx_buffer)
+00009a 4ffe      	SBCI R31,HIGH(-_rx_buffer)
+00009b 8300      	ST   Z,R16
                  ; 0000 0098 #if RX_BUFFER_SIZE == 256
                  ; 0000 0099    // special case for receiver buffer size=256
                  ; 0000 009A    if (++rx_counter == 0) rx_buffer_overflow=1;
                  ; 0000 009B #else
                  ; 0000 009C    if (rx_wr_index == RX_BUFFER_SIZE) rx_wr_index=0;
-00009d 91a0 0181 	LDS  R26,_rx_wr_index
-00009f 32a0      	CPI  R26,LOW(0x20)
-0000a0 f419      	BRNE _0x14
-0000a1 e0e0      	LDI  R30,LOW(0)
-0000a2 93e0 0181 	STS  _rx_wr_index,R30
+00009c 91a0 0181 	LDS  R26,_rx_wr_index
+00009e 32a0      	CPI  R26,LOW(0x20)
+00009f f419      	BRNE _0x12
+0000a0 e0e0      	LDI  R30,LOW(0)
+0000a1 93e0 0181 	STS  _rx_wr_index,R30
                  ; 0000 009D    if (++rx_counter == RX_BUFFER_SIZE)
-                 _0x14:
-0000a4 91a0 0183 	LDS  R26,_rx_counter
-0000a6 5faf      	SUBI R26,-LOW(1)
-0000a7 93a0 0183 	STS  _rx_counter,R26
-0000a9 32a0      	CPI  R26,LOW(0x20)
-0000aa f429      	BRNE _0x15
+                 _0x12:
+0000a3 91a0 0183 	LDS  R26,_rx_counter
+0000a5 5faf      	SUBI R26,-LOW(1)
+0000a6 93a0 0183 	STS  _rx_counter,R26
+0000a8 32a0      	CPI  R26,LOW(0x20)
+0000a9 f429      	BRNE _0x13
                  ; 0000 009E       {
                  ; 0000 009F       rx_counter=0;
-0000ab e0e0      	LDI  R30,LOW(0)
-0000ac 93e0 0183 	STS  _rx_counter,R30
+0000aa e0e0      	LDI  R30,LOW(0)
+0000ab 93e0 0183 	STS  _rx_counter,R30
                  ; 0000 00A0       rx_buffer_overflow=1;
-0000ae 9468      	SET
-0000af f821      	BLD  R2,1
+0000ad 9468      	SET
+0000ae f821      	BLD  R2,1
                  ; 0000 00A1       }
                  ; 0000 00A2 #endif
                  ; 0000 00A3    }
-                 _0x15:
-                 ; 0000 00A4 }
                  _0x13:
-0000b0 9109      	LD   R16,Y+
-0000b1 9119      	LD   R17,Y+
-0000b2 91e9      	LD   R30,Y+
-0000b3 bfef      	OUT  SREG,R30
-0000b4 91f9      	LD   R31,Y+
-0000b5 91e9      	LD   R30,Y+
-0000b6 91a9      	LD   R26,Y+
-0000b7 9518      	RETI
+                 ; 0000 00A4 }
+                 _0x11:
+0000af 9109      	LD   R16,Y+
+0000b0 9119      	LD   R17,Y+
+0000b1 91e9      	LD   R30,Y+
+0000b2 bfef      	OUT  SREG,R30
+0000b3 91f9      	LD   R31,Y+
+0000b4 91e9      	LD   R30,Y+
+0000b5 91a9      	LD   R26,Y+
+0000b6 9518      	RETI
                  ; .FEND
                  ;
                  ;#ifndef _DEBUG_TERMINAL_IO_
@@ -1588,91 +1587,89 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 00CB {
                  _timer0_ovf_isr:
                  ; .FSTART _timer0_ovf_isr
-0000b8 d0a6      	RCALL SUBOPT_0x0
+0000b7 d0a4      	RCALL SUBOPT_0x0
                  ; 0000 00CC // Reinitialize Timer 0 value
                  ; 0000 00CD TCNT0=0x06;
-0000b9 e0e6      	LDI  R30,LOW(6)
-0000ba bfe2      	OUT  0x32,R30
+0000b8 e0e6      	LDI  R30,LOW(6)
+0000b9 bfe2      	OUT  0x32,R30
                  ; 0000 00CE // Place your code here
                  ; 0000 00CF     if(fRSTCTL)
-0000bb fe20      	SBRS R2,0
-0000bc c023      	RJMP _0x1D
+0000ba fe20      	SBRS R2,0
+0000bb c021      	RJMP _0x1B
                  ; 0000 00D0     {
                  ; 0000 00D1         vCard = read_adc(0);
-0000bd e0a0      	LDI  R26,LOW(0)
-0000be df8e      	RCALL _read_adc
-0000bf 93e0 0160 	STS  _vCard,R30
+0000bc e0a0      	LDI  R26,LOW(0)
+0000bd df8f      	RCALL _read_adc
+0000be 93e0 0160 	STS  _vCard,R30
                  ; 0000 00D2         if(!cTIMERST--)
-0000c1 2de4      	MOV  R30,R4
-0000c2 944a      	DEC  R4
-0000c3 30e0      	CPI  R30,0
-0000c4 f449      	BRNE _0x1E
+0000c0 2de4      	MOV  R30,R4
+0000c1 944a      	DEC  R4
+0000c2 30e0      	CPI  R30,0
+0000c3 f459      	BRNE _0x1C
                  ; 0000 00D3         {
                  ; 0000 00D4             if(vCard >25)
-0000c5 91a0 0160 	LDS  R26,_vCard
-0000c7 31aa      	CPI  R26,LOW(0x1A)
-0000c8 f018      	BRLO _0x1F
+0000c4 91a0 0160 	LDS  R26,_vCard
+0000c6 31aa      	CPI  R26,LOW(0x1A)
+0000c7 f028      	BRLO _0x1D
                  ; 0000 00D5             {
                  ; 0000 00D6                 cTIMERST=0;
-0000c9 2444      	CLR  R4
+0000c8 2444      	CLR  R4
                  ; 0000 00D7                 oRSTCTL=1;
-0000ca 9a94      	SBI  0x12,4
-                 ; 0000 00D8 
+0000c9 9a94      	SBI  0x12,4
+                 ; 0000 00D8                 fRSTCTL=0;
+0000ca 94e8      	CLT
+0000cb f820      	BLD  R2,0
                  ; 0000 00D9 
                  ; 0000 00DA             }
                  ; 0000 00DB             else
-0000cb c002      	RJMP _0x22
-                 _0x1F:
+0000cc c002      	RJMP _0x20
+                 _0x1D:
                  ; 0000 00DC             {
                  ; 0000 00DD                 cTIMERST=5;//diubah dari v1.0 sebelumnya 10
-0000cc e0e5      	LDI  R30,LOW(5)
-0000cd 2e4e      	MOV  R4,R30
+0000cd e0e5      	LDI  R30,LOW(5)
+0000ce 2e4e      	MOV  R4,R30
                  ; 0000 00DE             }
-                 _0x22:
+                 _0x20:
                  ; 0000 00DF         }
                  ; 0000 00E0         if(iDATAOUT){
-                 _0x1E:
-0000ce 9b83      	SBIS 0x10,3
-0000cf c00f      	RJMP _0x23
+                 _0x1C:
+0000cf 9b83      	SBIS 0x10,3
+0000d0 c00b      	RJMP _0x21
                  ; 0000 00E1             //MISO = HIGH
                  ; 0000 00E2             if(iISP_SS){
-0000d0 9bb2      	SBIS 0x16,2
-0000d1 c00c      	RJMP _0x24
+0000d1 9bb2      	SBIS 0x16,2
+0000d2 c008      	RJMP _0x22
                  ; 0000 00E3                 if(frq >= 0x03e8) //more than 1MHz
-0000d2 eee8      	LDI  R30,LOW(1000)
-0000d3 e0f3      	LDI  R31,HIGH(1000)
-0000d4 16ae      	CP   R10,R30
-0000d5 06bf      	CPC  R11,R31
-0000d6 f028      	BRLO _0x25
+0000d3 eee8      	LDI  R30,LOW(1000)
+0000d4 e0f3      	LDI  R31,HIGH(1000)
+0000d5 16ae      	CP   R10,R30
+0000d6 06bf      	CPC  R11,R31
+0000d7 f010      	BRLO _0x23
                  ; 0000 00E4                     {
                  ; 0000 00E5                       PORTB |= (1<<PORTB4);
-0000d7 9ac4      	SBI  0x18,4
-                 ; 0000 00E6                       oDATACTL=0; fRSTCTL=0;
-0000d8 9897      	CBI  0x12,7
-0000d9 94e8      	CLT
-0000da f820      	BLD  R2,0
+0000d8 9ac4      	SBI  0x18,4
+                 ; 0000 00E6                      // oDATACTL=0;
                  ; 0000 00E7                     }
                  ; 0000 00E8                     else{
-0000db c002      	RJMP _0x28
-                 _0x25:
+0000d9 c001      	RJMP _0x24
+                 _0x23:
                  ; 0000 00E9                       PORTB &= ~(1<<PORTB4);
-0000dc 98c4      	CBI  0x18,4
-                 ; 0000 00EA                       oDATACTL=1;
-0000dd 9a97      	SBI  0x12,7
+0000da 98c4      	CBI  0x18,4
+                 ; 0000 00EA                      // oDATACTL=1;
                  ; 0000 00EB                     }
-                 _0x28:
+                 _0x24:
                  ; 0000 00EC 
                  ; 0000 00ED             }
                  ; 0000 00EE         }
-                 _0x24:
+                 _0x22:
                  ; 0000 00EF         else
-0000de c001      	RJMP _0x2B
-                 _0x23:
+0000db c001      	RJMP _0x25
+                 _0x21:
                  ; 0000 00F0         {
                  ; 0000 00F1              PORTB &= ~(1<<PORTB4);
-0000df 98c4      	CBI  0x18,4
+0000dc 98c4      	CBI  0x18,4
                  ; 0000 00F2         }
-                 _0x2B:
+                 _0x25:
                  ; 0000 00F3     }
                  ; 0000 00F4         /*if(oDATACTL==1){
                  ; 0000 00F5             counter2++;
@@ -1683,81 +1680,81 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 00FA             }
                  ; 0000 00FB         }*/
                  ; 0000 00FC         counter++;
-                 _0x1D:
-0000e0 01f3      	MOVW R30,R6
-0000e1 9631      	ADIW R30,1
-0000e2 013f      	MOVW R6,R30
+                 _0x1B:
+0000dd 01f3      	MOVW R30,R6
+0000de 9631      	ADIW R30,1
+0000df 013f      	MOVW R6,R30
                  ; 0000 00FD         TCNT0=0x06;
-0000e3 e0e6      	LDI  R30,LOW(6)
-0000e4 bfe2      	OUT  0x32,R30
+0000e0 e0e6      	LDI  R30,LOW(6)
+0000e1 bfe2      	OUT  0x32,R30
                  ; 0000 00FE         if(counter>=1) //freq sampling per 1ms
-0000e5 e0e1      	LDI  R30,LOW(1)
-0000e6 e0f0      	LDI  R31,HIGH(1)
-0000e7 166e      	CP   R6,R30
-0000e8 067f      	CPC  R7,R31
-0000e9 f0b8      	BRLO _0x2C
+0000e2 e0e1      	LDI  R30,LOW(1)
+0000e3 e0f0      	LDI  R31,HIGH(1)
+0000e4 166e      	CP   R6,R30
+0000e5 067f      	CPC  R7,R31
+0000e6 f0b8      	BRLO _0x26
                  ; 0000 00FF         {
                  ; 0000 0100             counter=0;
-0000ea 2466      	CLR  R6
-0000eb 2477      	CLR  R7
+0000e7 2466      	CLR  R6
+0000e8 2477      	CLR  R7
                  ; 0000 0101             if(updatefreq >0x00){   //update freq ==0x01
-0000ec e0e0      	LDI  R30,LOW(0)
-0000ed 15e5      	CP   R30,R5
-0000ee f490      	BRSH _0x2D
+0000e9 e0e0      	LDI  R30,LOW(0)
+0000ea 15e5      	CP   R30,R5
+0000eb f490      	BRSH _0x27
                  ; 0000 0102                 #asm ("cli");
-0000ef 94f8      	cli
+0000ec 94f8      	cli
                  ; 0000 0103                 frq = TCNT1;
                 +
-0000f0 b4ac     +IN R10 , 44
-0000f1 b4bd     +IN R11 , 44 + 1
+0000ed b4ac     +IN R10 , 44
+0000ee b4bd     +IN R11 , 44 + 1
                  	__INWR 10,11,44
                  ; 0000 0104                 if(frq >= 0x1770) //frequency too high, more than 6MHz
-0000f2 e7e0      	LDI  R30,LOW(6000)
-0000f3 e1f7      	LDI  R31,HIGH(6000)
-0000f4 16ae      	CP   R10,R30
-0000f5 06bf      	CPC  R11,R31
-0000f6 f018      	BRLO _0x2E
+0000ef e7e0      	LDI  R30,LOW(6000)
+0000f0 e1f7      	LDI  R31,HIGH(6000)
+0000f1 16ae      	CP   R10,R30
+0000f2 06bf      	CPC  R11,R31
+0000f3 f018      	BRLO _0x28
                  ; 0000 0105                 {
                  ; 0000 0106                     frq =0x0001;
-0000f7 e0e1      	LDI  R30,LOW(1)
-0000f8 e0f0      	LDI  R31,HIGH(1)
-0000f9 015f      	MOVW R10,R30
+0000f4 e0e1      	LDI  R30,LOW(1)
+0000f5 e0f0      	LDI  R31,HIGH(1)
+0000f6 015f      	MOVW R10,R30
                  ; 0000 0107                 }
                  ; 0000 0108                 else{  // frequency valid
-                 _0x2E:
+                 _0x28:
                  ; 0000 0109 
                  ; 0000 010A                 }
                  ; 0000 010B                 SPDR = (frq & 0xff00)>>8;
-0000fa 01f5      	MOVW R30,R10
-0000fb 70e0      	ANDI R30,LOW(0xFF00)
-0000fc 2fef      	MOV  R30,R31
-0000fd e0f0      	LDI  R31,0
-0000fe b9ef      	OUT  0xF,R30
+0000f7 01f5      	MOVW R30,R10
+0000f8 70e0      	ANDI R30,LOW(0xFF00)
+0000f9 2fef      	MOV  R30,R31
+0000fa e0f0      	LDI  R31,0
+0000fb b9ef      	OUT  0xF,R30
                  ; 0000 010C                 TCNT1H =0x00;
-0000ff d06d      	RCALL SUBOPT_0x1
+0000fc d06d      	RCALL SUBOPT_0x1
                  ; 0000 010D                 TCNT1L =0x00;
                  ; 0000 010E                 #asm("sei");
-000100 9478      	sei
+0000fd 9478      	sei
                  ; 0000 010F             }
                  ; 0000 0110 	    }
-                 _0x2D:
+                 _0x27:
                  ; 0000 0111 }
-                 _0x2C:
-                 _0x34:
+                 _0x26:
+                 _0x2E:
+0000fe 91e9      	LD   R30,Y+
+0000ff bfef      	OUT  SREG,R30
+000100 91f9      	LD   R31,Y+
 000101 91e9      	LD   R30,Y+
-000102 bfef      	OUT  SREG,R30
-000103 91f9      	LD   R31,Y+
-000104 91e9      	LD   R30,Y+
-000105 91b9      	LD   R27,Y+
-000106 91a9      	LD   R26,Y+
-000107 9199      	LD   R25,Y+
-000108 9189      	LD   R24,Y+
-000109 9179      	LD   R23,Y+
-00010a 9169      	LD   R22,Y+
-00010b 90f9      	LD   R15,Y+
-00010c 9019      	LD   R1,Y+
-00010d 9009      	LD   R0,Y+
-00010e 9518      	RETI
+000102 91b9      	LD   R27,Y+
+000103 91a9      	LD   R26,Y+
+000104 9199      	LD   R25,Y+
+000105 9189      	LD   R24,Y+
+000106 9179      	LD   R23,Y+
+000107 9169      	LD   R22,Y+
+000108 90f9      	LD   R15,Y+
+000109 9019      	LD   R1,Y+
+00010a 9009      	LD   R0,Y+
+00010b 9518      	RETI
                  ; .FEND
                  ;// Timer1 overflow interrupt service routine
                  ;interrupt [TIM1_OVF] void timer1_ovf_isr(void)
@@ -1776,7 +1773,7 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 011E //        status = 1;
                  ; 0000 011F //    }
                  ; 0000 0120 }
-00010f 9518      	RETI
+00010c 9518      	RETI
                  ; .FEND
                  ;
                  ;
@@ -1791,40 +1788,40 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 0129 // Port B initialization
                  ; 0000 012A // Function: Bit7=In Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=Out Bit0=In
                  ; 0000 012B DDRB=(0<<DDB7) | (0<<DDB6) | (0<<DDB5) | (1<<DDB4) | (0<<DDB3) | (0<<DDB2) | (1<<DDB1) | (0<<DDB0);
-000110 e1e2      	LDI  R30,LOW(18)
-000111 bbe7      	OUT  0x17,R30
+00010d e1e2      	LDI  R30,LOW(18)
+00010e bbe7      	OUT  0x17,R30
                  ; 0000 012C // State: Bit7=T Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
                  ; 0000 012D PORTB=(0<<PORTB7) | (0<<PORTB6) | (0<<PORTB5) | (0<<PORTB4) | (0<<PORTB3) | (0<<PORTB2) | (0<<PORTB1) | (0<<PORTB0);
-000112 e0e0      	LDI  R30,LOW(0)
-000113 bbe8      	OUT  0x18,R30
+00010f e0e0      	LDI  R30,LOW(0)
+000110 bbe8      	OUT  0x18,R30
                  ; 0000 012E 
                  ; 0000 012F // Port C initialization
                  ; 0000 0130 // Function: Bit6=In Bit5=In Bit4=In Bit3=In Bit2=In Bit1=In Bit0=In
                  ; 0000 0131 DDRC=(0<<DDC6) | (0<<DDC5) | (0<<DDC4) | (0<<DDC3) | (0<<DDC2) | (0<<DDC1) | (0<<DDC0);
-000114 bbe4      	OUT  0x14,R30
+000111 bbe4      	OUT  0x14,R30
                  ; 0000 0132 // State: Bit6=T Bit5=T Bit4=T Bit3=T Bit2=T Bit1=T Bit0=T
                  ; 0000 0133 PORTC=(0<<PORTC6) | (0<<PORTC5) | (0<<PORTC4) | (0<<PORTC3) | (0<<PORTC2) | (0<<PORTC1) | (0<<PORTC0);
-000115 bbe5      	OUT  0x15,R30
+000112 bbe5      	OUT  0x15,R30
                  ; 0000 0134 
                  ; 0000 0135 // Port D initialization
                  ; 0000 0136 // Function: Bit7=Out Bit6=Out Bit5=In Bit4=Out Bit3=In Bit2=In Bit1=In Bit0=In
                  ; 0000 0137 DDRD=(1<<DDD7) | (1<<DDD6) | (0<<DDD5) | (1<<DDD4) | (0<<DDD3) | (0<<DDD2) | (0<<DDD1) | (0<<DDD0);
-000116 ede0      	LDI  R30,LOW(208)
-000117 bbe1      	OUT  0x11,R30
+000113 ede0      	LDI  R30,LOW(208)
+000114 bbe1      	OUT  0x11,R30
                  ; 0000 0138 // State: Bit7=0 Bit6=1 Bit5=T Bit4=1 Bit3=T Bit2=T Bit1=T Bit0=T
                  ; 0000 0139 PORTD=(0<<PORTD7) | (1<<PORTD6) | (0<<PORTD5) | (1<<PORTD4) | (0<<PORTD3) | (0<<PORTD2) | (0<<PORTD1) | (0<<PORTD0);
-000118 e5e0      	LDI  R30,LOW(80)
-000119 bbe2      	OUT  0x12,R30
+000115 e5e0      	LDI  R30,LOW(80)
+000116 bbe2      	OUT  0x12,R30
                  ; 0000 013A 
                  ; 0000 013B // Timer/Counter 0 initialization
                  ; 0000 013C // Clock source: System Clock
                  ; 0000 013D // Clock value: 250,000 kHz
                  ; 0000 013E TCCR0=(0<<CS02) | (1<<CS01) | (1<<CS00);
-00011a e0e3      	LDI  R30,LOW(3)
-00011b bfe3      	OUT  0x33,R30
+000117 e0e3      	LDI  R30,LOW(3)
+000118 bfe3      	OUT  0x33,R30
                  ; 0000 013F TCNT0=0x06;
-00011c e0e6      	LDI  R30,LOW(6)
-00011d bfe2      	OUT  0x32,R30
+000119 e0e6      	LDI  R30,LOW(6)
+00011a bfe2      	OUT  0x32,R30
                  ; 0000 0140 
                  ; 0000 0141 // Timer/Counter 1 initialization
                  ; 0000 0142 // Clock source: T1 pin Rising Edge
@@ -1838,27 +1835,27 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 014A // Compare A Match Interrupt: Off
                  ; 0000 014B // Compare B Match Interrupt: Off
                  ; 0000 014C TCCR1A=(0<<COM1A1) | (0<<COM1A0) | (0<<COM1B1) | (0<<COM1B0) | (0<<WGM11) | (0<<WGM10);
-00011e e0e0      	LDI  R30,LOW(0)
-00011f bdef      	OUT  0x2F,R30
+00011b e0e0      	LDI  R30,LOW(0)
+00011c bdef      	OUT  0x2F,R30
                  ; 0000 014D TCCR1B=(0<<ICNC1) | (0<<ICES1) | (0<<WGM13) | (0<<WGM12) | (1<<CS12) | (1<<CS11) | (1<<CS10);
-000120 e0e7      	LDI  R30,LOW(7)
-000121 bdee      	OUT  0x2E,R30
+00011d e0e7      	LDI  R30,LOW(7)
+00011e bdee      	OUT  0x2E,R30
                  ; 0000 014E TCNT1H=0x00;
-000122 d04a      	RCALL SUBOPT_0x1
+00011f d04a      	RCALL SUBOPT_0x1
                  ; 0000 014F TCNT1L=0x00;
                  ; 0000 0150 ICR1H=0x00;
-000123 e0e0      	LDI  R30,LOW(0)
-000124 bde7      	OUT  0x27,R30
+000120 e0e0      	LDI  R30,LOW(0)
+000121 bde7      	OUT  0x27,R30
                  ; 0000 0151 ICR1L=0x00;
-000125 bde6      	OUT  0x26,R30
+000122 bde6      	OUT  0x26,R30
                  ; 0000 0152 OCR1AH=0x00;
-000126 bdeb      	OUT  0x2B,R30
+000123 bdeb      	OUT  0x2B,R30
                  ; 0000 0153 OCR1AL=0x00;
-000127 bdea      	OUT  0x2A,R30
+000124 bdea      	OUT  0x2A,R30
                  ; 0000 0154 OCR1BH=0x00;
-000128 bde9      	OUT  0x29,R30
+000125 bde9      	OUT  0x29,R30
                  ; 0000 0155 OCR1BL=0x00;
-000129 bde8      	OUT  0x28,R30
+000126 bde8      	OUT  0x28,R30
                  ; 0000 0156 
                  ; 0000 0157 // Timer/Counter 2 initialization
                  ; 0000 0158 // Clock source: System Clock
@@ -1866,18 +1863,18 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 015A // Mode: Normal top=0xFF
                  ; 0000 015B // OC2 output: Disconnected
                  ; 0000 015C ASSR=0<<AS2;
-00012a bde2      	OUT  0x22,R30
+000127 bde2      	OUT  0x22,R30
                  ; 0000 015D TCCR2=(0<<PWM2) | (0<<COM21) | (0<<COM20) | (0<<CTC2) | (0<<CS22) | (0<<CS21) | (0<<CS20);
-00012b bde5      	OUT  0x25,R30
+000128 bde5      	OUT  0x25,R30
                  ; 0000 015E TCNT2=0x00;
-00012c bde4      	OUT  0x24,R30
+000129 bde4      	OUT  0x24,R30
                  ; 0000 015F OCR2=0x00;
-00012d bde3      	OUT  0x23,R30
+00012a bde3      	OUT  0x23,R30
                  ; 0000 0160 
                  ; 0000 0161 // Timer(s)/Counter(s) Interrupt(s) initialization
                  ; 0000 0162 TIMSK=(0<<OCIE2) | (0<<TOIE2) | (0<<TICIE1) | (0<<OCIE1A) | (0<<OCIE1B) | (1<<TOIE1) | (1<<TOIE0);
-00012e e0e5      	LDI  R30,LOW(5)
-00012f bfe9      	OUT  0x39,R30
+00012b e0e5      	LDI  R30,LOW(5)
+00012c bfe9      	OUT  0x39,R30
                  ; 0000 0163 
                  ; 0000 0164 // External Interrupt(s) initialization
                  ; 0000 0165 // INT0: On
@@ -1885,15 +1882,15 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 0167 // INT1: On
                  ; 0000 0168 // INT1 Mode: Any change
                  ; 0000 0169 GICR|=(1<<INT1) | (1<<INT0);
-000130 b7eb      	IN   R30,0x3B
-000131 6ce0      	ORI  R30,LOW(0xC0)
-000132 bfeb      	OUT  0x3B,R30
+00012d b7eb      	IN   R30,0x3B
+00012e 6ce0      	ORI  R30,LOW(0xC0)
+00012f bfeb      	OUT  0x3B,R30
                  ; 0000 016A MCUCR=(0<<ISC11) | (1<<ISC10) | (1<<ISC01) | (0<<ISC00);
-000133 e0e6      	LDI  R30,LOW(6)
-000134 bfe5      	OUT  0x35,R30
+000130 e0e6      	LDI  R30,LOW(6)
+000131 bfe5      	OUT  0x35,R30
                  ; 0000 016B GIFR=(1<<INTF1) | (1<<INTF0);
-000135 ece0      	LDI  R30,LOW(192)
-000136 bfea      	OUT  0x3A,R30
+000132 ece0      	LDI  R30,LOW(192)
+000133 bfea      	OUT  0x3A,R30
                  ; 0000 016C 
                  ; 0000 016D // USART initialization
                  ; 0000 016E // Communication Parameters: 8 Data, 1 Stop, Even Parity
@@ -1902,20 +1899,20 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 0171 // USART Mode: Asynchronous
                  ; 0000 0172 // USART Baud Rate: 9600
                  ; 0000 0173 UCSRA=(0<<RXC) | (0<<TXC) | (0<<UDRE) | (0<<FE) | (0<<DOR) | (0<<UPE) | (0<<U2X) | (0<<MPCM);
-000137 e0e0      	LDI  R30,LOW(0)
-000138 b9eb      	OUT  0xB,R30
+000134 e0e0      	LDI  R30,LOW(0)
+000135 b9eb      	OUT  0xB,R30
                  ; 0000 0174 UCSRB=(1<<RXCIE) | (0<<TXCIE) | (0<<UDRIE) | (1<<RXEN) | (1<<TXEN) | (0<<UCSZ2) | (0<<RXB8) | (0<<TXB8);
-000139 e9e8      	LDI  R30,LOW(152)
-00013a b9ea      	OUT  0xA,R30
+000136 e9e8      	LDI  R30,LOW(152)
+000137 b9ea      	OUT  0xA,R30
                  ; 0000 0175 UCSRC=(1<<URSEL) | (0<<UMSEL) | (1<<UPM1) | (0<<UPM0) | (0<<USBS) | (1<<UCSZ1) | (1<<UCSZ0) | (0<<UCPOL);
-00013b eae6      	LDI  R30,LOW(166)
-00013c bde0      	OUT  0x20,R30
+000138 eae6      	LDI  R30,LOW(166)
+000139 bde0      	OUT  0x20,R30
                  ; 0000 0176 UBRRH=0x00;
-00013d e0e0      	LDI  R30,LOW(0)
-00013e bde0      	OUT  0x20,R30
+00013a e0e0      	LDI  R30,LOW(0)
+00013b bde0      	OUT  0x20,R30
                  ; 0000 0177 UBRRL=0x33;
-00013f e3e3      	LDI  R30,LOW(51)
-000140 b9e9      	OUT  0x9,R30
+00013c e3e3      	LDI  R30,LOW(51)
+00013d b9e9      	OUT  0x9,R30
                  ; 0000 0178 
                  ; 0000 0179 // Analog Comparator initialization
                  ; 0000 017A // Analog Comparator: Off
@@ -1924,22 +1921,22 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 017D // The Analog Comparator's negative input is
                  ; 0000 017E // connected to the AIN1 pin
                  ; 0000 017F ACSR=(1<<ACD) | (0<<ACBG) | (0<<ACO) | (0<<ACI) | (0<<ACIE) | (0<<ACIC) | (0<<ACIS1) | (0<<ACIS0);
-000141 e8e0      	LDI  R30,LOW(128)
-000142 b9e8      	OUT  0x8,R30
+00013e e8e0      	LDI  R30,LOW(128)
+00013f b9e8      	OUT  0x8,R30
                  ; 0000 0180 
                  ; 0000 0181 
                  ; 0000 0182 // ADC initialization
                  ; 0000 0183 // ADC Clock frequency: 1000,000 kHz
                  ; 0000 0184 // ADC Voltage Reference: AREF pin
                  ; 0000 0185 ADMUX=ADC_VREF_TYPE;
-000143 e0e0      	LDI  R30,LOW(0)
-000144 b9e7      	OUT  0x7,R30
+000140 e0e0      	LDI  R30,LOW(0)
+000141 b9e7      	OUT  0x7,R30
                  ; 0000 0186 ADCSRA=(1<<ADEN) | (0<<ADSC) | (0<<ADFR) | (0<<ADIF) | (0<<ADIE) | (0<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
-000145 e8e3      	LDI  R30,LOW(131)
-000146 b9e6      	OUT  0x6,R30
+000142 e8e3      	LDI  R30,LOW(131)
+000143 b9e6      	OUT  0x6,R30
                  ; 0000 0187 SFIOR=(0<<ACME);
-000147 e0e0      	LDI  R30,LOW(0)
-000148 bfe0      	OUT  0x30,R30
+000144 e0e0      	LDI  R30,LOW(0)
+000145 bfe0      	OUT  0x30,R30
                  ; 0000 0188 
                  ; 0000 0189 
                  ; 0000 018A // SPI initialization
@@ -1948,61 +1945,61 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  ; 0000 018D // SPI Clock Polarity: Low
                  ; 0000 018E // SPI Data Order: MSB First
                  ; 0000 018F SPCR=(1<<SPIE) | (1<<SPE) | (0<<DORD) | (0<<MSTR) | (0<<CPOL) | (0<<CPHA) | (0<<SPR1) | (0<<SPR0);
-000149 ece0      	LDI  R30,LOW(192)
-00014a b9ed      	OUT  0xD,R30
+000146 ece0      	LDI  R30,LOW(192)
+000147 b9ed      	OUT  0xD,R30
                  ; 0000 0190 SPSR=(0<<SPI2X);
-00014b e0e0      	LDI  R30,LOW(0)
-00014c b9ee      	OUT  0xE,R30
+000148 e0e0      	LDI  R30,LOW(0)
+000149 b9ee      	OUT  0xE,R30
                  ; 0000 0191 
                  ; 0000 0192 // Clear the SPI interrupt flag
                  ; 0000 0193 #asm
                  ; 0000 0194     in   r30,spsr
-00014d b1ee          in   r30,spsr
+00014a b1ee          in   r30,spsr
                  ; 0000 0195     in   r30,spdr
-00014e b1ef          in   r30,spdr
+00014b b1ef          in   r30,spdr
                  ; 0000 0196 #endasm
                  ; 0000 0197 
                  ; 0000 0198 // TWI initialization
                  ; 0000 0199 // TWI disabled
                  ; 0000 019A TWCR=(0<<TWEA) | (0<<TWSTA) | (0<<TWSTO) | (0<<TWEN) | (0<<TWIE);
-00014f e0e0      	LDI  R30,LOW(0)
-000150 bfe6      	OUT  0x36,R30
+00014c e0e0      	LDI  R30,LOW(0)
+00014d bfe6      	OUT  0x36,R30
                  ; 0000 019B 
                  ; 0000 019C //putchar('s');
                  ; 0000 019D tVoltage = read_adc(ISO_VCC);
-000151 e0a0      	LDI  R26,LOW(0)
-000152 defa      	RCALL _read_adc
-000153 016f      	MOVW R12,R30
+00014e e0a0      	LDI  R26,LOW(0)
+00014f defd      	RCALL _read_adc
+000150 016f      	MOVW R12,R30
                  ; 0000 019E //putchar((tVoltage&0xFF) +0x30);
                  ; 0000 019F //putchar(((tVoltage>>8)&0xFF) +0x30);
                  ; 0000 01A0 
                  ; 0000 01A1 // Global enable interrupts
                  ; 0000 01A2 #asm("sei")
-000154 9478      	sei
+000151 9478      	sei
                  ; 0000 01A3 //UsartTx_Off;
                  ; 0000 01A4 //initialize the global variable
                  ; 0000 01A5             counter=0;
-000155 2466      	CLR  R6
-000156 2477      	CLR  R7
+000152 2466      	CLR  R6
+000153 2477      	CLR  R7
                  ; 0000 01A6             counter2=0;
-000157 2488      	CLR  R8
-000158 2499      	CLR  R9
+000154 2488      	CLR  R8
+000155 2499      	CLR  R9
                  ; 0000 01A7            updatefreq = 0x01;
-000159 e0e1      	LDI  R30,LOW(1)
-00015a 2e5e      	MOV  R5,R30
+000156 e0e1      	LDI  R30,LOW(1)
+000157 2e5e      	MOV  R5,R30
                  ; 0000 01A8            SPDR =0;
-00015b e0e0      	LDI  R30,LOW(0)
-00015c b9ef      	OUT  0xF,R30
+000158 e0e0      	LDI  R30,LOW(0)
+000159 b9ef      	OUT  0xF,R30
                  ; 0000 01A9 while (1)
-                 _0x30:
+                 _0x2A:
                  ; 0000 01AA       {
                  ; 0000 01AB       // Place your code here
                  ; 0000 01AC 
                  ; 0000 01AD       }
-00015d cfff      	RJMP _0x30
+00015a cfff      	RJMP _0x2A
                  ; 0000 01AE }
-                 _0x33:
-00015e cfff      	RJMP _0x33
+                 _0x2D:
+00015b cfff      	RJMP _0x2D
                  ; .FEND
                  	#ifndef __SLEEP_DEFINED__
                  	#endif
@@ -2028,41 +2025,41 @@ D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\cipt
                  	.CSEG
                  ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:10 WORDS
                  SUBOPT_0x0:
-00015f 920a      	ST   -Y,R0
-000160 921a      	ST   -Y,R1
-000161 92fa      	ST   -Y,R15
-000162 936a      	ST   -Y,R22
-000163 937a      	ST   -Y,R23
-000164 938a      	ST   -Y,R24
-000165 939a      	ST   -Y,R25
-000166 93aa      	ST   -Y,R26
-000167 93ba      	ST   -Y,R27
+00015c 920a      	ST   -Y,R0
+00015d 921a      	ST   -Y,R1
+00015e 92fa      	ST   -Y,R15
+00015f 936a      	ST   -Y,R22
+000160 937a      	ST   -Y,R23
+000161 938a      	ST   -Y,R24
+000162 939a      	ST   -Y,R25
+000163 93aa      	ST   -Y,R26
+000164 93ba      	ST   -Y,R27
+000165 93ea      	ST   -Y,R30
+000166 93fa      	ST   -Y,R31
+000167 b7ef      	IN   R30,SREG
 000168 93ea      	ST   -Y,R30
-000169 93fa      	ST   -Y,R31
-00016a b7ef      	IN   R30,SREG
-00016b 93ea      	ST   -Y,R30
-00016c 9508      	RET
+000169 9508      	RET
                  
                  ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
                  SUBOPT_0x1:
-00016d e0e0      	LDI  R30,LOW(0)
-00016e bded      	OUT  0x2D,R30
-00016f bdec      	OUT  0x2C,R30
-000170 9508      	RET
+00016a e0e0      	LDI  R30,LOW(0)
+00016b bded      	OUT  0x2D,R30
+00016c bdec      	OUT  0x2C,R30
+00016d 9508      	RET
                  
                  
                  	.CSEG
                  __LSRW2:
-000171 95f6      	LSR  R31
-000172 95e7      	ROR  R30
-000173 95f6      	LSR  R31
-000174 95e7      	ROR  R30
-000175 9508      	RET
+00016e 95f6      	LSR  R31
+00016f 95e7      	ROR  R30
+000170 95f6      	LSR  R31
+000171 95e7      	ROR  R30
+000172 9508      	RET
                  
                  __SAVELOCR2:
-000176 931a      	ST   -Y,R17
-000177 930a      	ST   -Y,R16
-000178 9508      	RET
+000173 931a      	ST   -Y,R17
+000174 930a      	ST   -Y,R16
+000175 9508      	RET
                  
                  ;END OF CODE MARKER
                  __END_OF_CODE:
@@ -2096,7 +2093,7 @@ adiw  :   2 and   :   0 andi  :   2 asr   :   0 bclr  :   0 bld   :   3
 brbc  :   0 brbs  :   0 brcc  :   0 brcs  :   0 break :   0 breq  :   1 
 brge  :   0 brhc  :   0 brhs  :   0 brid  :   0 brie  :   0 brlo  :   4 
 brlt  :   0 brmi  :   0 brne  :   9 brpl  :   0 brsh  :   3 brtc  :   0 
-brts  :   0 brvc  :   0 brvs  :   0 bset  :   0 bst   :   0 cbi   :   4 
+brts  :   0 brvc  :   0 brvs  :   0 bset  :   0 bst   :   0 cbi   :   3 
 cbr   :   0 clc   :   0 clh   :   0 cli   :   2 cln   :   0 clr   :  11 
 cls   :   0 clt   :   1 clv   :   0 clz   :   0 com   :   0 cp    :   5 
 cpc   :   3 cpi   :   6 cpse  :   0 dec   :   3 des   :   0 eor   :   0 
@@ -2105,7 +2102,7 @@ inc   :   0 ld    :  22 ldd   :   0 ldi   :  63 lds   :   4 lpm   :   7
 lsl   :   0 lsr   :   2 mov   :   8 movw  :   8 mul   :   0 muls  :   0 
 mulsu :   0 neg   :   0 nop   :   0 or    :   0 ori   :   1 out   :  54 
 pop   :   0 push  :   0 rcall :   9 ret   :   5 reti  :   5 rjmp  :  36 
-rol   :   0 ror   :   2 sbc   :   0 sbci  :   1 sbi   :   6 sbic  :   2 
+rol   :   0 ror   :   2 sbc   :   0 sbci  :   1 sbi   :   4 sbic  :   2 
 sbis  :   3 sbiw  :   3 sbr   :   0 sbrc  :   0 sbrs  :   1 sec   :   0 
 seh   :   0 sei   :   2 sen   :   0 ser   :   0 ses   :   0 set   :   2 
 sev   :   0 sez   :   0 sleep :   0 spm   :   0 st    :  26 std   :   0 
@@ -2116,7 +2113,7 @@ Instructions used: 41 out of 114 (36.0%)
 ATmega8A memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0002f2    726     28    754    8192   9.2%
+[.cseg] 0x000000 0x0002ec    720     28    748    8192   9.1%
 [.dseg] 0x000060 0x000184      0     36     36    1024   3.5%
 [.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 

@@ -1354,8 +1354,7 @@ _0x9:
 ; 0000 0056                             //namun tetap menghasilkan delay 50ms karena timer nol interrupt setiap 1 ms
 ; 0000 0057          oRSTCTL =0;
 	CBI  0x12,4
-; 0000 0058          oDATACTL=1;
-	SBI  0x12,7
+; 0000 0058          //oDATACTL=1;
 ; 0000 0059         }
 ; 0000 005A     }
 _0xA:
@@ -1388,7 +1387,7 @@ _spi_isr:
 ; 0000 0067     if(SPDR ==0x51){
 	IN   R30,0xF
 	CPI  R30,LOW(0x51)
-	BRNE _0xF
+	BRNE _0xD
 ; 0000 0068         updatefreq =0x00;
 	CLR  R5
 ; 0000 0069         SPDR = (read_adc(0)>>2) & 0x00ff;
@@ -1398,12 +1397,12 @@ _spi_isr:
 	OUT  0xF,R30
 ; 0000 006A    }
 ; 0000 006B     else{
-	RJMP _0x10
-_0xF:
+	RJMP _0xE
+_0xD:
 ; 0000 006C         if(updatefreq > 0x00){ //updatefreq ==1
 	LDI  R30,LOW(0)
 	CP   R30,R5
-	BRSH _0x11
+	BRSH _0xF
 ; 0000 006D             SPDR = (frq & 0xff);   //set SPDR to LSB
 	MOV  R30,R10
 	OUT  0xF,R30
@@ -1411,18 +1410,18 @@ _0xF:
 	CLR  R5
 ; 0000 006F         }
 ; 0000 0070         else //update freq == 0
-	RJMP _0x12
-_0x11:
+	RJMP _0x10
+_0xF:
 ; 0000 0071         {
 ; 0000 0072             updatefreq=0x01;
 	LDI  R30,LOW(1)
 	MOV  R5,R30
 ; 0000 0073         }
-_0x12:
-; 0000 0074     }
 _0x10:
+; 0000 0074     }
+_0xE:
 ; 0000 0075 }
-	RJMP _0x34
+	RJMP _0x2E
 ; .FEND
 ;#define DATA_REGISTER_EMPTY (1<<UDRE)
 ;#define RX_COMPLETE (1<<RXC)
@@ -1470,7 +1469,7 @@ _usart_rx_isr:
 ; 0000 0095 if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN))==0)
 	MOV  R30,R17
 	ANDI R30,LOW(0x1C)
-	BRNE _0x13
+	BRNE _0x11
 ; 0000 0096    {
 ; 0000 0097    rx_buffer[rx_wr_index++]=data;
 	LDS  R30,_rx_wr_index
@@ -1488,16 +1487,16 @@ _usart_rx_isr:
 ; 0000 009C    if (rx_wr_index == RX_BUFFER_SIZE) rx_wr_index=0;
 	LDS  R26,_rx_wr_index
 	CPI  R26,LOW(0x20)
-	BRNE _0x14
+	BRNE _0x12
 	LDI  R30,LOW(0)
 	STS  _rx_wr_index,R30
 ; 0000 009D    if (++rx_counter == RX_BUFFER_SIZE)
-_0x14:
+_0x12:
 	LDS  R26,_rx_counter
 	SUBI R26,-LOW(1)
 	STS  _rx_counter,R26
 	CPI  R26,LOW(0x20)
-	BRNE _0x15
+	BRNE _0x13
 ; 0000 009E       {
 ; 0000 009F       rx_counter=0;
 	LDI  R30,LOW(0)
@@ -1508,9 +1507,9 @@ _0x14:
 ; 0000 00A1       }
 ; 0000 00A2 #endif
 ; 0000 00A3    }
-_0x15:
-; 0000 00A4 }
 _0x13:
+; 0000 00A4 }
+_0x11:
 	LD   R16,Y+
 	LD   R17,Y+
 	LD   R30,Y+
@@ -1571,7 +1570,7 @@ _timer0_ovf_isr:
 ; 0000 00CE // Place your code here
 ; 0000 00CF     if(fRSTCTL)
 	SBRS R2,0
-	RJMP _0x1D
+	RJMP _0x1B
 ; 0000 00D0     {
 ; 0000 00D1         vCard = read_adc(0);
 	LDI  R26,LOW(0)
@@ -1581,73 +1580,71 @@ _timer0_ovf_isr:
 	MOV  R30,R4
 	DEC  R4
 	CPI  R30,0
-	BRNE _0x1E
+	BRNE _0x1C
 ; 0000 00D3         {
 ; 0000 00D4             if(vCard >25)
 	LDS  R26,_vCard
 	CPI  R26,LOW(0x1A)
-	BRLO _0x1F
+	BRLO _0x1D
 ; 0000 00D5             {
 ; 0000 00D6                 cTIMERST=0;
 	CLR  R4
 ; 0000 00D7                 oRSTCTL=1;
 	SBI  0x12,4
-; 0000 00D8 
+; 0000 00D8                 fRSTCTL=0;
+	CLT
+	BLD  R2,0
 ; 0000 00D9 
 ; 0000 00DA             }
 ; 0000 00DB             else
-	RJMP _0x22
-_0x1F:
+	RJMP _0x20
+_0x1D:
 ; 0000 00DC             {
 ; 0000 00DD                 cTIMERST=5;//diubah dari v1.0 sebelumnya 10
 	LDI  R30,LOW(5)
 	MOV  R4,R30
 ; 0000 00DE             }
-_0x22:
+_0x20:
 ; 0000 00DF         }
 ; 0000 00E0         if(iDATAOUT){
-_0x1E:
+_0x1C:
 	SBIS 0x10,3
-	RJMP _0x23
+	RJMP _0x21
 ; 0000 00E1             //MISO = HIGH
 ; 0000 00E2             if(iISP_SS){
 	SBIS 0x16,2
-	RJMP _0x24
+	RJMP _0x22
 ; 0000 00E3                 if(frq >= 0x03e8) //more than 1MHz
 	LDI  R30,LOW(1000)
 	LDI  R31,HIGH(1000)
 	CP   R10,R30
 	CPC  R11,R31
-	BRLO _0x25
+	BRLO _0x23
 ; 0000 00E4                     {
 ; 0000 00E5                       PORTB |= (1<<PORTB4);
 	SBI  0x18,4
-; 0000 00E6                       oDATACTL=0; fRSTCTL=0;
-	CBI  0x12,7
-	CLT
-	BLD  R2,0
+; 0000 00E6                      // oDATACTL=0;
 ; 0000 00E7                     }
 ; 0000 00E8                     else{
-	RJMP _0x28
-_0x25:
+	RJMP _0x24
+_0x23:
 ; 0000 00E9                       PORTB &= ~(1<<PORTB4);
 	CBI  0x18,4
-; 0000 00EA                       oDATACTL=1;
-	SBI  0x12,7
+; 0000 00EA                      // oDATACTL=1;
 ; 0000 00EB                     }
-_0x28:
+_0x24:
 ; 0000 00EC 
 ; 0000 00ED             }
 ; 0000 00EE         }
-_0x24:
+_0x22:
 ; 0000 00EF         else
-	RJMP _0x2B
-_0x23:
+	RJMP _0x25
+_0x21:
 ; 0000 00F0         {
 ; 0000 00F1              PORTB &= ~(1<<PORTB4);
 	CBI  0x18,4
 ; 0000 00F2         }
-_0x2B:
+_0x25:
 ; 0000 00F3     }
 ; 0000 00F4         /*if(oDATACTL==1){
 ; 0000 00F5             counter2++;
@@ -1658,7 +1655,7 @@ _0x2B:
 ; 0000 00FA             }
 ; 0000 00FB         }*/
 ; 0000 00FC         counter++;
-_0x1D:
+_0x1B:
 	MOVW R30,R6
 	ADIW R30,1
 	MOVW R6,R30
@@ -1670,7 +1667,7 @@ _0x1D:
 	LDI  R31,HIGH(1)
 	CP   R6,R30
 	CPC  R7,R31
-	BRLO _0x2C
+	BRLO _0x26
 ; 0000 00FF         {
 ; 0000 0100             counter=0;
 	CLR  R6
@@ -1678,7 +1675,7 @@ _0x1D:
 ; 0000 0101             if(updatefreq >0x00){   //update freq ==0x01
 	LDI  R30,LOW(0)
 	CP   R30,R5
-	BRSH _0x2D
+	BRSH _0x27
 ; 0000 0102                 #asm ("cli");
 	cli
 ; 0000 0103                 frq = TCNT1;
@@ -1688,7 +1685,7 @@ _0x1D:
 	LDI  R31,HIGH(6000)
 	CP   R10,R30
 	CPC  R11,R31
-	BRLO _0x2E
+	BRLO _0x28
 ; 0000 0105                 {
 ; 0000 0106                     frq =0x0001;
 	LDI  R30,LOW(1)
@@ -1696,7 +1693,7 @@ _0x1D:
 	MOVW R10,R30
 ; 0000 0107                 }
 ; 0000 0108                 else{  // frequency valid
-_0x2E:
+_0x28:
 ; 0000 0109 
 ; 0000 010A                 }
 ; 0000 010B                 SPDR = (frq & 0xff00)>>8;
@@ -1712,10 +1709,10 @@ _0x2E:
 	sei
 ; 0000 010F             }
 ; 0000 0110 	    }
-_0x2D:
+_0x27:
 ; 0000 0111 }
-_0x2C:
-_0x34:
+_0x26:
+_0x2E:
 	LD   R30,Y+
 	OUT  SREG,R30
 	LD   R31,Y+
@@ -1966,15 +1963,15 @@ _main:
 	LDI  R30,LOW(0)
 	OUT  0xF,R30
 ; 0000 01A9 while (1)
-_0x30:
+_0x2A:
 ; 0000 01AA       {
 ; 0000 01AB       // Place your code here
 ; 0000 01AC 
 ; 0000 01AD       }
-	RJMP _0x30
+	RJMP _0x2A
 ; 0000 01AE }
-_0x33:
-	RJMP _0x33
+_0x2D:
+	RJMP _0x2D
 ; .FEND
 	#ifndef __SLEEP_DEFINED__
 	#define __SLEEP_DEFINED__

@@ -272,7 +272,7 @@ namespace ciptascope {
 			// deviceToolStripMenuItem
 			// 
 			this->deviceToolStripMenuItem->Name = L"deviceToolStripMenuItem";
-			this->deviceToolStripMenuItem->Size = System::Drawing::Size(151, 22);
+			this->deviceToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->deviceToolStripMenuItem->Text = L"Device";
 			this->deviceToolStripMenuItem->Visible = false;
 			this->deviceToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::deviceToolStripMenuItem_Click);
@@ -282,7 +282,7 @@ namespace ciptascope {
 			this->frequencyToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->m_FreqList, 
 				this->scanFrequencyToolStripMenuItem, this->printFreqBufferToolStripMenuItem, this->helloToolStripMenuItem});
 			this->frequencyToolStripMenuItem->Name = L"frequencyToolStripMenuItem";
-			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(151, 22);
+			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->frequencyToolStripMenuItem->Text = L"Show";
 			this->frequencyToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::frequencyToolStripMenuItem_Click);
 			// 
@@ -322,16 +322,17 @@ namespace ciptascope {
 			// 
 			this->baudRateToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->m_baudrate});
 			this->baudRateToolStripMenuItem->Name = L"baudRateToolStripMenuItem";
-			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(151, 22);
+			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->baudRateToolStripMenuItem->Text = L"BaudRate(bps)";
 			// 
 			// m_baudrate
 			// 
-			this->m_baudrate->Items->AddRange(gcnew cli::array< System::Object^  >(14) {L"300", L"600", L"1200", L"2400", L"4800", L"9600", 
-				L"14400", L"19200", L"38400", L"57600", L"115200", L"230400", L"460800", L"921600"});
+			this->m_baudrate->Items->AddRange(gcnew cli::array< System::Object^  >(13) {L"300", L"600", L"1200", L"2400", L"4800", L"8800", L"9600", L"10000", 
+				L"14400", L"19200", L"38400", L"57600", L"115200"});
 			this->m_baudrate->Name = L"m_baudrate";
 			this->m_baudrate->Size = System::Drawing::Size(121, 23);
 			this->m_baudrate->Text = L"9600";
+			this->m_baudrate->Click += gcnew System::EventHandler(this, &Form1::m_baudrate_Click);
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -524,7 +525,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 
 	ftStatus = FT_SetBitMode(ftHandle,0xCC,0x20);//11011100
 	ftStatus = FT_GetBitMode(ftHandle, &ucMask);
-	mask = (ucMask & 0x01) &&(ucMask & 0x04); //MISO ==1 and SS == 1
+	/*mask = (ucMask & 0x01) &&(ucMask & 0x04); //MISO ==1 and SS == 1
 			 if(mask && (counter==0)){
 				scanFrequencyToolStripMenuItem_Click(sender,e);
 				//temp = freqDataBuffer[0]*1000/372;
@@ -538,7 +539,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 					temp=8800;
 				}
 				counter=1;
-			 }
+			 }*/
 			
 	if (ftStatus != FT_OK) {
 		
@@ -550,8 +551,6 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 		}
 		else 
 		{	
-			 //ftStatus = FT_GetBitMode(ftHandle, &ucMask);
-			 //pdupoll->Enabled="False";
 			//set global index
 			globalIndex =0;
 			phase =1; //CLA
@@ -559,17 +558,13 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			remaining=0;
 			datalength = 0;
 			updatebaudcounter = 0;
-			//scanFrequencyToolStripMenuItem_Click(sender,e);
-			//temp = 9600;
-		
-			//sprintf(&buffer[0], "%02d", temp);
-			//textBox2->Text = gcnew String(buffer);
+			
 			FT_SetBaudRate(ftHandle, temp);//temp-300);//freqDataBuffer[0]*1000/372-300);
 			FT_Purge (ftHandle, FT_PURGE_RX);
 			//-----------------scan the frequency------------------//
-			//counter =0;	//clear counter after reset
-			//reset_low=1; //set flag for frequency timer sampling to work
-			//timer1->Enabled="True"; //enable the timer
+			counter =0;	//clear counter after reset
+			reset_low=1; //set flag for frequency timer sampling to work
+			timer1->Enabled="True"; //enable the timer
 			//----------------------end---------------------------//
 			RxBytes=0;
 
@@ -594,9 +589,13 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			TotalBytesReceived=0;
 			if (RxBytes > 0) 
 			{
+					
 				
 				ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
-				ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
+				if((RxBuffer[0] & 0xff) != 0x3B)
+				{
+					ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
+				}
 				sprintf(&buffer[0], "%02d", temp);
 				textBox2->Text = gcnew String(buffer);
 				
@@ -848,19 +847,24 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 						}
 
 						//----------set the baudrate according to frequency-----//
-						index=0;//get the first one
+						index=3;//get the first one
 						if (freqDataBuffer[index] <1000){
 							sprintf(&buffer[0], "%02d", freqDataBuffer[index]*1000);//*1000 to get per second
+							textBox1->Text = gcnew String(buffer);
 							freqDataBuffer[index] = 3700;
 						}
-						else
+						else{
 							sprintf(&buffer[0], "%02d", freqDataBuffer[index]*1000);//*1000 to get per second
-						textBox1->Text = gcnew String(buffer);
+							textBox1->Text = gcnew String(buffer);
+						}
 						
-						
-						baudbuf = freqDataBuffer[index]*1000 / 372;
-						FT_SetBaudRate(ftHandle, baudbuf);//12674);	//set baudrate
-						//FT_SetBaudRate(ftHandle, 12779);			
+						baudbuf = freqDataBuffer[index]*1000/372;
+						if(temp==9600){
+							FT_SetBaudRate(ftHandle, baudbuf);//baudbuf);//12674);	//set baudrate
+						}
+						else{
+							FT_SetBaudRate(ftHandle, temp);//baudbuf);//12674);	//set baudrate
+						}//FT_SetBaudRate(ftHandle, 12779);			
 						//-----------------end of setting baud rate--------------//
 
 						ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);						
@@ -1034,6 +1038,7 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 							else{
 								baudrate = f*Di/(Fi);
 							}	
+							
 						}
 						else if((RxBuffer[1]) & 0x10){	//T0
 							unsigned int Fi = Fimap[(RxBuffer[2] & 0xF0) >> 4];
@@ -1044,20 +1049,22 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 							}
 							else{
 								baudrate = f*Di/(Fi);
-							}						
+							}			
+							
 						}
 						//FT_ResetDevice(ftHandle);
 						FT_SetChars (ftHandle, NULL, NULL, NULL, NULL);
 						//FT_Purge (ftHandle, FT_PURGE_RX);
 						//FT_SetDataCharacteristics(ftHandle, FT_BITS_8, FT_STOP_BITS_2, FT_PARITY_EVEN);
 						ftStatus=FT_INVALID_BAUD_RATE;
-						ftStatus = FT_SetBaudRate(ftHandle, baudrate);//59468+400); //baudrate);//59921+1000);// baudrate+200);
+						ftStatus = FT_SetBaudRate(ftHandle, baudrate);// 60000);//baudrate);//59468+400); //baudrate);//59921+1000);// baudrate+200);
 						//ftStatus = FT_SetDivisor(ftHandle,223.375);
-						
+						sprintf(&buffer[0], "%02d", baudrate);//*1000 to get per second
+							textBox2->Text = gcnew String(buffer);
 
 						if (ftStatus == FT_OK) {
 							itoa (baudrate,hexStr,10);
-							m_baudrate->Text=(gcnew String(hexStr));
+							//m_baudrate->Text=(gcnew String(hexStr));
 							//pdupoll->Enabled="True";
 						}
 						else
@@ -1184,7 +1191,7 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 			//}
 			//Sleep(1000);
 			//pdupoll->Enabled="True";
-			counter=0;
+			//counter=0;
 		}
 	}
 }
@@ -1217,20 +1224,20 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
 					unsigned int baudrate = atoi(PChar);
 					ftStatus = FT_SetBaudRate(ftHandle, baudrate);
 					FT_Purge (ftHandle, FT_PURGE_RX);
-					FT_Purge (ftHandle, FT_PURGE_TX);
 					//freqDataBuffer[4] = 0x12bc;
 					//FT_SetTimeouts (ftHandle,5000,5000);
 					//FT_SetResetPipeRetryCount (ftHandle,100);
 					//FT_SetDeadmanTimeout (ftHandle,6000);
 					//set SS to HIGH,0b11001100
 					ftStatus = FT_SetBitMode(ftHandle, 0xCC,0x20);
-					ftStatus = FT_SetBaudRate(ftHandle, 8800);
+					//ftStatus = FT_SetBaudRate(ftHandle, 8800);
 					CardResetPoll->Enabled="True";
 					pdupoll->Enabled="True";
 					freqDataBuffer[0]=3200;
-					temp=8800;
+					temp=baudrate;
 					//timer1->Enabled="True"; //enable the timer
 					counter = 0;
+					reset_low=0;
 					//voltage->Enabled="True";
 				}
 				else {
@@ -1348,9 +1355,9 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 				ftStatus = FT_Read(ftHandle, RxBuffer, RxBytes, &BytesReceived);
 				if (ftStatus == FT_OK) {
 					// FT_Read OK 
-					char hexStr[2500];
+					char hexStr[5000];
 					char sTmp[256];
-					for(i=0;i<2500;i++){
+					for(i=0;i<5000;i++){
 						hexStr[i]=0x00;
 					}
 					globalIndex=0;
@@ -1619,7 +1626,7 @@ private: System::Void helloToolStripMenuItem_Click(System::Object^  sender, Syst
 private: System::Void timer1_Tick_1(System::Object^  sender, System::EventArgs^  e) {
 			 FT_STATUS ftStatus;	
 			 byte ucMask,i,mask;
-			/* if(counter<60{)
+			 if(counter<6){
 				 if(reset_low){
 					//helloToolStripMenuItem_Click(sender,e);
 					scanFrequencyToolStripMenuItem_Click(sender,e);
@@ -1631,13 +1638,13 @@ private: System::Void timer1_Tick_1(System::Object^  sender, System::EventArgs^ 
 				reset_low=0;
 				counter =0;
 				timer1->Enabled="False";
-			 }*/
+			 }
 			 //scanFrequencyToolStripMenuItem_Click(sender,e);
-			 ftStatus = FT_GetBitMode(ftHandle, &ucMask);
-			 mask = (ucMask & 0x01) &&(ucMask & 0x04); //MISO ==1 and SS == 1
-			 if(mask && (counter==0)){
+			 //ftStatus = FT_GetBitMode(ftHandle, &ucMask);
+			 //mask = (ucMask & 0x01) &&(ucMask & 0x04); //MISO ==1 and SS == 1
+			 //if(mask && (counter==0)){
+			 /*if(counter==0){			
 				scanFrequencyToolStripMenuItem_Click(sender,e);
-				//temp = freqDataBuffer[0]*1000/372;
 				if(freqDataBuffer[0] > 3800){
 					temp = 10000;
 				}
@@ -1648,12 +1655,12 @@ private: System::Void timer1_Tick_1(System::Object^  sender, System::EventArgs^ 
 					temp=8800;
 				}
 				counter=1;
-			 }
+			 }*/ 
 		 }
 private: System::Void printFreqBufferToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 			char buffer[10];
 			richTextBox1 ->Clear();
-			 for(int i=0;i<2;i++)
+			 for(int i=0;i<6;i++)
 			{
 				sprintf(&buffer[0], "%02x", freqDataBuffer[i]);
 				richTextBox1->Text += gcnew String(buffer) + "\n";
@@ -1796,6 +1803,8 @@ private: System::Void openLogFileToolStripMenuItem_Click(System::Object^  sender
 private: System::Void m_devlist_Click_1(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void m_baudrate_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 };
 }

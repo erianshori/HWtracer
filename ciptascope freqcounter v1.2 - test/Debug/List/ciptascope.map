@@ -27,10 +27,10 @@ FLASH Allocation [words]
 Function                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
 read_adc                                                                          0x0004D     14
-ext_int0_isr                                                                      0x0005B     24
-ext_int1_isr                                                                      0x00073      1
-spi_isr                                                                           0x00074     20
-usart_rx_isr                                                                      0x00088     48
-timer0_ovf_isr                                                                    0x000B8     87
-timer1_ovf_isr                                                                    0x0010F      1
-main                                                                              0x00110     79
+ext_int0_isr                                                                      0x0005B     23
+ext_int1_isr                                                                      0x00072      1
+spi_isr                                                                           0x00073     20
+usart_rx_isr                                                                      0x00087     48
+timer0_ovf_isr                                                                    0x000B7     85
+timer1_ovf_isr                                                                    0x0010C      1
+main                                                                              0x0010D     79

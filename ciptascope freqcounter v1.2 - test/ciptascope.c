@@ -85,7 +85,7 @@ unsigned char i;
             cTIMERST = 50; //cTimer diubah dari v1.0 sebelumya -> 100;    //sementara 25ms *7 jan 2017
                             //namun tetap menghasilkan delay 50ms karena timer nol interrupt setiap 1 ms
          oRSTCTL =0;   
-         oDATACTL=1;
+         //oDATACTL=1;
         }
     }
 }
@@ -213,7 +213,7 @@ TCNT0=0x06;
             {
                 cTIMERST=0;   
                 oRSTCTL=1; 
-                
+                fRSTCTL=0;
                        
             }
             else
@@ -227,11 +227,11 @@ TCNT0=0x06;
                 if(frq >= 0x03e8) //more than 1MHz
                     {
                       PORTB |= (1<<PORTB4);
-                      oDATACTL=0; fRSTCTL=0;
+                     // oDATACTL=0; 
                     }
                     else{
                       PORTB &= ~(1<<PORTB4);
-                      oDATACTL=1;
+                     // oDATACTL=1;
                     }
                     
             }

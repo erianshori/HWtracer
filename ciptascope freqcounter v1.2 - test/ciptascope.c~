@@ -213,8 +213,8 @@ TCNT0=0x06;
             {
                 cTIMERST=0;   
                 oRSTCTL=1; 
-                
-                      fRSTCTL=0; 
+                fRSTCTL=0;
+                       
             }
             else
             {
