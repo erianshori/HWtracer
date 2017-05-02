@@ -1761,6 +1761,7 @@ private: System::Void saveFile(void){
 private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  e) {
 		FT_STATUS ftStatus;	
 		byte ucMask,i,mask;
+		scanFrequencyToolStripMenuItem_Click(sender,e);
 		byte data = 0x55;
 		char buffer[30];
 			 //ask for voltage data
@@ -1841,6 +1842,7 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 					voltage->Enabled="False";
 				}
 			}*/ 
+			
 			if(data<30){
 				sprintf(&buffer[0], "Card Voltage : 0 mV"); //ref voltage :5090mV
 			}
@@ -1848,6 +1850,7 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 				sprintf(&buffer[0], "Card Voltage : %02d mV", 600+(2*data*5060/256));
 			}
 			toolStripStatusLabel2->Text = gcnew String(buffer);
+			
 		 }
 private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 			 richTextBox1->Text= "Welcom to Ciptascope!\nTo do signal tracking, please follow below instructions :\n1. Click Scan\n2. Select Device\n3. Select Baudrate (for baudrate information please Click Help -> Baudrate info)\n4. Connect\n\nTo Clean text area, Click File->Clean\n\nBaudrate informations :\n1. HID Omnikey : 9600 \n2. Nokia lama : 8800\n3. Samsung A3 : 10000\n4. Oppo : 10000\n5. Huawei p8 : 10000\n6. Redmi : 10000\n7. Xperia Z2 : 10000\n8. Inphone 5SE : 12800\n9. Iphone 6Plus : 12800\n10. Iphone5 : 10000\n11. Iphone 4, Iphone 4S, Acer Z500 still not compatible\n\nThanks";			
