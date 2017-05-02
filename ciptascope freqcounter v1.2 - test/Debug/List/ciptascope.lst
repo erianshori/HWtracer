@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.30  D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm Fri Mar 03 17:01:26 2017
+AVRASM ver. 2.1.30  D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm Tue Mar 07 14:32:33 2017
 
 D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm(1086): warning: Register r5 already defined by the .DEF directive
 D:\Eri\OnProgress\ciptascope\20160512m8a\ciptascope freqcounter v2\HWtracer\ciptascope freqcounter v1.2 - test\Debug\List\ciptascope.asm(1087): warning: Register r6 already defined by the .DEF directive

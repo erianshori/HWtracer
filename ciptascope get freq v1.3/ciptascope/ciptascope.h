@@ -4,7 +4,6 @@
 #include <string>
 #include <stdlib.h>
 #include "ftd2xx.h"
-
 FT_HANDLE ftHandle;
 
 #pragma once
@@ -21,7 +20,8 @@ unsigned char datalength ,start,stop;
 unsigned char INSBefore;
 int temp;
 int updatebaudcounter;
-
+int awal;
+WORD firstfreq;
 //
 //std::string hexStr(unsigned char *data, int len)
 //{
@@ -85,7 +85,8 @@ namespace ciptascope {
 	private: System::Windows::Forms::ToolStripMenuItem^  exitToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  optionsToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  baudRateToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripComboBox^  m_baudrate;
+	private: System::Windows::Forms::ToolStripComboBox^  m_baudrate1;
+
 
 	private: System::Windows::Forms::ToolStripMenuItem^  helpToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem;
@@ -123,6 +124,10 @@ namespace ciptascope {
 	private: System::Windows::Forms::ToolStripMenuItem^  closeToolStripMenuItem;
 	private: System::Windows::Forms::TextBox^  textBox1;
 	private: System::Windows::Forms::Panel^  panel1;
+	private: System::Windows::Forms::ToolStripMenuItem^  baudrateInfoToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripComboBox^  m_baudrate;
+
+
 
 
 
@@ -167,6 +172,7 @@ namespace ciptascope {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Form1::typeid));
 			this->CardResetPoll = (gcnew System::Windows::Forms::Timer(this->components));
 			this->MainMenu = (gcnew System::Windows::Forms::MenuStrip());
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -182,11 +188,13 @@ namespace ciptascope {
 			this->printFreqBufferToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helloToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->baudRateToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->m_baudrate = (gcnew System::Windows::Forms::ToolStripComboBox());
+			this->m_baudrate1 = (gcnew System::Windows::Forms::ToolStripComboBox());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->baudrateInfoToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->scanToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->m_devlist = (gcnew System::Windows::Forms::ToolStripComboBox());
+			this->m_baudrate = (gcnew System::Windows::Forms::ToolStripComboBox());
 			this->openToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->closeToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
@@ -213,9 +221,9 @@ namespace ciptascope {
 			// MainMenu
 			// 
 			this->MainMenu->BackColor = System::Drawing::SystemColors::ControlLight;
-			this->MainMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(7) {this->fileToolStripMenuItem, 
-				this->optionsToolStripMenuItem, this->helpToolStripMenuItem, this->scanToolStripMenuItem, this->m_devlist, this->openToolStripMenuItem, 
-				this->closeToolStripMenuItem});
+			this->MainMenu->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(8) {this->fileToolStripMenuItem, 
+				this->optionsToolStripMenuItem, this->helpToolStripMenuItem, this->scanToolStripMenuItem, this->m_devlist, this->m_baudrate, 
+				this->openToolStripMenuItem, this->closeToolStripMenuItem});
 			this->MainMenu->Location = System::Drawing::Point(0, 0);
 			this->MainMenu->Name = L"MainMenu";
 			this->MainMenu->Padding = System::Windows::Forms::Padding(6, 0, 0, 35);
@@ -250,7 +258,7 @@ namespace ciptascope {
 			// 
 			this->cleanToolStripMenuItem->Name = L"cleanToolStripMenuItem";
 			this->cleanToolStripMenuItem->Size = System::Drawing::Size(147, 22);
-			this->cleanToolStripMenuItem->Text = L"Clean";
+			this->cleanToolStripMenuItem->Text = L"Clear";
 			this->cleanToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::cleanToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
@@ -272,7 +280,7 @@ namespace ciptascope {
 			// deviceToolStripMenuItem
 			// 
 			this->deviceToolStripMenuItem->Name = L"deviceToolStripMenuItem";
-			this->deviceToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->deviceToolStripMenuItem->Size = System::Drawing::Size(151, 22);
 			this->deviceToolStripMenuItem->Text = L"Device";
 			this->deviceToolStripMenuItem->Visible = false;
 			this->deviceToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::deviceToolStripMenuItem_Click);
@@ -282,7 +290,7 @@ namespace ciptascope {
 			this->frequencyToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->m_FreqList, 
 				this->scanFrequencyToolStripMenuItem, this->printFreqBufferToolStripMenuItem, this->helloToolStripMenuItem});
 			this->frequencyToolStripMenuItem->Name = L"frequencyToolStripMenuItem";
-			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->frequencyToolStripMenuItem->Size = System::Drawing::Size(151, 22);
 			this->frequencyToolStripMenuItem->Text = L"Show";
 			this->frequencyToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::frequencyToolStripMenuItem_Click);
 			// 
@@ -320,23 +328,25 @@ namespace ciptascope {
 			// 
 			// baudRateToolStripMenuItem
 			// 
-			this->baudRateToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->m_baudrate});
+			this->baudRateToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->m_baudrate1});
 			this->baudRateToolStripMenuItem->Name = L"baudRateToolStripMenuItem";
-			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->baudRateToolStripMenuItem->Size = System::Drawing::Size(151, 22);
 			this->baudRateToolStripMenuItem->Text = L"BaudRate(bps)";
+			this->baudRateToolStripMenuItem->Visible = false;
 			// 
-			// m_baudrate
+			// m_baudrate1
 			// 
-			this->m_baudrate->Items->AddRange(gcnew cli::array< System::Object^  >(13) {L"300", L"600", L"1200", L"2400", L"4800", L"8800", L"9600", L"10000", 
-				L"14400", L"19200", L"38400", L"57600", L"115200"});
-			this->m_baudrate->Name = L"m_baudrate";
-			this->m_baudrate->Size = System::Drawing::Size(121, 23);
-			this->m_baudrate->Text = L"9600";
-			this->m_baudrate->Click += gcnew System::EventHandler(this, &Form1::m_baudrate_Click);
+			this->m_baudrate1->Items->AddRange(gcnew cli::array< System::Object^  >(13) {L"300", L"600", L"1200", L"2400", L"10002", L"8800", 
+				L"9600", L"10000", L"12800", L"19200", L"38400", L"57600", L"115200"});
+			this->m_baudrate1->Name = L"m_baudrate1";
+			this->m_baudrate1->Size = System::Drawing::Size(121, 23);
+			this->m_baudrate1->Text = L"9600";
+			this->m_baudrate1->Click += gcnew System::EventHandler(this, &Form1::m_baudrate_Click);
 			// 
 			// helpToolStripMenuItem
 			// 
-			this->helpToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->aboutToolStripMenuItem});
+			this->helpToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->aboutToolStripMenuItem, 
+				this->baudrateInfoToolStripMenuItem});
 			this->helpToolStripMenuItem->Margin = System::Windows::Forms::Padding(0, 5, 0, 5);
 			this->helpToolStripMenuItem->Name = L"helpToolStripMenuItem";
 			this->helpToolStripMenuItem->Size = System::Drawing::Size(44, 39);
@@ -345,9 +355,16 @@ namespace ciptascope {
 			// aboutToolStripMenuItem
 			// 
 			this->aboutToolStripMenuItem->Name = L"aboutToolStripMenuItem";
-			this->aboutToolStripMenuItem->Size = System::Drawing::Size(107, 22);
+			this->aboutToolStripMenuItem->Size = System::Drawing::Size(145, 22);
 			this->aboutToolStripMenuItem->Text = L"About";
 			this->aboutToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::aboutToolStripMenuItem_Click);
+			// 
+			// baudrateInfoToolStripMenuItem
+			// 
+			this->baudrateInfoToolStripMenuItem->Name = L"baudrateInfoToolStripMenuItem";
+			this->baudrateInfoToolStripMenuItem->Size = System::Drawing::Size(145, 22);
+			this->baudrateInfoToolStripMenuItem->Text = L"Baudrate Info";
+			this->baudrateInfoToolStripMenuItem->Click += gcnew System::EventHandler(this, &Form1::baudrateInfoToolStripMenuItem_Click);
 			// 
 			// scanToolStripMenuItem
 			// 
@@ -362,10 +379,20 @@ namespace ciptascope {
 			// m_devlist
 			// 
 			this->m_devlist->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->m_devlist->Margin = System::Windows::Forms::Padding(10, 0, 1, 0);
 			this->m_devlist->Name = L"m_devlist";
 			this->m_devlist->Size = System::Drawing::Size(180, 49);
 			this->m_devlist->Text = L"Select Device";
 			this->m_devlist->Click += gcnew System::EventHandler(this, &Form1::m_devlist_Click_1);
+			// 
+			// m_baudrate
+			// 
+			this->m_baudrate->Alignment = System::Windows::Forms::ToolStripItemAlignment::Right;
+			this->m_baudrate->Items->AddRange(gcnew cli::array< System::Object^  >(13) {L"300", L"600", L"1200", L"2400", L"10002", L"8800", 
+				L"9600", L"10000", L"12800", L"19200", L"38400", L"57600", L"115200"});
+			this->m_baudrate->Name = L"m_baudrate";
+			this->m_baudrate->Size = System::Drawing::Size(121, 49);
+			this->m_baudrate->Text = L"9600";
 			// 
 			// openToolStripMenuItem
 			// 
@@ -389,7 +416,7 @@ namespace ciptascope {
 			// 
 			this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->toolStripStatusLabel1, 
 				this->toolStripStatusLabel2});
-			this->statusStrip1->Location = System::Drawing::Point(0, 377);
+			this->statusStrip1->Location = System::Drawing::Point(0, 477);
 			this->statusStrip1->Margin = System::Windows::Forms::Padding(0, 5, 0, 5);
 			this->statusStrip1->Name = L"statusStrip1";
 			this->statusStrip1->Size = System::Drawing::Size(839, 30);
@@ -419,9 +446,9 @@ namespace ciptascope {
 				static_cast<System::Byte>(0)));
 			this->richTextBox1->Location = System::Drawing::Point(0, 97);
 			this->richTextBox1->Name = L"richTextBox1";
-			this->richTextBox1->Size = System::Drawing::Size(839, 283);
+			this->richTextBox1->Size = System::Drawing::Size(839, 383);
 			this->richTextBox1->TabIndex = 6;
-			this->richTextBox1->Text = L"";
+			this->richTextBox1->Text = L"Welcome to Ciptascope!\nTo do signal tracking, please follow below instructions :\n1. Click Scan\n2. Select Device\n3. Select Baudrate (for baudrate information please Click Help -> Baudrate info)\n4. Connect\nTo Clean text area, Click File->Clean \nBaudrate informations :\n1. HID Omnikey : 9600 \n2. Nokia lama : 8800\n3. Samsung A3 : 10000\n4. Oppo : 10000\n5. Huawei p8 : 10000\n6. Redmi : 10000\n7. Xperia Z2 : 10000\n8. Inphone 5SE : 12800\n9. Iphone 6Plus : 12800\n10. Iphone5 : 10000\n11. Iphone 4, Iphone 4S, Acer Z500 still not compatible\nThanks\n";
 			this->richTextBox1->Enter += gcnew System::EventHandler(this, &Form1::richTextBox1_TextChanged);
 			this->richTextBox1->TextChanged += gcnew System::EventHandler(this, &Form1::richTextBox1_TextChanged);
 			// 
@@ -456,10 +483,11 @@ namespace ciptascope {
 			// textBox2
 			// 
 			this->textBox2->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-			this->textBox2->Location = System::Drawing::Point(397, 386);
+			this->textBox2->Location = System::Drawing::Point(397, 486);
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->Size = System::Drawing::Size(143, 20);
 			this->textBox2->TabIndex = 9;
+			this->textBox2->Visible = false;
 			this->textBox2->TextChanged += gcnew System::EventHandler(this, &Form1::textBox2_TextChanged);
 			// 
 			// timer1
@@ -489,7 +517,7 @@ namespace ciptascope {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(839, 407);
+			this->ClientSize = System::Drawing::Size(839, 507);
 			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->richTextBox1);
 			this->Controls->Add(this->statusStrip1);
@@ -561,6 +589,7 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			
 			FT_SetBaudRate(ftHandle, temp);//temp-300);//freqDataBuffer[0]*1000/372-300);
 			FT_Purge (ftHandle, FT_PURGE_RX);
+			
 			//-----------------scan the frequency------------------//
 			counter =0;	//clear counter after reset
 			reset_low=1; //set flag for frequency timer sampling to work
@@ -589,12 +618,12 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 			TotalBytesReceived=0;
 			if (RxBytes > 0) 
 			{
-					
 				
 				ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
 				if((RxBuffer[0] & 0xff) != 0x3B)
 				{
 					ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
+					//ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
 				}
 				sprintf(&buffer[0], "%02d", temp);
 				textBox2->Text = gcnew String(buffer);
@@ -617,11 +646,16 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 							ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);
 							TotalBytesReceived+=BytesReceived;
 						}
-						if((RxBuffer[0] & 0xff) == 0xe7)
+						/*if((RxBuffer[0] & 0xff) == 0xe7)
+						{
+							RxBuffer[0] = 0x3B
+							RxBuffer[1] = 0x9f;
+						}
+						if((RxBuffer[0] & 0xff) == 0xfa)
 						{
 							RxBuffer[0] = 0x3B;
 							RxBuffer[1] = 0x9f;
-						}
+						}*/
 						//calculate atr length from T0
 						//RxBuffer[1] = 0x9f;
 						unsigned char TOTAL_ATR_RECEIVED=TotalBytesReceived;
@@ -847,11 +881,31 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 						}
 
 						//----------set the baudrate according to frequency-----//
-						index=3;//get the first one
+						index=0;//get the first one
+						if(temp==8800){
+							firstfreq = 3202;
+						}
+						else if(temp== 10000){
+							firstfreq = 3800;
+						}
+						else if(temp== 12800){
+							firstfreq=4790;
+						}
+						else if(temp==10001){
+							firstfreq=3800;
+							freqDataBuffer[index] =3800;
+							temp=10000;
+						}
+						else if(temp==10002){
+							firstfreq=4790;
+						}else  {
+							firstfreq=4700;
+						}
+
 						if (freqDataBuffer[index] <1000){
 							sprintf(&buffer[0], "%02d", freqDataBuffer[index]*1000);//*1000 to get per second
 							textBox1->Text = gcnew String(buffer);
-							freqDataBuffer[index] = 3700;
+							freqDataBuffer[index] = firstfreq;
 						}
 						else{
 							sprintf(&buffer[0], "%02d", freqDataBuffer[index]*1000);//*1000 to get per second
@@ -864,7 +918,9 @@ private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e
 						}
 						else{
 							FT_SetBaudRate(ftHandle, temp);//baudbuf);//12674);	//set baudrate
-						}//FT_SetBaudRate(ftHandle, 12779);			
+						}
+						
+						//FT_SetBaudRate(ftHandle, 12779);			
 						//-----------------end of setting baud rate--------------//
 
 						ftStatus = FT_Read(ftHandle, &RxBuffer[TotalBytesReceived], RxBytes, &BytesReceived);						
@@ -1014,6 +1070,11 @@ PPS_HANDLER:				if(RxBuffer[32]==(char)0xFF)
 						char *PChar = reinterpret_cast<char *>(static_cast<unsigned char *>(charsPointer));
 						unsigned int f = freqDataBuffer[index]*1000;//atoi(PChar);
 						baudrate = f/372;
+						if(temp== 12800){
+							temp=10001;
+							freqDataBuffer[index]=3800;
+							firstfreq = 3800;
+						}
 						i=0;
 						if(TOTAL_PPS_LENGTH *2 == TOTAL_PPS_RECEIVED)
 						{
@@ -1233,12 +1294,13 @@ private: System::Void openToolStripMenuItem_Click(System::Object^  sender, Syste
 					//ftStatus = FT_SetBaudRate(ftHandle, 8800);
 					CardResetPoll->Enabled="True";
 					pdupoll->Enabled="True";
-					freqDataBuffer[0]=3200;
 					temp=baudrate;
+					 richTextBox1->Clear();
 					//timer1->Enabled="True"; //enable the timer
 					counter = 0;
 					reset_low=0;
-					//voltage->Enabled="True";
+					voltage->Enabled="True";
+					awal=1;
 				}
 				else {
 					// FT_Open Failed
@@ -1403,18 +1465,18 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 							}
 							for(i=start;i<stop;i++){
 								switch (i){
-									case 0 : sprintf(&sTmp[0], "\nTerminal : \n  CLA : %02X\n",RxBuffer[globalIndex++] & 0xFF);
+									case 0 : sprintf(&sTmp[0], "\nT: %02X",RxBuffer[globalIndex++] & 0xFF);
 												strcat(hexStr, sTmp); break;
 									case 1 : INSBefore =RxBuffer[globalIndex++] & 0xFF;
-												sprintf(&sTmp[0], "   INS : %02X\n", INSBefore);
+												sprintf(&sTmp[0], "  %02X", INSBefore);
 												strcat(hexStr, sTmp); break;
-									case 2 : sprintf(&sTmp[0], "   P1 : %02X\n", RxBuffer[globalIndex++] & 0xFF);
+									case 2 : sprintf(&sTmp[0], "  %02X", RxBuffer[globalIndex++] & 0xFF);
 												strcat(hexStr, sTmp); break;
-									case 3 : sprintf(&sTmp[0], "   P2 : %02X\n", RxBuffer[globalIndex++] & 0xFF);
+									case 3 : sprintf(&sTmp[0], "  %02X", RxBuffer[globalIndex++] & 0xFF);
 												strcat(hexStr, sTmp); break;
 									case 4 : 
 										datalength = RxBuffer[globalIndex++] & 0xFF;
-										sprintf(&sTmp[0], "   P3 : %02X\n", datalength );
+										sprintf(&sTmp[0], "   %02X\n", datalength );
 												
 												strcat(hexStr, sTmp);
 												if(datalength > 0x00){
@@ -1432,14 +1494,21 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 						else if (phase == 2){ //ACK
 							assign =1;
 							ACK = RxBuffer[globalIndex++] & 0xFF;
+							if(ACK == 0x60)
+							{
+								sprintf(&sTmp[0], "C: %02X\n", ACK);
+								strcat(hexStr, sTmp);
+								phase=2;
+							}
+							else
 							if(ACK == INSBefore){
-							sprintf(&sTmp[0], "Card:\n  ACK : %02X\n", ACK);
+							sprintf(&sTmp[0], "C: %02X\n", ACK);
 							strcat(hexStr, sTmp);
 							phase++;
 							}
 							else{
 								assign =2;
-								sprintf(&sTmp[0], "Card:\n SW : ");
+								sprintf(&sTmp[0], "C: ");
 								strcat(hexStr, sTmp);
 								globalIndex--;
 								for(i=0;i<assign;i++){
@@ -1454,7 +1523,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 						}
 						else if(phase == 3){ //DATA
 							if(remaining==0){
-								sprintf(&sTmp[0], "T/C Data : ");
+								sprintf(&sTmp[0], "T/C: ");
 								strcat(hexStr, sTmp);
 							}
 							if((datalength > BytesReceived) && (remaining ==0)){
@@ -1483,7 +1552,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 							}
 							for(i=0;i<assign;i++){
 								DT[i] = RxBuffer[globalIndex++] &0xFF;
-								sprintf(&sTmp[0], "%02X", DT[i]);
+								sprintf(&sTmp[0], "%02X ", DT[i]);
 								strcat(hexStr, sTmp);
 							}
 							if(remaining==0){
@@ -1493,7 +1562,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 						}
 						else if(phase == 4){ //SW
 							if(remaining==0){
-								sprintf(&sTmp[0], "Card\n SW : ");
+								sprintf(&sTmp[0], "C: ");
 								strcat(hexStr, sTmp);
 							}
 							if((2 > BytesReceived) && (remaining ==0)){
@@ -1513,7 +1582,7 @@ private: System::Void pduoll_Tick(System::Object^  sender, System::EventArgs^  e
 							}
 							for(i=0;i<assign;i++){
 								DT[i] = RxBuffer[globalIndex++] &0xFF;
-								sprintf(&sTmp[0], "%02X", DT[i]);
+								sprintf(&sTmp[0], "%02X ", DT[i]);
 								strcat(hexStr, sTmp);
 							}
 							sprintf(&sTmp[0], "\n");
@@ -1542,9 +1611,12 @@ private: System::Void cleanToolStripMenuItem_Click(System::Object^  sender, Syst
 private: System::Void deviceToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void richTextBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-			richTextBox1->SelectionStart = richTextBox1->Text->Length;
-					richTextBox1->ScrollToCaret();
-		 }
+		
+			 if(awal){
+	  richTextBox1->SelectionStart = richTextBox1->Text->Length;
+	  richTextBox1->ScrollToCaret();}
+  
+}
 private: System::Void m_FreqList_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void scanFrequencyToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -1778,7 +1850,7 @@ private: System::Void voltage_Tick(System::Object^  sender, System::EventArgs^  
 			toolStripStatusLabel2->Text = gcnew String(buffer);
 		 }
 private: System::Void aboutToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
-			
+			 richTextBox1->Text= "Welcom to Ciptascope!\nTo do signal tracking, please follow below instructions :\n1. Click Scan\n2. Select Device\n3. Select Baudrate (for baudrate information please Click Help -> Baudrate info)\n4. Connect\n\nTo Clean text area, Click File->Clean\n\nBaudrate informations :\n1. HID Omnikey : 9600 \n2. Nokia lama : 8800\n3. Samsung A3 : 10000\n4. Oppo : 10000\n5. Huawei p8 : 10000\n6. Redmi : 10000\n7. Xperia Z2 : 10000\n8. Inphone 5SE : 12800\n9. Iphone 6Plus : 12800\n10. Iphone5 : 10000\n11. Iphone 4, Iphone 4S, Acer Z500 still not compatible\n\nThanks";			
 		 }
 private: System::Void saveAsToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 			 saveFile();
@@ -1805,6 +1877,9 @@ private: System::Void m_devlist_Click_1(System::Object^  sender, System::EventAr
 private: System::Void label1_Click(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void m_baudrate_Click(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void baudrateInfoToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+			 MessageBox::Show( "1. HID Omnikey : 9600 \n2. Nokia lama : 8800\n3. Samsung A3 : 10000\n4. Oppo : 10000\n5. Huawei p8 : 10000\n6. Redmi : 10000\n7. Xperia Z2 : 10000\n8. Inphone 5SE : 12800\n9. Iphone 6Plus : 12800\n10. Iphone5 : 10000\n11. Iphone 4, Iphone 4S, Acer Z500 still not compatible ", "Baudrate information",    MessageBoxButtons::OK, MessageBoxIcon::Exclamation );
 		 }
 };
 }

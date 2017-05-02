@@ -126,6 +126,31 @@
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>272, 12</value>
   </metadata>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Welcome to Ciptascope!
+To do signal tracking, please follow below instructions :
+1. Click Scan
+2. Select Device
+3. Select Baudrate (for baudrate information please Click Help -&gt; Baudrate info)
+4. Connect
+
+To Clean text area, Click File-&gt;Clean
+
+Baudrate informations :
+1. HID Omnikey : 9600 
+2. Nokia lama : 8800
+3. Samsung A3 : 10000
+4. Oppo : 10000
+5. Huawei p8 : 10000
+6. Redmi : 10000
+7. Xperia Z2 : 10000
+8. Inphone 5SE : 12800
+9. Iphone 6Plus : 12800
+10. Iphone5 : 10000
+11. Iphone 4, Iphone 4S, Acer Z500 still not compatible
+
+Thanks</value>
+  </data>
   <metadata name="pdupoll.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>389, 11</value>
   </metadata>
